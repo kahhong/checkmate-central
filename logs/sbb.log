@@ -1,0 +1,32 @@
+2024-08-23 12:34:29.139  INFO 7460 --- [tetrisshowdown] [restartedMain] c.i.t.TetrisshowdownApplication          : Starting TetrisshowdownApplication using Java 17.0.11 with PID 7460 (C:\Users\kmta1\OneDrive\바탕 화면\CS201 Group Project\tetris-showdown\build\classes\java\main started by kmta1 in C:\Users\kmta1\OneDrive\바탕 화면\CS201 Group Project\tetris-showdown)
+2024-08-23 12:34:29.142  INFO 7460 --- [tetrisshowdown] [restartedMain] c.i.t.TetrisshowdownApplication          : No active profile set, falling back to 1 default profile: "default"
+2024-08-23 12:34:29.325  INFO 7460 --- [tetrisshowdown] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-08-23 12:34:29.325  INFO 7460 --- [tetrisshowdown] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-08-23 12:34:30.050  INFO 7460 --- [tetrisshowdown] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-08-23 12:34:30.062  INFO 7460 --- [tetrisshowdown] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-23 12:34:30.062  INFO 7460 --- [tetrisshowdown] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-08-23 12:34:30.106  INFO 7460 --- [tetrisshowdown] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-23 12:34:30.107  INFO 7460 --- [tetrisshowdown] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 781 ms
+2024-08-23 12:34:30.330  WARN 7460 --- [tetrisshowdown] [restartedMain] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-08-23 12:34:30.403  INFO 7460 --- [tetrisshowdown] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2024-08-23 12:34:30.424  INFO 7460 --- [tetrisshowdown] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-08-23 12:34:30.429  INFO 7460 --- [tetrisshowdown] [restartedMain] c.i.t.TetrisshowdownApplication          : Started TetrisshowdownApplication in 1.596 seconds (process running for 1.941)
+2024-08-23 12:34:50.272  INFO 7460 --- [tetrisshowdown] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-23 12:34:50.272  INFO 7460 --- [tetrisshowdown] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-23 12:34:50.273  INFO 7460 --- [tetrisshowdown] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2024-08-23 12:41:18.110  INFO 27924 --- [tetrisshowdown] [restartedMain] c.i.t.TetrisshowdownApplication          : Starting TetrisshowdownApplication using Java 17.0.11 with PID 27924 (C:\Users\kmta1\OneDrive\바탕 화면\CS201 Group Project\tetris-showdown\build\classes\java\main started by kmta1 in C:\Users\kmta1\OneDrive\바탕 화면\CS201 Group Project\tetris-showdown)
+2024-08-23 12:41:18.112  INFO 27924 --- [tetrisshowdown] [restartedMain] c.i.t.TetrisshowdownApplication          : No active profile set, falling back to 1 default profile: "default"
+2024-08-23 12:41:18.289  INFO 27924 --- [tetrisshowdown] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2024-08-23 12:41:18.289  INFO 27924 --- [tetrisshowdown] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2024-08-23 12:41:19.096  INFO 27924 --- [tetrisshowdown] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-08-23 12:41:19.106  INFO 27924 --- [tetrisshowdown] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-08-23 12:41:19.106  INFO 27924 --- [tetrisshowdown] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.26]
+2024-08-23 12:41:19.150  INFO 27924 --- [tetrisshowdown] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-08-23 12:41:19.150  INFO 27924 --- [tetrisshowdown] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 861 ms
+2024-08-23 12:41:19.375  WARN 27924 --- [tetrisshowdown] [restartedMain] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-08-23 12:41:19.445  INFO 27924 --- [tetrisshowdown] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2024-08-23 12:41:19.468  INFO 27924 --- [tetrisshowdown] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-08-23 12:41:19.474  INFO 27924 --- [tetrisshowdown] [restartedMain] c.i.t.TetrisshowdownApplication          : Started TetrisshowdownApplication in 1.684 seconds (process running for 2.019)
+2024-08-23 12:41:25.749  INFO 27924 --- [tetrisshowdown] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-08-23 12:41:25.749  INFO 27924 --- [tetrisshowdown] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-08-23 12:41:25.750  INFO 27924 --- [tetrisshowdown] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms

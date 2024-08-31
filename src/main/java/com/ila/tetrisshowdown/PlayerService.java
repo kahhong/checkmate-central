@@ -11,6 +11,9 @@ public class PlayerService {
     private PlayerRepository playerRepository;
 
     public Player registerPlayer(Player player) {
+        // Ensure default values are set
+        player.setRating(0); 
+        player.setAvailability(false);
         return playerRepository.save(player);
     }
 

@@ -17,6 +17,12 @@ public class PlayerService {
         return playerRepository.save(player);
     }
 
+    // Check if an email is already registered
+    public Optional<Player> findByEmail(String email) {
+        return playerRepository.findByEmail(email);
+    }
+
+    // Login: Check if the provided email and password are correct
     public Optional<Player> loginPlayer(String email, String password) {
         Optional<Player> player = playerRepository.findByEmail(email);
         if (player.isPresent() && player.get().getPassword().equals(password)) {

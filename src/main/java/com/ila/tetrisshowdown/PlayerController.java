@@ -18,7 +18,8 @@ public class PlayerController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registerPlayer(@RequestBody Player player) {
-        Optional<Player> existingPlayer = playerService.loginPlayer(player.getEmail(), player.getPassword());
+        // Check if the email already exists
+        Optional<Player> existingPlayer = playerService.findByEmail(player.getEmail());
         if (existingPlayer.isPresent()) {
             return ResponseEntity.badRequest().body("Player with this email already exists.");
         }

@@ -14,22 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlayerController {
 
     @Autowired
-    private PlayerService playerService;
+    private PlayerAuthService playerAuthService;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerPlayer(@RequestBody Player player) {
-        // Check if the email already exists
-        Optional<Player> existingPlayer = playerService.findByEmail(player.getEmail());
-        if (existingPlayer.isPresent()) {
+        // Use playerExists method to check if the email is already registered
+        if (playerAuthService.playerExists(player.getEmail())) {
             return ResponseEntity.badRequest().body("Player with this email already exists.");
         }
-        playerService.registerPlayer(player);
+        playerAuthService.registerPlayer(player);
         return ResponseEntity.ok("Player registered successfully.");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginPlayer(@RequestBody Player player) {
-        Optional<Player> loggedInPlayer = playerService.loginPlayer(player.getEmail(), player.getPassword());
+        Optional<Player> loggedInPlayer = playerAuthService.loginPlayer(player.getEmail(), player.getPassword());
         if (loggedInPlayer.isPresent()) {
             return ResponseEntity.ok("Login successful.");
         } else {

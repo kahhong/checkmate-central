@@ -27,6 +27,11 @@ public class Player {
 	
 	private boolean availability;
 	
+	// Constructor to set default values
+    public Player() {
+        this.rating = 0;
+        this.availability = false;
+    }
 	
 }
 

@@ -6,20 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PlayerService {
+public class PlayerAuthService {
     @Autowired
     private PlayerRepository playerRepository;
 
     public Player registerPlayer(Player player) {
-        // Ensure default values are set
-        player.setRating(0); 
-        player.setAvailability(false);
         return playerRepository.save(player);
     }
 
-    // Check if an email is already registered
-    public Optional<Player> findByEmail(String email) {
-        return playerRepository.findByEmail(email);
+    public boolean playerExists(String email) {
+        // Check if a player with the given email exists
+        return playerRepository.findByEmail(email).isPresent();
     }
 
     // Login: Check if the provided email and password are correct

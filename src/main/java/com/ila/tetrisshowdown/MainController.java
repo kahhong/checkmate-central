@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MainController {
 
     
-    @GetMapping("/ila")
+    @GetMapping("/")
     @ResponseBody
     public String index() {
-        // System.out.println("Index");
-        return "Hello World!";
+        // System.out.println("Index");asdasda
+        return "Bye fvvbasdasdasads!";
     }
 }

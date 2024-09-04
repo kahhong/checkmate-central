@@ -8,26 +8,22 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
+@Entity
 public class Player {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer id;
-	
-	private String userName;
-	
-	private String password;
-	
 	@Column(unique = true)
 	private String email;
+
+	@Column(unique = true)
+	private String playerName;
+	
+	private String password;
 	
 	private float rating;
 	
 	private boolean availability;
-	
-	
 }
 
 

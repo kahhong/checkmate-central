@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,8 +20,6 @@ public class Player {
 	
 	private String userName;
 	
-	private String password;
-	
 	@Column(unique = true)
 	private String email;
 	
@@ -32,7 +32,13 @@ public class Player {
         this.rating = 0;
         this.availability = false;
     }
+
+	@OneToOne(mappedBy="player", cascade= CascadeType.ALL)
+	private PlayerPassword password; 
 	
+	public String getPassword() { 
+		return this.password.getPassword(); 
+	}
 }
 
 

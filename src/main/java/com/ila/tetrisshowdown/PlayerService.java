@@ -1,5 +1,7 @@
 package com.ila.tetrisshowdown;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +26,25 @@ public class PlayerService {
 
         return player;
     }
-	
-	// private String userName;
-	
-	// private String password;
-	
-	// @Column(unique = true)
-	// private String email;
-	
-	// private float rating;
-	
-	// private boolean availability;
+
+    // Login: Check if the provided email and password are correct
+    public Optional<Player> login(String email, String password) {
+        Optional<Player> player = playerRepository.findByEmail(email);
+        // Check if the player exists and if the password matches
+        if (player.isPresent() && passwordEncoder.matches(password, player.get().getPassword())) {
+            return player;
+        }
+        return Optional.empty();
+    }
+
+    // private String userName;
+
+    // private String password;
+
+    // @Column(unique = true)
+    // private String email;
+
+    // private float rating;
+
+    // private boolean availability;
 }

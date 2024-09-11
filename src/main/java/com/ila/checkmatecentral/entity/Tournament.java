@@ -3,9 +3,11 @@ package com.ila.checkmatecentral.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.Date;
 
 @Getter
@@ -15,6 +17,9 @@ public class Tournament {
     @Id
     @Column(unique = true)
     private int tournamentId;
+
+    @OneToMany
+    private Collection<Match> matches;
 
     private String tournamentName;
 

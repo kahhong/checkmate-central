@@ -3,7 +3,7 @@ package com.ila.checkmatecentral.service;
 import java.util.Optional;
 
 import com.ila.checkmatecentral.entity.Player;
-import com.ila.checkmatecentral.PlayerRepository;
+import com.ila.checkmatecentral.repository.PlayerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

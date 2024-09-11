@@ -1,4 +1,4 @@
-package com.ila.checkmatecentral;
+package com.ila.checkmatecentral.repository;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.ila.checkmatecentral;
+package com.ila.checkmatecentral.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

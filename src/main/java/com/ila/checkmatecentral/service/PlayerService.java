@@ -1,7 +1,9 @@
-package com.ila.checkmatecentral;
+package com.ila.checkmatecentral.service;
 
 import java.util.Optional;
 
+import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.PlayerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

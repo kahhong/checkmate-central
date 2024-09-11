@@ -1,7 +1,11 @@
-package com.ila.checkmatecentral;
+package com.ila.checkmatecentral.controller;
 
 import java.util.Optional;
 
+import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.PlayerCreateForm;
+import com.ila.checkmatecentral.PlayerLoginForm;
+import com.ila.checkmatecentral.service.PlayerService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;

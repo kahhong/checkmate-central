@@ -1,4 +1,4 @@
-package com.ila.checkmatecentral;
+package com.ila.checkmatecentral.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

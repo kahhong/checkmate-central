@@ -1,4 +1,4 @@
-package com.ila.tetrisshowdown;
+package com.ila.checkmatecentral;
 
 import java.util.Optional;
 

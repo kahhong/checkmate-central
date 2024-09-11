@@ -1,20 +1,21 @@
-package com.ila.tetrisshowdown;
+package com.ila.checkmatecentral;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/player")
 public class PlayerController {
     public final PlayerService playerService;
@@ -23,9 +24,11 @@ public class PlayerController {
     public String signup(PlayerCreateForm playerCreateForm) {
         return "signup_page";
     }
+    
 
+    @CrossOrigin
     @PostMapping("/signup")
-    public String signup(@Valid PlayerCreateForm playerCreateForm, BindingResult bindingResult) {
+    public String signup(@Valid @RequestBody PlayerCreateForm playerCreateForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "signup_page";
         }

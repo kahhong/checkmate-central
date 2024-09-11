@@ -1,10 +1,10 @@
-package com.ila.tetrisshowdown;
+package com.ila.checkmatecentral;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TetrisshowdownApplicationTests {
+class CheckmateCentralApplicationTests {
 
 	@Test
 	void contextLoads() {

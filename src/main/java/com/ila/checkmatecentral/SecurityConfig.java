@@ -1,4 +1,4 @@
-package com.ila.tetrisshowdown;
+package com.ila.checkmatecentral;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,9 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
             .csrf((csrf) -> csrf
                 .ignoringRequestMatchers(new AntPathRequestMatcher
-            ("/h2-console/**")))
+            ("/h2-console/**"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher
+            ("/player/signup")))
                 .headers((headers) -> headers
                     .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
             ;

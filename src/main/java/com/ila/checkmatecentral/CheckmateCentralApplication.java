@@ -1,13 +1,13 @@
-package com.ila.tetrisshowdown;
+package com.ila.checkmatecentral;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TetrisshowdownApplication {
+public class CheckmateCentralApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TetrisshowdownApplication.class, args);
+		SpringApplication.run(CheckmateCentralApplication.class, args);
 	}
 
 }

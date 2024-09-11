@@ -1,4 +1,4 @@
-package com.ila.tetrisshowdown;
+package com.ila.checkmatecentral;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

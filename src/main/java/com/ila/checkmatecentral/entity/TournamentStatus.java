@@ -1,11 +1,23 @@
 package com.ila.checkmatecentral.entity;
 
 public enum TournamentStatus {
-    UPCOMING,
+    UPCOMING("Upcoming"),
 
-    ONGOING,
+    ONGOING("Ongoing"),
 
-    CALCULATING,
+    CALCULATING("Calculating"),
 
-    COMPLETED
+    COMPLETED("Completed");
+
+
+    private final String displayName;
+
+    TournamentStatus(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return  displayName;
+    }
 }

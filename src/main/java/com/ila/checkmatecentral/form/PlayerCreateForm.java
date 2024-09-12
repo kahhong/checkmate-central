@@ -1,4 +1,4 @@
-package com.ila.checkmatecentral;
+package com.ila.checkmatecentral.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

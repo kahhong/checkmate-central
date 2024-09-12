@@ -1,9 +1,21 @@
 package com.ila.checkmatecentral.entity;
 
 public enum MatchStatus {
-    UPCOMING,
+    UPCOMING("Upcoming"),
 
-    ONGOING,
+    ONGOING("Ongoing"),
 
-    COMPLETED
+    COMPLETED("Completed");
+
+
+    private final String displayName;
+
+    MatchStatus(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return  displayName;
+    }
 }

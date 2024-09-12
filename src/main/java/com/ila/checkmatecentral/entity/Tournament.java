@@ -21,9 +21,9 @@ public class Tournament {
     @OneToMany
     private Collection<Match> matches;
 
-    private String tournamentName;
+    private String name;
 
-    private String tournamentDescription;
+    private String description;
 
     private TournamentStatus status;
 

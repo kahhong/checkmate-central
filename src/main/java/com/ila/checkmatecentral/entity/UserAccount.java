@@ -68,6 +68,7 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     }
 
     @Override
+    @Transient
     public String getUsername() {
         return email;
     }

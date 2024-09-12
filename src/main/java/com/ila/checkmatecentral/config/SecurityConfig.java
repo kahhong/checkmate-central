@@ -22,7 +22,9 @@ public class SecurityConfig {
                 .ignoringRequestMatchers(new AntPathRequestMatcher
             ("/h2-console/**"))
                 .ignoringRequestMatchers(new AntPathRequestMatcher
-            ("/player/signup")))
+            ("/player/signup"))
+                .ignoringRequestMatchers(new AntPathRequestMatcher
+            ("/tournaments/**")))
                 .headers((headers) -> headers
                     .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
             ;

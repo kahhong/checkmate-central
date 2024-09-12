@@ -1,9 +1,6 @@
 package com.ila.checkmatecentral.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +13,7 @@ import java.util.Date;
 public class Tournament {
     @Id
     @Column(unique = true)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int tournamentId;
 
     @OneToMany

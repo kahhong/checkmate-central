@@ -1,22 +1,19 @@
 package com.ila.checkmatecentral.service;
 
-import com.ila.checkmatecentral.entity.Player;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
-import com.ila.checkmatecentral.repository.PlayerRepository;
+import com.ila.checkmatecentral.repository.TournamentRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class TournamentService {
-    private final PlayerRepository playerRepository;
+    private final TournamentRepository tournamentRepository;
 
     public Tournament create(TournamentCreateForm tournamentCreateForm) {
         Tournament newTournament = new Tournament();
@@ -34,6 +31,8 @@ public class TournamentService {
         } else {
             newTournament.setStatus(TournamentStatus.UPCOMING);
         }
+
+        this.tournamentRepository.save(newTournament);
 
         return newTournament;
     }

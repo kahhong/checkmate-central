@@ -2,12 +2,14 @@ package com.ila.checkmatecentral.form;
 
 import com.ila.checkmatecentral.entity.TournamentType;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -20,25 +22,25 @@ public class TournamentCreateForm {
     @NotEmpty(message="Password is necessary!")
     private String description;
 
-    @NotEmpty(message="Confirmation of password is necessary!")
+    @NotNull(message="Confirmation of password is necessary!")
     @NumberFormat
     private int maxPlayers;
 
-    @NotEmpty(message="Email is necessary!")
+    @NotNull(message="Email is necessary!")
     @NumberFormat
     private int minElo;
 
-    @NotEmpty
+    @NotNull
     private TournamentType type;
 
 //    @NotEmpty
 //    private MatchmakeAlgorithm matchmakeAlgorithm;
 
-    @NotEmpty
+    @NotNull
     @DateTimeFormat
     private Date startDate;
 
-    @NotEmpty
+    @NotNull
     @DateTimeFormat
     private Date endDate;
 }

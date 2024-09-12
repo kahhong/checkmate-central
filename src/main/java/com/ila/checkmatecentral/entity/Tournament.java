@@ -14,7 +14,7 @@ public class Tournament {
     @Id
     @Column(unique = true)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int tournamentId;
+    private Integer tournamentId;
 
     @OneToMany
     private Collection<Match> matches;

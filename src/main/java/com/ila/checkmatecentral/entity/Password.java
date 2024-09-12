@@ -39,7 +39,7 @@ public class Password {
     private Date dateCreated;
 
     public Password(long userId, byte[] salt, String password) {
-        Assert.isTrue(salt != null && salt.length == SALT_LENGTH, "Salt must be 16 bytes");
+        Assert.isTrue(salt != null && salt.length == SALT_LENGTH, "Salt must be %d bytes".formatted(SALT_LENGTH));
 
         this.userId = userId;
         this.salt = salt;

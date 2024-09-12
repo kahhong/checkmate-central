@@ -21,7 +21,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> postMethodName(@RequestBody UserAccount user) {
+    public ResponseEntity<?> register(@RequestBody UserAccount user) {
         userService.register(user);
         return ResponseEntity.ok("User registered: " + user.getEmail());
     }

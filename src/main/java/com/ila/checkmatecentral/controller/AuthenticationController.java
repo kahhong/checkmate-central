@@ -21,8 +21,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public UserAccount postMethodName(@RequestBody UserAccount user) {
-        return userService.register(user);
+    public ResponseEntity<?> postMethodName(@RequestBody UserAccount user) {
+        userService.register(user);
+        return ResponseEntity.ok("User registered: " + user.getEmail());
     }
     
     @ExceptionHandler(AuthenticationException.class)

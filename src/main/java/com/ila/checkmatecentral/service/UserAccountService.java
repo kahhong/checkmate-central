@@ -7,8 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.InvalidPasswordException;
 import com.ila.checkmatecentral.exceptions.AccountExistsException;
+import com.ila.checkmatecentral.exceptions.InvalidCredentialsException;
+import com.ila.checkmatecentral.exceptions.InvalidPasswordException;
 import com.ila.checkmatecentral.repository.UserAccountRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,17 @@ public class UserAccountService implements UserDetailsService {
     
     public boolean exists(String email) {
         return repository.findByEmail(email).isPresent();
+    }
+    
+    public UserAccount login(UserAccount user) throws AuthenticationException {
+        UserAccount storedUser = repository.findByEmail(user.getEmail())
+            .orElseThrow(InvalidCredentialsException::new);
+
+        if (!passwordEncoder.matches(user.getPassword(), storedUser.getPassword())) {
+            throw new InvalidCredentialsException();
+        }
+        
+        return storedUser;
     }
     
     public UserAccount register(UserAccount user) throws AuthenticationException {

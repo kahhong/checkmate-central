@@ -15,7 +15,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.requestMatchers("/**").permitAll())
+            .httpBasic(httpBasic -> httpBasic.init(http))
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/**").permitAll()
+                .requestMatchers("/user**").hasAnyRole("PLAYER", "ADMIN")
+                .anyRequest().authenticated())
             .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
             .headers(headers -> headers.addHeaderWriter(
                         new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)));

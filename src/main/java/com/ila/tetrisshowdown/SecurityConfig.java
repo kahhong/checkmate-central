@@ -23,6 +23,9 @@ public class SecurityConfig {
             ("/h2-console/**")))
                 .headers((headers) -> headers
                     .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+                .formLogin((formLogin) -> formLogin
+                    .loginPage("/player/login")
+                    .defaultSuccessUrl("/"))
             ;
         return http.build();
     }

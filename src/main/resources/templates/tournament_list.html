@@ -1,0 +1,86 @@
+<html layout:decorate="~{layout}"></html>
+<div layout:fragment="content" class="container my-3">
+	<div class="row my-3">
+		<div class="col-6">
+			<a th:href="@{/tornament/create}" class="btn btn-primary">Create Tournament</a>
+		</div>
+		<div class="col-6">
+			<div class="input-group">
+				<input type="text" id="search_kw" class="form-control" th:value="${kw}">
+				<button class="btn btn-outline-secondary" type="button" id="btn_search">Search</button>
+			</div>
+		</div>
+	</div>
+	
+	<table class="table">
+		<thead class="table-dark">
+			<tr class="text-center">
+				<th>Tournament ID</th>
+				<th style="width:50%">Title</th>
+				<th>Admin</th>
+				<th>createDate</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="text-center" th:each="tournament, loop : ${paging}">
+				<td th:text="${paging.getTotalElements-(paging.number*paging.size)-loop.index}"></td>
+				<td class="text-start">
+					<a th:href="@{|/tournament/detail/${tournament.id}|}" th:text="${tournament.title}"></a>
+					<span th:if="${#lists.size(tournament.playerList) > 0}"
+						  th:text="${#lists.size(tournament.playerList)}"
+						class="text-danger small ms-2">
+					</span>
+				</td>
+				<td><span th:if="${question.author != null}" th:text="${tournament.admin.name}"></span></td>
+				<td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<div th:if="${!paging.isEmpty()}">
+		<ul class="pagination justify-content-center">
+			<li th:classappend="${!paging.hasPrevious} ? 'disabled'"
+				class="page-item">
+				<a href="javascript:void(0)" th:data-page="${paging.number-1}" class="page-link">
+					<span>Previous</span>
+				</a>
+			</li>
+			<li th:each="page : ${#numbers.sequence(0, paging.totalPages-1)}"
+				th:if="${page >= paging.number-5 and page <= paging.number+5}"
+				th:classappend="${page==paging.number} ? 'active'"
+				class="page-item">
+				<a th:text="${page}" href="javascript:void(0)" th:data-page="${page}" class="page-link"></a>
+			</li>
+			<li th:classappend="${!paging.hasNext} ? 'disabled'"
+				class="page-item">
+				<a href="javascript:void(0)" th:data-page="${paging.number+1}" class="page-link">
+					<span>Next</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+
+	<form th:action="@{/tournament/list}" method="get" id="searchForm">
+		<input type="hidden" id="kw" name="kw" th:value="${kw}">
+		<input type="hidden" id="page" name="page" th:value="${paging.number}">
+	</form>
+</div>
+
+<script layout:fragment="script">
+	const page_elements = document.getElementsByClassName("page-link");
+	Array.from(page_elements).forEach(function(element) {
+		element.addEventListener("click", function() {
+			document.getElementById("page").value = this.dataset.page;
+			document.getElementById("searchForm").submit();
+		});
+	});
+	
+	const btn_search = document.getElementById("btn_search");
+	btn_search.addEventListener("click", function() {
+		document.getElementById("kw").value = document.getElementById("search_kw").value;
+		document.getElementById("page").value = 0;
+		document.getElementById("searchForm").submit();
+	});
+</script>
+
+</html>

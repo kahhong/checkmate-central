@@ -1,9 +1,14 @@
-package com.ila.tetrisshowdown;
+package com.ila.tetrisshowdown.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.ila.tetrisshowdown.entity.Player;
+import com.ila.tetrisshowdown.exception.PlayerNotFoundException;
+import com.ila.tetrisshowdown.repository.PlayerRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,14 +42,16 @@ public class PlayerService {
         return Optional.empty();
     }
 
-    // private String userName;
+    public List<Player> getPlayerList() {
+        return this.playerRepository.findAll();
+    }
 
-    // private String password;
-
-    // @Column(unique = true)
-    // private String email;
-
-    // private float rating;
-
-    // private boolean availability;
+    public Player getPlayer(String email) {
+        Optional<Player> player = this.playerRepository.findByEmail(email);
+        if (player.isPresent()) {
+            return player.get();
+        } else {
+            throw new PlayerNotFoundException("Player not found");
+        }
+    }
 }

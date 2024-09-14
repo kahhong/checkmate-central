@@ -1,0 +1,14 @@
+<table>
+    <thead>
+        <tr>
+            <th>PlayerEmail</th>
+            <th>MMR</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="player : ${playerList}">
+            <td th:text="${player.email}"></td>
+            <td th:text="${player.rating}"></td>
+        </tr>
+    </tbody>
+</table>

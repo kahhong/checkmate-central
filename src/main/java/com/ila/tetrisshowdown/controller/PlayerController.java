@@ -1,14 +1,19 @@
-package com.ila.tetrisshowdown;
+package com.ila.tetrisshowdown.controller;
 
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.ila.tetrisshowdown.PlayerCreateForm;
+import com.ila.tetrisshowdown.PlayerLoginForm;
+import com.ila.tetrisshowdown.entity.Player;
+import com.ila.tetrisshowdown.service.PlayerService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +40,19 @@ public class PlayerController {
             return "signup_page";
         }
 
-        playerService.create(playerCreateForm.getPlayername(), playerCreateForm.getEmail(),
-                playerCreateForm.getPassword1());
+        try {
+            playerService.create(playerCreateForm.getPlayername(), playerCreateForm.getEmail(), playerCreateForm.getPassword1());
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            bindingResult.reject("signupFailed", "Duplicated User Information");
+            return "signup_page";
+        }
 
         return "redirect:/";
     }
 
     @GetMapping("/login")
-    public String login(PlayerLoginForm playerLoginForm) {
+    public String login() {
         return "login_page"; // Return the login page
     }
 

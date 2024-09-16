@@ -5,6 +5,7 @@ import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.service.TournamentService;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,7 +39,6 @@ public class TournamentController {
         }
 
         tournamentService.create(tournamentCreateForm);
-
-        return ResponseEntity.ok("Tournament created");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Created Successfully");
     }
 }

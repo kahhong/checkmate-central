@@ -12,7 +12,7 @@ sequenceDiagram
     else !userExists
         AuthenticationController->>+UserAccountService: Encode Password <br/> passwordEncoder.encode(password)
         UserAccountService->>+UserAccountRepository: save(new UserAccount(email, username, password)
-        UserAccountRepository->>+H2 Database: INSERT INTO USER_ACCOUNT ...
+%%        UserAccountRepository->>+H2 Database: INSERT INTO USER_ACCOUNT ...
         UserAccountRepository-->>-UserAccountService: return newUserAccount
         UserAccountService-->>-AuthenticationController: return newUserAccount
         AuthenticationController-->>-Web UI: 201 Created

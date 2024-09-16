@@ -29,12 +29,6 @@ public class TournamentController {
     public final TournamentService tournamentService;
     public final TournamentRepository tournamentRepository;
 
-    @CrossOrigin
-    @GetMapping("/")
-    public String signup(PlayerCreateForm playerCreateForm) {
-        return "signup_page";
-    }
-
 
     @CrossOrigin
     @PostMapping("/")

@@ -1,0 +1,132 @@
+// Player Registers
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe",
+	"email": "john@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe1",
+	"email": "john1@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe2",
+	"email": "john2@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe3",
+	"email": "john3@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe4",
+	"email": "john4@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe5",
+	"email": "john5@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe6",
+	"email": "john6@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe7",
+	"email": "john7@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+###
+POST http://localhost:8080/player/signup
+Content-Type: application/json
+
+{
+    "playername": "john_doe8",
+	"email": "john8@example.com",
+    "password1": "password123",
+	"password2": "password123"
+}
+
+### 
+// Player Login
+POST http://localhost:8080/player/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+###
+// Get Player
+
+###
+
+
+// Delete Player
+
+###
+// Create Tournament
+POST http://localhost:8080/tournaments/
+Content-Type: application/json
+
+{
+    "name": "Test_Tourney",
+    "description": "My first ever Tournament for 10 players",
+    "maxPlayers": "10",
+    "minElo": "1000",
+    "type": "SINGLE_KNOCKOUT",
+    "startDate": "2024-09-12T05:09:10Z",
+    "endDate": "2024-10-12T05:09:10Z"
+}
+
+// List Tournament
+
+
+// Update Tournament
+
+
+// Delete Tournament

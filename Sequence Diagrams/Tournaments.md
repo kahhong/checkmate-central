@@ -16,7 +16,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor User
-    User->>Web UI: Clicks a tournament
+    User->>Web UI: List of documents
     Web UI->>+TournamentController: GET /tournaments
     activate TournamentService
     TournamentController->>+TournamentService: findAll(id)
@@ -44,7 +44,7 @@ sequenceDiagram
 ```
 
 # Get details of a specific tournament (Admin)
-> TODO: Check if admin is authorized to view the details of the tournament.
+> TODO: Check if admin is authorized to access the tournament.
 ```mermaid
 sequenceDiagram
     actor Admin
@@ -59,6 +59,37 @@ sequenceDiagram
     else !tournament.isPresent()
         TournamentController-->>-Web UI: 404 Not Found
         Web UI-->>Admin: Show 404 error
+    end
+```
+
+# Update a tournament
+> TODO: Check if admin is authorized to edit the tournament.
+```mermaid
+sequenceDiagram
+    actor Admin
+    Admin->>Web UI: Clicks "Save" after editing the tournament
+    Web UI->>+TournamentController: PUT /tournaments/{id}<br/>{updated options}
+    activate TournamentService
+    TournamentController->>+TournamentService: findById(id)
+    TournamentService-->>TournamentController: tournament
+    deactivate TournamentService
+    alt tournament.isPresent()
+        alt tournament.Status == UPCOMING
+            TournamentController->>+TournamentService: update(id, options)
+            TournamentService->>+TournamentRepository: save(updatedTournament)
+            activate TournamentRepository
+            TournamentRepository-->>TournamentService: Tournament updatedTournament
+            deactivate TournamentRepository
+            TournamentService-->>-TournamentController: Tournament updatedTournament
+            TournamentController-->>Web UI: 200 OK
+            Web UI-->>Admin: Show success message
+        else tournament.Status != UPCOMING
+            TournamentController-->>Web UI: 405 Not Allowed
+            Web UI-->>Admin: Show error message
+        end
+    else !tournament.isPresent()
+        TournamentController-->>-Web UI: 404 Not Found
+        Web UI-->>Admin: Show error message
     end
 ```
 

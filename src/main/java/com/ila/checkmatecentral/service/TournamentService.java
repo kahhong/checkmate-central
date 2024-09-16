@@ -1,14 +1,18 @@
 package com.ila.checkmatecentral.service;
 
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
-import com.ila.checkmatecentral.form.TournamentCreateForm;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.ila.checkmatecentral.entity.Tournament;
+import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
+import com.ila.checkmatecentral.form.TournamentCreateForm;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
@@ -36,4 +40,38 @@ public class TournamentService {
 
         return newTournament;
     }
+
+    public void delete(Tournament tournament) {
+        this.tournamentRepository.delete(tournament);
+    }
+
+    public List<Tournament> getAllTournaments() {
+        return this.tournamentRepository.findAll();
+    }
+
+    public Tournament update(Integer tournamentId, TournamentCreateForm updatedTournamentCreateForm) {
+        Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException(tournamentId)); 
+            /*
+             * TODO: The constructor TournamentNotFoundException is undefined WHY?
+             */
+
+        existingTournament.setName(updatedTournamentCreateForm.getName());
+        existingTournament.setDescription(updatedTournamentCreateForm.getDescription());
+        existingTournament.setType(updatedTournamentCreateForm.getType());
+        existingTournament.setMaxPlayers(updatedTournamentCreateForm.getMaxPlayers());
+        existingTournament.setMinElo(updatedTournamentCreateForm.getMinElo());
+        existingTournament.setStartDate(updatedTournamentCreateForm.getStartDate());
+        existingTournament.setEndDate(updatedTournamentCreateForm.getEndDate());
+
+        Instant currentDate = new Date().toInstant();
+        if (updatedTournamentCreateForm.getStartDate().toInstant().isBefore(currentDate)) {
+            existingTournament.setStatus(TournamentStatus.ONGOING);
+        } else {
+            existingTournament.setStatus(TournamentStatus.UPCOMING);
+        }
+
+        return tournamentRepository.save(existingTournament);
+    }
+
 }

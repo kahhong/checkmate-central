@@ -13,10 +13,10 @@ import java.util.Date;
 public class Tournament {
     @Id
     @Column(unique = true)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tournamentId;
 
-    @OneToMany
+    @OneToMany(mappedBy = "tournament")
     private Collection<Match> matches;
 
     private String name;

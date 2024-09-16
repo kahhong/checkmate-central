@@ -3,6 +3,7 @@ package com.ila.checkmatecentral.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.IdGeneratorType;
 
 import java.util.Date;
 
@@ -12,14 +13,17 @@ import java.util.Date;
 @IdClass(MatchPk.class)
 public class Match {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int matchId;
-
-    @Id
-    private int tournamentId;
 
     private MatchStatus matchStatus;
 
     private MatchType matchType;
 
     private Date startDate;
+
+    @Id
+    @ManyToOne
+    @JoinColumn(name="tournament_id", insertable = false, updatable = false)
+    private Tournament tournament;
 }

@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
@@ -52,9 +51,6 @@ public class TournamentService {
     public Tournament update(Integer tournamentId, TournamentCreateForm updatedTournamentCreateForm) {
         Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException(tournamentId)); 
-            /*
-             * TODO: The constructor TournamentNotFoundException is undefined WHY?
-             */
 
         existingTournament.setName(updatedTournamentCreateForm.getName());
         existingTournament.setDescription(updatedTournamentCreateForm.getDescription());
@@ -71,7 +67,7 @@ public class TournamentService {
             existingTournament.setStatus(TournamentStatus.UPCOMING);
         }
 
-        return tournamentRepository.save(existingTournament);
+        return this.tournamentRepository.save(existingTournament);
     }
 
 }

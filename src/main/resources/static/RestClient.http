@@ -1,107 +1,82 @@
-// Player Registers
-POST http://localhost:8080/player/signup
+// Player Register
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe",
+    "name": "john_doe",
 	"email": "john@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
 
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe1",
-	"email": "john1@example.com",
-    "password1": "password123",
-	"password2": "password123"
-}
-###
-POST http://localhost:8080/player/signup
-Content-Type: application/json
-
-{
-    "playername": "john_doe2",
+    "name": "john_doe2",
 	"email": "john2@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
+
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe3",
+    "name": "john_doe3",
 	"email": "john3@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
+
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe4",
+    "name": "john_doe4",
 	"email": "john4@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
+
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe5",
+    "name": "john_doe5",
 	"email": "john5@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
+
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe6",
+    "name": "john_doe6",
 	"email": "john6@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
+
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe7",
+    "name": "john_doe7",
 	"email": "john7@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
+
 ###
-POST http://localhost:8080/player/signup
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "playername": "john_doe8",
+    "name": "john_doe8",
 	"email": "john8@example.com",
-    "password1": "password123",
-	"password2": "password123"
+    "password": "password123"
 }
-
-### 
-// Player Login
-POST http://localhost:8080/player/login
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
-
-###
-// Get Player
 
 ###
 
@@ -115,9 +90,9 @@ Content-Type: application/json
 
 {
     "name": "Test_Tourney",
-    "description": "My first ever Tournament for 10 players",
-    "maxPlayers": "10",
-    "minElo": "1000",
+    "description": "My first ever Tournament for 8 players",
+    "maxPlayers": "8",
+    "minElo": "100",
     "type": "SINGLE_KNOCKOUT",
     "startDate": "2024-09-12T05:09:10Z",
     "endDate": "2024-10-12T05:09:10Z"

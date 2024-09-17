@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.form.PlayerCreateForm;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.service.TournamentService;

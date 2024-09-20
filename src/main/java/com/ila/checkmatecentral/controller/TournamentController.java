@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,8 +39,8 @@ public class TournamentController {
 
     @GetMapping("/{id}")
     public Tournament getTournamentById(@PathVariable("id") Integer id) {
-        return tournamentRepository.findById(id).
-            orElseThrow(() -> new TournamentNotFoundException(id));
+        return tournamentRepository.findById(id)
+            .orElseThrow(() -> new TournamentNotFoundException(id));
     }
 
     @CrossOrigin

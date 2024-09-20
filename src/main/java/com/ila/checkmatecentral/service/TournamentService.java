@@ -1,6 +1,7 @@
 package com.ila.checkmatecentral.service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class TournamentService {
         newTournament.setMinElo(tournamentCreateForm.getMinElo());
         newTournament.setStartDate(tournamentCreateForm.getStartDate());
         newTournament.setEndDate(tournamentCreateForm.getEndDate());
+        newTournament.setCreateDate(LocalDateTime.now());
 
         Instant currentDate = new Date().toInstant();
         if(newTournament.getStartDate().toInstant().isBefore(currentDate)) {
@@ -63,6 +65,7 @@ public class TournamentService {
         existingTournament.setMinElo(updatedTournamentCreateForm.getMinElo());
         existingTournament.setStartDate(updatedTournamentCreateForm.getStartDate());
         existingTournament.setEndDate(updatedTournamentCreateForm.getEndDate());
+        existingTournament.setCreateDate(LocalDateTime.now());
 
         Instant currentDate = new Date().toInstant();
         if (updatedTournamentCreateForm.getStartDate().toInstant().isBefore(currentDate)) {

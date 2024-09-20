@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
@@ -36,7 +37,7 @@ public class TournamentService {
         }
 
         this.tournamentRepository.save(newTournament);
-
+        System.out.println(newTournament.getTournamentId());
         return newTournament;
     }
 

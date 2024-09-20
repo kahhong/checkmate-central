@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,16 +30,27 @@ public class TournamentController {
     public final TournamentService tournamentService;
     public final TournamentRepository tournamentRepository;
 
-
     @CrossOrigin
     @PostMapping("/")
-    public ResponseEntity<?> createTournament(@Valid @RequestBody TournamentCreateForm tournamentCreateForm, BindingResult bindingResult) {
+    public ResponseEntity<?> createTournament(@Valid @RequestBody TournamentCreateForm tournamentCreateForm,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid tournament data");
         }
 
         tournamentService.create(tournamentCreateForm);
         return ResponseEntity.status(HttpStatus.CREATED).body("Created Successfully");
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
+        if (!tournamentRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
+        }
+
+        tournamentService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
 
     @GetMapping("/list")

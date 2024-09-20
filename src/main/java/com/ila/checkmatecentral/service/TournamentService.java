@@ -37,12 +37,15 @@ public class TournamentService {
         }
 
         this.tournamentRepository.save(newTournament);
-        System.out.println(newTournament.getTournamentId());
         return newTournament;
     }
 
     public void delete(Tournament tournament) {
         this.tournamentRepository.delete(tournament);
+    }
+
+    public void deleteById(Integer id) {
+        this.tournamentRepository.deleteById(id);
     }
 
     public List<Tournament> getAllTournaments() {

@@ -43,12 +43,13 @@ public class Match {
     private Tournament tournament;
 
 
-    public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round) {
+    public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round, Integer tournamentId) {
         this.player1 = player1;
         this.player2 = player2;
         this.matchDateTime = dateTime;
         this.round = round;
         this.matchStatus = MatchStatus.ONGOING;
+        this.tournamentId = tournamentId;
         // -1 = no result yet
         // 0 = player 1 lose
         // 0.5 = tie

@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ila.checkmatecentral.entity.Tournament;
+import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.repository.UserAccountRepository;
+import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
 import com.ila.checkmatecentral.service.UserAccountService;
 
@@ -37,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TournamentController {
     public final TournamentService tournamentService;
     public final UserAccountService userAccountService;
+    public final MatchService matchService;
     public final UserAccountRepository userAccountRepository;
     public final TournamentRepository tournamentRepository;
 
@@ -89,7 +92,6 @@ public class TournamentController {
         if (!tournamentRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
         }
-
         tournamentService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
@@ -98,8 +100,13 @@ public class TournamentController {
     @CrossOrigin
     @PostMapping("/{id}/add/{playerId}")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId, @PathVariable("playerId") Long playerId) {
-        tournamentService.addPlayer(tournamentId, userAccountService.loadUserById(playerId));
-        return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+        Tournament tournament = tournamentService.getTournament(tournamentId);
+        if (tournament.getPlayerList().size() < tournament.getMaxPlayers() ) {
+            tournamentService.addPlayer(tournamentId, userAccountService.loadUserById(playerId));
+            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+        }
     }
 
     @CrossOrigin
@@ -107,8 +114,39 @@ public class TournamentController {
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId,
             @RequestBody JsonNode json) {
         String email = json.get("email").asText();
-        tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
-        return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+        Tournament tournament = tournamentService.getTournament(tournamentId);
+        if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
+            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+        }
     }
     
+    @CrossOrigin
+    @PostMapping("/{id}/start")
+    public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
+        Tournament tournament = tournamentService.getTournament(tournamentId);
+        // if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
+        //     tournament.setStatus(TournamentStatus.ONGOING);
+        //     matchService.createMatches(tournament.getPlayerList(), 1, tournamentId); 
+        // }
+        tournament.setStatus(TournamentStatus.ONGOING);
+        matchService.createMatches(tournament.getPlayerList(), 1, tournamentId); 
+
+        return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
+    }
+
+    @CrossOrigin
+    @PostMapping("/{id}/nextround")
+    public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
+        Tournament tournament = tournamentService.getTournament(tournamentId);
+        if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
+            tournament.setStatus(TournamentStatus.ONGOING);
+            int round = tournament.getRound() + 1;
+            tournament.setRound(round);
+            matchService.createMatches(tournament.getPlayerList(), round, tournamentId); 
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+    }
 }

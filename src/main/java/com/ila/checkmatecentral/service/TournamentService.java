@@ -56,6 +56,10 @@ public class TournamentService {
         return this.tournamentRepository.findAll();
     }
 
+    public Tournament getTournament(Integer id) {
+        return this.tournamentRepository.findById(id).orElseThrow(() -> new TournamentNotFoundException(id));
+    }
+
     public Tournament update(Integer tournamentId, TournamentCreateForm updatedTournamentCreateForm) {
         Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException(tournamentId)); 

@@ -79,6 +79,16 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+    "name": "john_doe9",
+	"email": "john9@example.com",
+    "password": "password123"
+}
+
+###
 
 
 // Delete Player
@@ -130,6 +140,41 @@ Content-Type: application/json
     
 }
 ###
+POST http://localhost:8080/tournaments/1/add/5
+Content-Type: application/json
+
+{
+    
+}
+###
+POST http://localhost:8080/tournaments/1/add/6
+Content-Type: application/json
+
+{
+    
+}
+###
+POST http://localhost:8080/tournaments/1/add/7
+Content-Type: application/json
+
+{
+    
+}
+###
+POST http://localhost:8080/tournaments/1/add/8
+Content-Type: application/json
+
+{
+    
+}
+###
+POST http://localhost:8080/tournaments/1/add/9
+Content-Type: application/json
+
+{
+    
+}
+###
 
 // List Tournament
 
@@ -138,3 +183,21 @@ Content-Type: application/json
 
 
 // Delete Tournament
+
+
+// List Matches
+GET http://localhost:8080/match/list/1
+Content-Type: application/json
+
+{
+    
+}
+###
+
+// Start Tournament
+POST http://localhost:8080/tournaments/1/start
+Content-Type: application/json
+
+{
+
+}

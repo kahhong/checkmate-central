@@ -16,6 +16,9 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int matchId;
 
+    @Id
+    private Integer tournamentId;
+
     private MatchStatus matchStatus;
 
     private MatchType matchType;
@@ -26,19 +29,19 @@ public class Match {
 
     // one player can enter multiple matches
     @ManyToOne
-    @JoinColumn(name = "player1_id", referencedColumnName = "id")
+    @JoinColumn(name = "player1Id", referencedColumnName = "id")
     private UserAccount player1;
 
     @ManyToOne
-    @JoinColumn(name = "player2_id", referencedColumnName = "id")
+    @JoinColumn(name = "player2Id", referencedColumnName = "id")
     private UserAccount player2;
 
     private double outcome;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name="tournamentId", insertable = false, updatable = false, referencedColumnName = "tournamentId")
+    @JoinColumn(name="tournamentId", insertable = false, updatable = false)
     private Tournament tournament;
+
 
     public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round) {
         this.player1 = player1;
@@ -52,4 +55,6 @@ public class Match {
         // 1 = player 2 lose
         this.outcome = -1;
     }
+
+    public Match() {}
 }

@@ -87,7 +87,8 @@ public class TournamentController {
         return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
 
-    public ResponseEntity<?> addPlayersToTournament(@PathVariable Integer tournamentId, String email) {
+    @PostMapping("/{id}/add")
+    public ResponseEntity<?> addPlayersToTournament(@PathVariable Integer tournamentId, @RequestBody String email) {
         tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
         return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
     }

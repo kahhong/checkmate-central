@@ -36,8 +36,8 @@ public class MatchController {
 
     // get every match from ONE tournament
     @GetMapping({"/list"})
-    public List<Match> getMatchesFromTournament(Tournament tournament) {
-            return matchRepository.findByTournament(tournament);
+    public List<Match> getMatchesFromTournament(Integer tournamentId) {
+            return matchRepository.findByTournamentId(tournamentId);
     }
 
     // get all matches from all tournaments

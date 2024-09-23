@@ -3,6 +3,7 @@ package com.ila.checkmatecentral.entity;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +26,8 @@ public class Tournament {
     @OneToMany(mappedBy = "tournament")
     private Collection<Match> matches;
 
+    private List<UserAccount> playerList;
+
     private String name;
 
     private String description;
@@ -44,4 +47,8 @@ public class Tournament {
     private int round;
 
     private LocalDateTime createDate;
+
+    public void addPlayer(UserAccount player){
+        this.playerList.add(player);
+    }
 }

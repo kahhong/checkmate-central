@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ila.checkmatecentral.entity.Match;
+import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.UserAccount;
 import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
@@ -27,29 +28,26 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/Tournament/{id}")
+@RequestMapping("/match")
 public class MatchController {
     public final MatchService matchService;
     public final MatchRepository matchRepository;
     public final TournamentRepository tournamentRepository;
 
     // get every match from ONE tournament
-    @GetMapping({"/match/list"})
-    public List<Match> getMatchesFromTournament(int tournamentId) {
-            if(!tournamentRepository.existsById(tournamentId)) {
-                throw new TournamentNotFoundException(tournamentId);
-            }
-            return matchRepository.findByTournamentId(tournamentId);
+    @GetMapping({"/list"})
+    public List<Match> getMatchesFromTournament(Tournament tournament) {
+            return matchRepository.findByTournament(tournament);
     }
 
     // get all matches from all tournaments
-    // @GetMapping({"/Tournament/{id}/list"})
+    // @GetMapping({"/listall"})
     // public List<Match> getAllMatches() {
     //         return matchRepository.findAll();
     // }
 
     // get all matches from ONE player
-    // @GetMapping({"/Tournament/list"})
+    // @GetMapping({"/list"})
     // public ResponseEntity<List<Match>> getAllMatchs() {
     //     List<Match> Matchs = MatchService.getAllMatches();
     //     return ResponseEntity.ok(Matchs);
@@ -61,11 +59,11 @@ public class MatchController {
     //         .orElseThrow(() -> new MatchNotFoundException(id));
     // }
 
-    @CrossOrigin
-    @PostMapping("/match")
-    public void createMatches(List<UserAccount> userList, int round) {
-        matchService.createMatches(userList, round);
-    }
+    // @CrossOrigin
+    // @PostMapping("/")
+    // public void createMatches(List<UserAccount> userList, int round) {
+    //     matchService.createMatches(userList, round);
+    // }
 
     // @PutMapping("/{id}")
     // public ResponseEntity<?> updateMatch(@PathVariable("id") Integer MatchId,

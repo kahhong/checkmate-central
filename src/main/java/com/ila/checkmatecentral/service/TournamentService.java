@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.entity.UserAccount;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -76,6 +77,10 @@ public class TournamentService {
         }
 
         return this.tournamentRepository.save(existingTournament);
+    }
+
+    public void addPlayer(Integer tournamentId, UserAccount player){
+        tournamentRepository.findById(tournamentId).get().addPlayer(player);
     }
 
     public void createMatches(){

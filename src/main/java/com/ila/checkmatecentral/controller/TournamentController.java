@@ -20,6 +20,7 @@ import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.service.TournamentService;
+import com.ila.checkmatecentral.service.UserAccountService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/tournaments")
 public class TournamentController {
     public final TournamentService tournamentService;
+    public final UserAccountService userAccountService;
     public final TournamentRepository tournamentRepository;
 
     @GetMapping({"/lists", "/list"})
@@ -83,6 +85,11 @@ public class TournamentController {
 
         tournamentService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
+    }
+
+    public ResponseEntity<?> addPlayersToTournament(@PathVariable Integer tournamentId, String email) {
+        tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+        return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
     }
     
 }

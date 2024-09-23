@@ -2,6 +2,7 @@ package com.ila.checkmatecentral.repository;
 
 import com.ila.checkmatecentral.entity.Match;
 import com.ila.checkmatecentral.entity.MatchPk;
+import com.ila.checkmatecentral.entity.Tournament;
 
 import java.util.List;
 import java.util.Optional;

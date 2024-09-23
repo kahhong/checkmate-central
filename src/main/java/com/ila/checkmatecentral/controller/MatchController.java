@@ -2,24 +2,12 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
-import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.MatchRepository;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.service.MatchService;

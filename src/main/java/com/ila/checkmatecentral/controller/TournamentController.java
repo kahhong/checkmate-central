@@ -1,7 +1,6 @@
 package com.ila.checkmatecentral.controller;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +29,7 @@ import com.ila.checkmatecentral.service.UserAccountService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tournaments")

@@ -2,14 +2,11 @@ package com.ila.checkmatecentral.service;
 
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.UserAccount;
 
 import com.ila.checkmatecentral.repository.MatchRepository;

@@ -4,6 +4,7 @@ import java.beans.Transient;
 import java.util.Collection;
 import java.util.List;
 
+import com.ila.checkmatecentral.service.MatchService;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,9 +51,14 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @Setter
     private double rating;
 
+
     @ManyToOne
-    @JoinColumn(name="tournamentId", insertable = false, updatable = false)
+    @JoinColumn(name="tournamentId")
+    @Getter
+    @Setter
     private Tournament tournament;
+
+
 
     protected UserAccount() {
     }
@@ -61,7 +67,7 @@ public class UserAccount implements UserDetails, CredentialsContainer {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.rating = 1500;
+        this.rating = Math.random();
     }
 
     @Override
@@ -84,4 +90,6 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     public String getUsername() {
         return email;
     }
+
+
 }

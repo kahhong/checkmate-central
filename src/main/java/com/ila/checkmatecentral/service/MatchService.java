@@ -4,6 +4,7 @@ package com.ila.checkmatecentral.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Match;
@@ -13,10 +14,13 @@ import com.ila.checkmatecentral.repository.MatchRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
+
 public class MatchService {
     public final MatchRepository matchRepository;
+
 
     public void createMatches(List<UserAccount> players, int round, Integer tournamentId) {
         // Sort players by ELO in descending order

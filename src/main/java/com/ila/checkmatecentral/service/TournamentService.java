@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Tournament;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
 
@@ -84,7 +86,14 @@ public class TournamentService {
     }
 
     public void addPlayer(Integer tournamentId, UserAccount player){
-        tournamentRepository.findById(tournamentId).get().addPlayer(player);
+        Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        currentTournament.addPlayer(player);
+        tournamentRepository.save(currentTournament);
+    }
+
+    public List<UserAccount> getPlayers(Integer tournamentId) {
+        Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        return currentTournament.getPlayerList();
     }
 
     public void createMatches(){

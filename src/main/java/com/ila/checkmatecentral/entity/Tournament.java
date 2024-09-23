@@ -5,18 +5,15 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @Entity
+@Slf4j
 public class Tournament {
     @Id
     @Column(unique = true)
@@ -24,7 +21,7 @@ public class Tournament {
     private Integer tournamentId;
 
     @OneToMany(mappedBy = "tournament")
-    private Collection<Match> matches;
+    private List<Match> matches;
 
     @OneToMany(mappedBy = "tournament")
     private List<UserAccount> playerList;
@@ -49,7 +46,10 @@ public class Tournament {
 
     private LocalDateTime createDate;
 
+
     public void addPlayer(UserAccount player){
         this.playerList.add(player);
+        player.setTournament(this);
     }
+
 }

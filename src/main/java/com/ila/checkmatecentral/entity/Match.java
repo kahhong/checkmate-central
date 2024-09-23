@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @IdClass(MatchPk.class)
 public class Match {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int matchId;
 
     @Id
@@ -58,4 +58,20 @@ public class Match {
     }
 
     public Match() {}
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "matchId=" + matchId +
+                ", tournamentId=" + tournamentId +
+                ", matchStatus=" + matchStatus +
+                ", matchType=" + matchType +
+                ", matchDateTime=" + matchDateTime +
+                ", round=" + round +
+                ", player1=" + player1 +
+                ", player2=" + player2 +
+                ", outcome=" + outcome +
+                ", tournament=" + tournament +
+                '}';
+    }
 }

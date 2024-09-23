@@ -2,6 +2,8 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
+import com.ila.checkmatecentral.entity.UserAccount;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -29,7 +31,7 @@ import com.ila.checkmatecentral.service.UserAccountService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tournaments")
@@ -129,8 +131,8 @@ public class TournamentController {
         //     matchService.createMatches(tournament.getPlayerList(), 1, tournamentId); 
         // }
         tournament.setStatus(TournamentStatus.ONGOING);
-        matchService.createMatches(tournament.getPlayerList(), 1, tournamentId); 
 
+        matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
         return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
     }
 
@@ -142,7 +144,7 @@ public class TournamentController {
             tournament.setStatus(TournamentStatus.ONGOING);
             int round = tournament.getRound() + 1;
             tournament.setRound(round);
-            matchService.createMatches(tournament.getPlayerList(), round, tournamentId); 
+            matchService.createMatches(tournament.getPlayerList(), round, tournamentId);
         }
         return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
     }

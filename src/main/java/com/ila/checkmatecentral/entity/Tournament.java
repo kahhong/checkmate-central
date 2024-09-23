@@ -22,7 +22,7 @@ public class Tournament {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tournamentId;
 
-    @OneToMany(mappedBy = "tournament")
+    @OneToMany(mappedBy = "tournamentId")
     private Collection<Match> matches;
 
     private String name;
@@ -40,6 +40,8 @@ public class Tournament {
     private Date startDate;
 
     private Date endDate;
+
+    private int round;
 
     private LocalDateTime createDate;
 }

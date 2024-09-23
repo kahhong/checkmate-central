@@ -30,6 +30,7 @@ public class TournamentService {
         newTournament.setStartDate(tournamentCreateForm.getStartDate());
         newTournament.setEndDate(tournamentCreateForm.getEndDate());
         newTournament.setCreateDate(LocalDateTime.now());
+        newTournament.setRound(1);
 
         Instant currentDate = new Date().toInstant();
         if(newTournament.getStartDate().toInstant().isBefore(currentDate)) {
@@ -77,4 +78,15 @@ public class TournamentService {
         return this.tournamentRepository.save(existingTournament);
     }
 
+    public void createMatches(){
+
+    }
+
+    public void getCurrentRoundMatches(){
+
+    }
+
+    public void getAllMatches(){
+        
+    }
 }

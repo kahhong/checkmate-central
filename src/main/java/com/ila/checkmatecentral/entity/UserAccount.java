@@ -16,6 +16,8 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder.Default;
 
 @Entity
 public class UserAccount implements UserDetails, CredentialsContainer {
@@ -43,6 +45,10 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @Column(nullable = false)
     private String password;
     
+    @Getter
+    @Setter
+    private double rating;
+
     protected UserAccount() {
     }
     
@@ -50,6 +56,7 @@ public class UserAccount implements UserDetails, CredentialsContainer {
         this.email = email;
         this.name = name;
         this.password = password;
+        this.rating = 1500;
     }
 
     @Override

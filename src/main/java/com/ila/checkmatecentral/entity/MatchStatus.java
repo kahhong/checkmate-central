@@ -1,8 +1,6 @@
 package com.ila.checkmatecentral.entity;
 
 public enum MatchStatus {
-    UPCOMING("Upcoming"),
-
     ONGOING("Ongoing"),
 
     COMPLETED("Completed");

@@ -26,6 +26,7 @@ public class Tournament {
     @OneToMany(mappedBy = "tournament")
     private Collection<Match> matches;
 
+    @OneToMany(mappedBy = "tournament")
     private List<UserAccount> playerList;
 
     private String name;

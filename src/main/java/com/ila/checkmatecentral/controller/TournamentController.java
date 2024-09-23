@@ -1,6 +1,7 @@
 package com.ila.checkmatecentral.controller;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +16,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
+import com.ila.checkmatecentral.repository.UserAccountRepository;
 import com.ila.checkmatecentral.service.TournamentService;
 import com.ila.checkmatecentral.service.UserAccountService;
 
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tournaments")
 public class TournamentController {
     public final TournamentService tournamentService;
     public final UserAccountService userAccountService;
+    public final UserAccountRepository userAccountRepository;
     public final TournamentRepository tournamentRepository;
 
     @GetMapping({"/lists", "/list"})
@@ -87,8 +94,19 @@ public class TournamentController {
         return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
 
+    
+    @CrossOrigin
+    @PostMapping("/{id}/add/{playerId}")
+    public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId, @PathVariable("playerId") Long playerId) {
+        tournamentService.addPlayer(tournamentId, userAccountService.loadUserById(playerId));
+        return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+    }
+
+    @CrossOrigin
     @PostMapping("/{id}/add")
-    public ResponseEntity<?> addPlayersToTournament(@PathVariable Integer tournamentId, @RequestBody String email) {
+    public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId,
+            @RequestBody JsonNode json) {
+        String email = json.get("email").asText();
         tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
         return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
     }

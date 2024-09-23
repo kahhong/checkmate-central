@@ -13,6 +13,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -48,6 +50,10 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @Getter
     @Setter
     private double rating;
+
+    @ManyToOne
+    @JoinColumn(name="tournamentId", insertable = false, updatable = false)
+    private Tournament tournament;
 
     protected UserAccount() {
     }

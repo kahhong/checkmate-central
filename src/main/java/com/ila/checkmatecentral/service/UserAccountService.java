@@ -29,6 +29,11 @@ public class UserAccountService implements UserDetailsService {
         return repository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException(email));
     }
+
+    public UserAccount loadUserById(long id) throws UsernameNotFoundException {
+        return repository.findById(id)
+            .orElseThrow(() -> new UsernameNotFoundException("" + id));
+    }
     
     public boolean exists(String email) {
         return repository.findByEmail(email).isPresent();

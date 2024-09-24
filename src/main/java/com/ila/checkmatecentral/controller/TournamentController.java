@@ -60,9 +60,15 @@ public class TournamentController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid tournament data");
         }
+        int numPlayers = tournamentCreateForm.getMaxPlayers();
+        // Bitwise operation
+        // Check if numPlayers is greater than 0 and if n & (n - 1) equals 0
+        if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Number of players must be power of 2");
+        }
 
         tournamentService.create(tournamentCreateForm);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Created Successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }
 
     @PutMapping("/{id}")

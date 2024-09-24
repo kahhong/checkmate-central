@@ -4,6 +4,10 @@ package com.ila.checkmatecentral.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ila.checkmatecentral.entity.MatchStatus;
+import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
+import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
+import com.ila.checkmatecentral.repository.TournamentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 public class MatchService {
     public final MatchRepository matchRepository;
+    public final TournamentRepository tournamentRepository;
 
 
     public void createMatches(List<UserAccount> players, int round, Integer tournamentId) {
@@ -39,4 +44,32 @@ public class MatchService {
             matchRepository.save(match);
         }
     }
+
+    public Match getMatch(Integer matchId) {
+        return matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+    }
+
+    public List<Match> getMatches(Integer tournamentId) {
+        return matchRepository.findByTournamentId(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+    }
+
+
+    // update match - outcome
+    public Match updateMatch(Integer matchId, double outcome) {
+        Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+        currentMatch.setOutcome(outcome);
+        currentMatch.setMatchStatus(MatchStatus.COMPLETED);
+        return matchRepository.save(currentMatch);
+    }
+
+    // fetch winners from previous round
+    /*
+    public List<UserAccount> getWinners(Integer matchId, int round) {
+        Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+        currentMatch.setOutcome(outcome);
+        currentMatch.setMatchStatus(MatchStatus.COMPLETED);
+        return matchRepository.save(currentMatch);
+    }
+    */
+
 }

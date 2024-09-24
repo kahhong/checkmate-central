@@ -10,5 +10,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MatchRepository extends JpaRepository<Match, MatchPk> {
     Optional<Match> findByMatchId(Integer id);
-    List<Match> findByTournamentId(Integer tournamentId);
+    Optional<List<Match>> findByTournamentId(Integer tournamentId);
 }

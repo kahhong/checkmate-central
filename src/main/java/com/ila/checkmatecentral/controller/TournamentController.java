@@ -2,6 +2,8 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
+import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -126,31 +128,38 @@ public class TournamentController {
             return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
         }
     }
-    
+
     @CrossOrigin
     @PostMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
         Tournament tournament = tournamentService.getTournament(tournamentId);
-        // if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
-        //     tournament.setStatus(TournamentStatus.ONGOING);
-        //     matchService.createMatches(tournament.getPlayerList(), 1, tournamentId); 
-        // }
-        tournament.setStatus(TournamentStatus.ONGOING);
-
-        matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
-        return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
+        // ensure that tournament size is full before starting
+        if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
+            tournament.setStatus(TournamentStatus.ONGOING);
+            matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament player size is insufficient to start");
+        }
     }
+
+
 
     @CrossOrigin
     @PostMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
-        Tournament tournament = tournamentService.getTournament(tournamentId);
-        if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
-            tournament.setStatus(TournamentStatus.ONGOING);
-            int round = tournament.getRound() + 1;
-            tournament.setRound(round);
-            matchService.createMatches(tournament.getPlayerList(), round, tournamentId);
+        try {
+            List<UserAccount> winners = tournamentService.getWinners(tournamentId);
+            Integer highestRound = tournamentService.getHighestRound(tournamentId);
+            matchService.createMatches(winners, highestRound+1, tournamentId );
+            return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+        catch (MatchesNotCompletedException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while creating the next round");
+        }
     }
 }

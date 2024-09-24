@@ -1,7 +1,9 @@
 package com.ila.checkmatecentral.entity;
 
 import java.beans.Transient;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.CredentialsContainer;
@@ -50,6 +52,14 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @Setter
     private double rating;
 
+    @Getter
+    @Setter
+    private double ratingDeviation;
+
+    @Getter
+    @Setter
+    private LocalDateTime timeLastPlayed;
+
 
     @ManyToOne
     @JoinColumn(name="tournamentId")
@@ -66,7 +76,9 @@ public class UserAccount implements UserDetails, CredentialsContainer {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.rating = Math.random();
+        this.rating = 1500;
+        this.ratingDeviation = 350;
+        this.timeLastPlayed = null;
     }
 
     @Override

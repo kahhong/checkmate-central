@@ -151,15 +151,22 @@ public class TournamentController {
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
         try {
             List<UserAccount> winners = tournamentService.getWinners(tournamentId);
+            if(winners.size() == 1){
+                Tournament tournament = tournamentService.getTournament(tournamentId);
+                tournament.setStatus(TournamentStatus.COMPLETED);
+                tournamentRepository.save(tournament);
+                return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
+            }
             Integer highestRound = tournamentService.getHighestRound(tournamentId);
             matchService.createMatches(winners, highestRound+1, tournamentId );
             return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
         }
         catch (MatchesNotCompletedException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while creating the next round");
-        }
+        } 
+        // catch (Exception e) {
+        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        //             .body("An error occurred while creating the next round");
+        // }
     }
 }

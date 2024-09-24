@@ -49,11 +49,10 @@ public class Match {
         this.matchDateTime = dateTime;
         this.round = round;
         this.matchStatus = MatchStatus.ONGOING;
+        this.matchType = MatchType.ONE_VS_ONE;
         this.tournamentId = tournamentId;
-        // -1 = no result yet
-        // 0 = player 1 lose
-        // 0.5 = tie
-        // 1 = player 2 lose
+        // -1 = no result yet ; 0 = player 1 lose
+        // 0.5 = tie ; 1 = player 2 lose
         this.outcome = -1;
     }
 

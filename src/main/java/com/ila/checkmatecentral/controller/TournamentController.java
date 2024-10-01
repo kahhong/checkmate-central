@@ -44,7 +44,7 @@ public class TournamentController {
     public final TournamentRepository tournamentRepository;
 
 
-    /* Start of GET Mappings */
+/* Start of GET Mappings */
 
     @GetMapping({"/lists", "/list"})
     public ResponseEntity<List<Tournament>> getAllTournaments() {
@@ -58,12 +58,12 @@ public class TournamentController {
             .orElseThrow(() -> new TournamentNotFoundException(id));
     }
 
-    /* End of GET Mappings */
+/* End of GET Mappings */
 
 
 
 
-    /* Start of POST Mappings */
+/* Start of POST Mappings */
 
     @CrossOrigin
     @PostMapping("/")
@@ -85,7 +85,6 @@ public class TournamentController {
         tournamentService.create(tournament);
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }
-
 
     @CrossOrigin
     @PostMapping("/{id}/add/{playerId}")
@@ -129,7 +128,6 @@ public class TournamentController {
     }
 
 
-
     @CrossOrigin
     @PostMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
@@ -154,7 +152,10 @@ public class TournamentController {
         // }
     }
 
-    /* End of POST Mappings */
+/* End of POST Mappings */
+
+
+/* Start of PUT Mappings */
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId, @Valid @RequestBody Tournament updatedTournament,
@@ -176,6 +177,10 @@ public class TournamentController {
         }
     }
 
+/* End of PUT Mappings */
+
+
+/* Start of DELETE Mappings */
     @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
@@ -185,4 +190,7 @@ public class TournamentController {
         tournamentService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
+
+/* End of DELETE Mappings */
+
 }

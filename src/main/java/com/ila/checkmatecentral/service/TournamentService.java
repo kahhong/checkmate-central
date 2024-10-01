@@ -54,28 +54,28 @@ public class TournamentService {
         return this.tournamentRepository.findById(id).orElseThrow(() -> new TournamentNotFoundException(id));
     }
 
-//    public Tournament update(Integer tournamentId, TournamentCreateForm updatedTournamentCreateForm) {
-//        Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
-//            .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
-//
-//        existingTournament.setName(updatedTournamentCreateForm.getName());
-//        existingTournament.setDescription(updatedTournamentCreateForm.getDescription());
-//        existingTournament.setType(updatedTournamentCreateForm.getType());
-//        existingTournament.setMaxPlayers(updatedTournamentCreateForm.getMaxPlayers());
-//        existingTournament.setMinElo(updatedTournamentCreateForm.getMinElo());
-//        existingTournament.setStartDate(updatedTournamentCreateForm.getStartDate());
-//        existingTournament.setEndDate(updatedTournamentCreateForm.getEndDate());
-//        existingTournament.setCreateDate(LocalDateTime.now());
-//
-//        Instant currentDate = new Date().toInstant();
-//        if (updatedTournamentCreateForm.getStartDate().toInstant().isBefore(currentDate)) {
-//            existingTournament.setStatus(TournamentStatus.ONGOING);
-//        } else {
-//            existingTournament.setStatus(TournamentStatus.UPCOMING);
-//        }
-//
-//        return this.tournamentRepository.save(existingTournament);
-//    }
+    public Tournament update(Integer tournamentId, Tournament updatedTournament) {
+        Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+
+        existingTournament.setName(updatedTournament.getName());
+        existingTournament.setDescription(updatedTournament.getDescription());
+        existingTournament.setType(updatedTournament.getType());
+        existingTournament.setMaxPlayers(updatedTournament.getMaxPlayers());
+        existingTournament.setMinElo(updatedTournament.getMinElo());
+        existingTournament.setStartDate(updatedTournament.getStartDate());
+        existingTournament.setEndDate(updatedTournament.getEndDate());
+        existingTournament.setCreateDate(LocalDateTime.now());
+
+        Instant currentDate = new Date().toInstant();
+        if (updatedTournament.getStartDate().toInstant().isBefore(currentDate)) {
+            existingTournament.setStatus(TournamentStatus.ONGOING);
+        } else {
+            existingTournament.setStatus(TournamentStatus.UPCOMING);
+        }
+
+        return this.tournamentRepository.save(existingTournament);
+    }
 
     public void addPlayer(Integer tournamentId, UserAccount player){
         Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));

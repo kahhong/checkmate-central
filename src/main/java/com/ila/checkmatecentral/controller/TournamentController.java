@@ -154,24 +154,27 @@ public class TournamentController {
         // }
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId,
-//            @RequestBody TournamentCreateForm updatedTournamentCreateForm,
-//            BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid tournament data");
-//        }
-//
-//        try {
-//            Tournament updatedTournament = tournamentService.update(tournamentId, updatedTournamentCreateForm);
-//            return ResponseEntity.ok(updatedTournament);
-//        } catch (TournamentNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body("An error occurred while updating the tournament.");
-//        }
-//    }
+    /* End of POST Mappings */
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId, @Valid @RequestBody Tournament updatedTournament,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<FieldError> errorMessages = bindingResult.getFieldErrors();
+            String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
+        }
+
+        try {
+            Tournament response = tournamentService.update(tournamentId, updatedTournament);
+            return ResponseEntity.ok(response);
+        } catch (TournamentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while updating the tournament.");
+        }
+    }
 
     @CrossOrigin
     @DeleteMapping("/{id}")

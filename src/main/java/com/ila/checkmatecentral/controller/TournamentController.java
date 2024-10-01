@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
-import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.repository.UserAccountRepository;
 import com.ila.checkmatecentral.service.MatchService;
@@ -43,6 +43,9 @@ public class TournamentController {
     public final UserAccountRepository userAccountRepository;
     public final TournamentRepository tournamentRepository;
 
+
+    /* Start of GET Mappings */
+
     @GetMapping({"/lists", "/list"})
     public ResponseEntity<List<Tournament>> getAllTournaments() {
         List<Tournament> tournaments = tournamentService.getAllTournaments();
@@ -55,54 +58,35 @@ public class TournamentController {
             .orElseThrow(() -> new TournamentNotFoundException(id));
     }
 
+    /* End of GET Mappings */
+
+
+
+
+    /* Start of POST Mappings */
+
     @CrossOrigin
     @PostMapping("/")
-    public ResponseEntity<?> createTournament(@Valid @RequestBody TournamentCreateForm tournamentCreateForm,
+    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament,
             BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid tournament data");
+            List<FieldError> errorMessages = bindingResult.getFieldErrors();
+            String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
         }
-        int numPlayers = tournamentCreateForm.getMaxPlayers();
+        int numPlayers = tournament.getMaxPlayers();
         // Bitwise operation
         // Check if numPlayers is greater than 0 and if n & (n - 1) equals 0
         if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Number of players must be power of 2");
         }
 
-        tournamentService.create(tournamentCreateForm);
+        tournamentService.create(tournament);
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId,
-            @RequestBody TournamentCreateForm updatedTournamentCreateForm,
-            BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid tournament data");
-        }
 
-        try {
-            Tournament updatedTournament = tournamentService.update(tournamentId, updatedTournamentCreateForm);
-            return ResponseEntity.ok(updatedTournament);
-        } catch (TournamentNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while updating the tournament.");
-        }
-    }
-
-    @CrossOrigin
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
-        if (!tournamentRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
-        }
-        tournamentService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
-    }
-
-    
     @CrossOrigin
     @PostMapping("/{id}/add/{playerId}")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId, @PathVariable("playerId") Long playerId) {
@@ -118,7 +102,7 @@ public class TournamentController {
     @CrossOrigin
     @PostMapping("/{id}/add")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId,
-            @RequestBody JsonNode json) {
+                                                    @RequestBody JsonNode json) {
         String email = json.get("email").asText();
         Tournament tournament = tournamentService.getTournament(tournamentId);
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
@@ -133,7 +117,7 @@ public class TournamentController {
     @PostMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
         Tournament tournament = tournamentService.getTournament(tournamentId);
-        // ensure that tournament size is full before starting
+//         ensure that tournament size is full before starting
         if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
             tournament.setStatus(TournamentStatus.ONGOING);
             matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
@@ -163,10 +147,39 @@ public class TournamentController {
         }
         catch (MatchesNotCompletedException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
-        } 
+        }
         // catch (Exception e) {
         //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         //             .body("An error occurred while creating the next round");
         // }
+    }
+
+//    @PutMapping("/{id}")
+//    public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId,
+//            @RequestBody TournamentCreateForm updatedTournamentCreateForm,
+//            BindingResult bindingResult) {
+//        if (bindingResult.hasErrors()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid tournament data");
+//        }
+//
+//        try {
+//            Tournament updatedTournament = tournamentService.update(tournamentId, updatedTournamentCreateForm);
+//            return ResponseEntity.ok(updatedTournament);
+//        } catch (TournamentNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("An error occurred while updating the tournament.");
+//        }
+//    }
+
+    @CrossOrigin
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
+        if (!tournamentRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
+        }
+        tournamentService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
 }

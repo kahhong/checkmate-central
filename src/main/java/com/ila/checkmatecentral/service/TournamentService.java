@@ -2,6 +2,7 @@ package com.ila.checkmatecentral.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -113,10 +114,11 @@ public class TournamentService {
                     .max()
                     .orElse(0);
 
-            List<UserAccount> winners = matches.stream()
-                    .filter(match -> match.getRound() == highestRound)
-                    .map(Match::getWinnerSK)
-                    .toList();
+            List<UserAccount> winners = new ArrayList<>(
+                    matches.stream()
+                            .filter(match -> match.getRound() == highestRound)
+                            .map(Match::getWinnerSK)
+                            .toList());
 
             return winners;
         }

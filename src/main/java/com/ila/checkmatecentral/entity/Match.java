@@ -58,6 +58,17 @@ public class Match {
 
     public Match() {}
 
+
+    public UserAccount getWinnerSK(){
+        if(outcome == 1){
+            return player1;
+        }
+        else if(outcome == 0){
+            return player2;
+        }
+        // no draw in single knockout tournament -> assume draw, players will fight again until outcome is determined
+        return null;
+    }
     @Override
     public String toString() {
         return "Match{" +

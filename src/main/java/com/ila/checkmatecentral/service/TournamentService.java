@@ -4,13 +4,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.ila.checkmatecentral.entity.*;
+import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
-import com.ila.checkmatecentral.entity.UserAccount;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.form.TournamentCreateForm;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Slf4j
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
+    private final MatchService matchService;
 
     public Tournament create(TournamentCreateForm tournamentCreateForm) {
         Tournament newTournament = new Tournament();
@@ -94,6 +95,49 @@ public class TournamentService {
     public List<UserAccount> getPlayers(Integer tournamentId) {
         Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         return currentTournament.getPlayerList();
+    }
+
+    public List<UserAccount> getWinners(Integer tournamentId) {
+        // 1) get the match list from tournamentId
+        // 2) check if the round is completed
+        // 3) get highest round number
+        // 4) iteratrate all high round number matches -  and add winner to list of player
+        // 5) call createMatch
+        List<Match> matches = matchService.getMatches(tournamentId);
+        boolean matchesCompleted = matches.stream()
+                .allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED);
+
+        if(matchesCompleted) {
+            int highestRound = matches.stream()
+                    .mapToInt(Match::getRound)
+                    .max()
+                    .orElse(0);
+
+            List<UserAccount> winners = matches.stream()
+                    .filter(match -> match.getRound() == highestRound)
+                    .map(Match::getWinnerSK)
+                    .toList();
+
+            return winners;
+        }
+        else{
+            throw new MatchesNotCompletedException();
+        }
+    }
+
+    public Integer getHighestRound(Integer tournamentId) {
+        List<Match> matches = matchService.getMatches(tournamentId);
+        boolean matchesCompleted = matches.stream()
+                .allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED);
+
+        int highestRound = 0;
+        if (matchesCompleted) {
+            highestRound = matches.stream()
+                    .mapToInt(Match::getRound)
+                    .max()
+                    .orElse(0);
+        }
+        return highestRound;
     }
 
     public void createMatches(){

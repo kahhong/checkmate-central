@@ -232,3 +232,53 @@ Content-Type: application/json
 {
 
 }
+
+
+###
+
+// update match outcome
+
+POST http://localhost:8080/match/1/update
+Content-Type: application/json
+
+{
+    "outcome" : "1.0"
+}
+
+###
+POST http://localhost:8080/match/2/update
+Content-Type: application/json
+
+{
+"outcome" : "1.0"
+}
+
+###
+POST http://localhost:8080/match/3/update
+Content-Type: application/json
+
+{
+  "outcome" : "0"
+}
+
+###
+POST http://localhost:8080/match/4/update
+Content-Type: application/json
+
+{
+  "outcome" : "0"
+}
+
+
+###
+
+// move to round 2
+
+POST http://localhost:8080/tournaments/1/nextround
+Content-Type: application/json
+
+{
+
+}
+
+

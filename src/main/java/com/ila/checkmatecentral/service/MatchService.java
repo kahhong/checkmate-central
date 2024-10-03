@@ -8,6 +8,7 @@ import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
+import com.ila.checkmatecentral.repository.UserAccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class MatchService {
     public final MatchRepository matchRepository;
     public final TournamentRepository tournamentRepository;
+    public final GlickoService glickoService;
 
 
     public void createMatches(List<UserAccount> players, int round, Integer tournamentId) {
@@ -58,6 +60,7 @@ public class MatchService {
     public Match updateMatch(Integer matchId, double outcome) {
         Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
         currentMatch.setOutcome(outcome);
+        glickoService.updateRatings(currentMatch);
         currentMatch.setMatchStatus(MatchStatus.COMPLETED);
         return matchRepository.save(currentMatch);
     }

@@ -78,7 +78,7 @@ Content-Type: application/json
     "password": "password123"
 }
 
-# ###
+###
 # POST http://localhost:8080/auth/register
 # Content-Type: application/json
 

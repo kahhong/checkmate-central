@@ -1,7 +1,6 @@
 package com.ila.checkmatecentral.entity;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 

@@ -2,7 +2,6 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
-import com.ila.checkmatecentral.entity.UserAccount;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

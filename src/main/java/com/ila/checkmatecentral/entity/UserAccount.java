@@ -4,7 +4,6 @@ import java.beans.Transient;
 import java.util.Collection;
 import java.util.List;
 
-import com.ila.checkmatecentral.service.MatchService;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

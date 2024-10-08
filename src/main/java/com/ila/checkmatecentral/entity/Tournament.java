@@ -19,6 +19,7 @@ import org.springframework.format.annotation.NumberFormat;
 public class Tournament {
     // Start of server generated fields
 
+    @Getter
     @Id
     @Column(unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,33 +65,39 @@ public class Tournament {
     // Start of user input fields
 
     @Getter
+    @Setter
     @JsonProperty("name")
     @NotEmpty(message="Tournament name is required!")
     private String name;
 
     @Getter
+    @Setter
     @JsonProperty("description")
     @NotEmpty(message="Description is required!")
     private String description;
 
     @Getter
+    @Setter
     @JsonProperty("type")
     @NotNull
     private TournamentType type;
 
     @Getter
+    @Setter
     @JsonProperty("maxPlayers")
     @Range(min=2, max=100, message = "Number of maximum players must be between 2 and 100.")
     @NumberFormat
     private int maxPlayers;
 
     @Getter
+    @Setter
     @JsonProperty("minElo")
     @PositiveOrZero(message = "Elo must be a positive number.")
     @NumberFormat
     private int minElo;
 
     @Getter
+    @Setter
     @JsonProperty("startDate")
     @NotNull(message = "Start date is required")
     @DateTimeFormat
@@ -98,6 +105,7 @@ public class Tournament {
     private Date startDate;
 
     @Getter
+    @Setter
     @JsonProperty("endDate")
     @NotNull(message = "End date is required")
     @DateTimeFormat

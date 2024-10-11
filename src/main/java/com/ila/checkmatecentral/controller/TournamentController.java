@@ -80,6 +80,7 @@ public class TournamentController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }
 
+    /*
     @CrossOrigin
     @PostMapping("/{id}/add/{playerId}")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId, @PathVariable("playerId") Long playerId) {
@@ -96,6 +97,7 @@ public class TournamentController {
         }
         
     }
+    */
 
     @CrossOrigin
     @PostMapping("/{id}/add")
@@ -103,11 +105,19 @@ public class TournamentController {
                                                     @RequestBody JsonNode json) {
         String email = json.get("email").asText();
         Tournament tournament = tournamentService.getTournament(tournamentId);
-        if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
-            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email).getId());
-            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+        try{
+            if (tournament.getStatus().equals(TournamentStatus.ONGOING)){
+                return ResponseEntity.status(HttpStatus.OK).body("Tournament is currently ongoing, player added unsuccessfully");
+            }
+            if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
+                tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email).getId());
+                return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+            }
+        }
+        catch(PlayerAlreadyInTournamentException e) {
+            return ResponseEntity.status(HttpStatus.OK).body("Player is already in Tournament");
         }
     }
 

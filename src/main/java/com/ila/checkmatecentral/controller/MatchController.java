@@ -3,17 +3,14 @@ package com.ila.checkmatecentral.controller;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
-import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
+
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.repository.MatchRepository;
-import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.service.MatchService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/match")
 public class MatchController {
     public final MatchService matchService;
-    public final MatchRepository matchRepository;
-    public final TournamentRepository tournamentRepository;
 
     // get every match from ONE tournament
     @GetMapping({"/list/{id}"})

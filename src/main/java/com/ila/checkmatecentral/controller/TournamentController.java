@@ -2,8 +2,6 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
@@ -85,12 +84,17 @@ public class TournamentController {
     @PostMapping("/{id}/add/{playerId}")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId, @PathVariable("playerId") Long playerId) {
         Tournament tournament = tournamentService.getTournament(tournamentId);
-        if (tournament.getPlayerList().size() < tournament.getMaxPlayers() ) {
-            tournamentService.addPlayer(tournamentId, userAccountService.loadUserById(playerId));
-            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
-        }else{
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+        try {
+            if (tournament.getPlayerList().size() < tournament.getMaxPlayers() ) {
+                tournamentService.addPlayer(tournamentId, playerId);
+                return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+            }else{
+                return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+            }
+        } catch (PlayerAlreadyInTournamentException e) {
+            return ResponseEntity.status(HttpStatus.OK).body("Player is already in Tournament");
         }
+        
     }
 
     @CrossOrigin
@@ -100,7 +104,7 @@ public class TournamentController {
         String email = json.get("email").asText();
         Tournament tournament = tournamentService.getTournament(tournamentId);
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
-            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email).getId());
             return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");

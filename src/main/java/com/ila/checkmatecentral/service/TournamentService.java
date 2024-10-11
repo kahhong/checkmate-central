@@ -84,7 +84,7 @@ public class TournamentService {
         return this.tournamentRepository.save(existingTournament);
     }
 
-    public void addPlayer(Integer tournamentId, Long playerId) throws RuntimeException{
+    public void addPlayer(Integer tournamentId, Long playerId) throws PlayerAlreadyInTournamentException{
         Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         List<UserAccount> playerList = getPlayers(tournamentId);
         List<Long> playerListIds = new ArrayList<Long>();

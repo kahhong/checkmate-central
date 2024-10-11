@@ -8,10 +8,13 @@ import java.util.List;
 
 import com.ila.checkmatecentral.entity.*;
 import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
+import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
@@ -24,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Slf4j
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
+    private final UserAccountService userAccountService;
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
@@ -80,8 +84,17 @@ public class TournamentService {
         return this.tournamentRepository.save(existingTournament);
     }
 
-    public void addPlayer(Integer tournamentId, UserAccount player){
+    public void addPlayer(Integer tournamentId, Long playerId) throws RuntimeException{
         Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        List<UserAccount> playerList = getPlayers(tournamentId);
+        List<Long> playerListIds = new ArrayList<Long>();
+        for (UserAccount player : playerList) {
+            playerListIds.add(player.getId());
+        }
+        UserAccount player = userAccountService.loadUserById(playerId);
+        if (playerListIds.contains(playerId)) {
+            throw new PlayerAlreadyInTournamentException(tournamentId);
+        }
         currentTournament.addPlayer(player);
         tournamentRepository.save(currentTournament);
     }

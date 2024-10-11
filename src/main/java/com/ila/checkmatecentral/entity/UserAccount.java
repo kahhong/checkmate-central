@@ -78,7 +78,7 @@ public class UserAccount implements UserDetails, CredentialsContainer {
         this.password = password;
         this.rating = 1500;
         this.ratingDeviation = 350;
-        this.timeLastPlayed = null;
+        this.timeLastPlayed = LocalDateTime.now();
     }
 
     @Override

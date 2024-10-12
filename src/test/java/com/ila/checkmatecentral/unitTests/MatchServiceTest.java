@@ -2,7 +2,6 @@ package com.ila.checkmatecentral.unitTests;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
@@ -48,10 +47,10 @@ public class MatchServiceTest {
         ReflectionTestUtils.setField(tournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
         ReflectionTestUtils.setField(tournament, "maxPlayers", 8);
         ReflectionTestUtils.setField(tournament, "minElo", 1000);
-        ReflectionTestUtils.setField(tournament, "startDate", new Date());
-        ReflectionTestUtils.setField(tournament, "endDate", new Date());
+        ReflectionTestUtils.setField(tournament, "startDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(tournament, "endDate", LocalDateTime.now());
         ReflectionTestUtils.setField(tournament, "status", TournamentStatus.ONGOING);
-        ReflectionTestUtils.setField(tournament, "createDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(tournament, "lastUpdated", LocalDateTime.now());
         ReflectionTestUtils.setField(tournament, "round", 1);
 
         // Mocking an empty list for matches and players

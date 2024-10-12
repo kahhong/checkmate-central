@@ -1,8 +1,8 @@
 package com.ila.checkmatecentral.service;
 
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class MatchService {
             UserAccount player1 = sortedPlayers[i];
             UserAccount player2 = sortedPlayers[n - 1 - i];
 
-            Match match = new Match(player1, player2, new Date(), round, tournamentId);
+            Match match = new Match(player1, player2, LocalDateTime.now(), round, tournamentId);
 
             matchRepository.save(match);
         }

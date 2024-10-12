@@ -1,38 +1,7 @@
 package com.ila.checkmatecentral.unitTests;
 
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
-import com.ila.checkmatecentral.entity.TournamentType;
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.MatchStatus;
-import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
-import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
-import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-import com.ila.checkmatecentral.service.MatchService;
-import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +9,29 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.ila.checkmatecentral.entity.Tournament;
+import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.entity.TournamentType;
+import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
+import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+import com.ila.checkmatecentral.service.MatchService;
+import com.ila.checkmatecentral.service.TournamentService;
+import com.ila.checkmatecentral.service.UserAccountService;
 
 @SpringBootTest
 public class TournamentServiceTest {
@@ -73,10 +65,10 @@ public class TournamentServiceTest {
         ReflectionTestUtils.setField(tournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
         ReflectionTestUtils.setField(tournament, "maxPlayers", 8);
         ReflectionTestUtils.setField(tournament, "minElo", 1000);
-        ReflectionTestUtils.setField(tournament, "startDate", new Date());
-        ReflectionTestUtils.setField(tournament, "endDate", new Date());
+        ReflectionTestUtils.setField(tournament, "startDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(tournament, "endDate", LocalDateTime.now());
         ReflectionTestUtils.setField(tournament, "status", TournamentStatus.ONGOING);
-        ReflectionTestUtils.setField(tournament, "createDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(tournament, "lastUpdated", LocalDateTime.now());
         ReflectionTestUtils.setField(tournament, "round", 1);
 
         // Mocking an empty list for matches and players
@@ -97,10 +89,10 @@ public class TournamentServiceTest {
         ReflectionTestUtils.setField(invalidTournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
         ReflectionTestUtils.setField(invalidTournament, "maxPlayers", 5); // Invalid number of players (not 2^n)
         ReflectionTestUtils.setField(invalidTournament, "minElo", 1000);
-        ReflectionTestUtils.setField(invalidTournament, "startDate", new Date());
-        ReflectionTestUtils.setField(invalidTournament, "endDate", new Date());
+        ReflectionTestUtils.setField(invalidTournament, "startDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(invalidTournament, "endDate", LocalDateTime.now());
         ReflectionTestUtils.setField(invalidTournament, "status", TournamentStatus.UPCOMING);
-        ReflectionTestUtils.setField(invalidTournament, "createDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(invalidTournament, "lastUpdated", LocalDateTime.now());
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -121,10 +113,10 @@ public class TournamentServiceTest {
         ReflectionTestUtils.setField(validTournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
         ReflectionTestUtils.setField(validTournament, "maxPlayers", 8); // Valid number of players (2^n)
         ReflectionTestUtils.setField(validTournament, "minElo", 1000);
-        ReflectionTestUtils.setField(validTournament, "startDate", new Date());
-        ReflectionTestUtils.setField(validTournament, "endDate", new Date());
+        ReflectionTestUtils.setField(validTournament, "startDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(validTournament, "endDate", LocalDateTime.now());
         ReflectionTestUtils.setField(validTournament, "status", TournamentStatus.UPCOMING);
-        ReflectionTestUtils.setField(validTournament, "createDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(validTournament, "lastUpdated", LocalDateTime.now());
 
         // Mock behavior of the repository save
         when(tournamentRepository.save(any(Tournament.class))).thenReturn(validTournament);
@@ -150,9 +142,9 @@ public class TournamentServiceTest {
         when(userAccountService.loadUserById(any(Long.class))).thenReturn(userAccount); // Simulate loading the same user
 
         // When & Then: Expect PlayerAlreadyInTournamentException
-        assertThrows(PlayerAlreadyInTournamentException.class, () -> {
-            tournamentService.addPlayer(1, userAccount.getId()); // Trying to add the same user
-        });
+        assertThrows(PlayerAlreadyInTournamentException.class,
+            () -> tournamentService.addPlayer(1, userAccount) // Trying to add the same user
+        );
 
         // Verify interactions with the mocked repository
         verify(tournamentRepository, times(1)).findById(any(Integer.class));

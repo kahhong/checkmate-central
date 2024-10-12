@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -44,6 +45,7 @@ public class Tournament {
     @Getter
     @Setter
     @OneToMany(mappedBy = "tournament")
+    @JsonManagedReference
     private List<UserAccount> playerList;
 
     // End of server generated fields

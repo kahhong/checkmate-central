@@ -52,7 +52,7 @@ public class MatchService {
     }
 
     public Match getMatch(Integer matchId) {
-        return matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+        return matchRepository.findByMatchIdWithoutPassword(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
     }
 
     public List<Match> getMatches(Integer tournamentId) {

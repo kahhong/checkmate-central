@@ -40,7 +40,7 @@ public class MatchController {
         }
 
         try {
-            matchService.updateMatch(matchId, outcome);
+            matchService.updateMatchOutcome(matchId, outcome);
             return ResponseEntity.status(HttpStatus.OK).body("Match " + matchId + " has been updated with " + outcome);
 
         } catch (MatchNotFoundException e) {

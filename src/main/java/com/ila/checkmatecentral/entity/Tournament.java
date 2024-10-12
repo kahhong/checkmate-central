@@ -59,8 +59,6 @@ public class Tournament {
 
     // End of server generated fields
 
-
-
     /* Sample JSON from POST /tournaments:
      *      {
      *          "name" : "Baby's First Steps",

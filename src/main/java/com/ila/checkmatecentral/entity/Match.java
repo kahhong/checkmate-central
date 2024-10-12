@@ -1,6 +1,6 @@
 package com.ila.checkmatecentral.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +29,7 @@ public class Match {
 
     private MatchType matchType;
 
-    private Date matchDateTime;
+    private LocalDateTime matchDateTime;
 
     private int round;
 
@@ -49,7 +49,7 @@ public class Match {
     private Tournament tournament;
 
 
-    public Match(UserAccount player1, UserAccount player2, Date dateTime, int round, Integer tournamentId) {
+    public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round, Integer tournamentId) {
         this.player1 = player1;
         this.player2 = player2;
         this.matchDateTime = dateTime;

@@ -13,6 +13,7 @@ import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -32,7 +33,7 @@ public class TournamentService {
         final LocalDateTime now = LocalDateTime.now();
         
         if (tournament.getStartDate().isAfter(tournament.getEndDate())) {
-            return null;
+            throw new InvalidTournamentException("End date must be before start date");
         }
         
         tournament.setLastUpdated(now);

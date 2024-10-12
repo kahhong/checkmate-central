@@ -1,6 +1,6 @@
 package com.ila.checkmatecentral.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Range;
@@ -40,7 +40,7 @@ public class Tournament {
 
     @Getter
     @Setter
-    private Date createDate;
+    private LocalDateTime lastUpdated;
 
     @Getter
     @Setter
@@ -105,20 +105,22 @@ public class Tournament {
     @NumberFormat
     private int minElo;
 
+    // TODO: Refactor name to startDateTime
     @Getter
     @Setter
     @JsonProperty("startDate")
     @NotNull(message = "Start date is required")
     @DateTimeFormat
     @FutureOrPresent(message = "Start date is in the past.")
-    private Date startDate;
+    private LocalDateTime startDate;
 
+    // TODO: Refactor name to endDateTime
     @Getter
     @Setter
     @JsonProperty("endDate")
     @NotNull(message = "End date is required")
     @DateTimeFormat
-    private Date endDate;
+    private LocalDateTime endDate;
 
      // End of user input fields
 

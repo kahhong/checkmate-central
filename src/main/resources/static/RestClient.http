@@ -190,7 +190,7 @@ Content-Type: application/json
 {
   "email": "john8@example.com"
 }
-# ###
+###
 # POST http://localhost:8080/tournaments/1/add/9
 # Content-Type: application/json
 
@@ -215,7 +215,15 @@ Content-Type: application/json
 
 // Delete Tournament
 
+// get singular match
+###
+GET http://localhost:8080/match/1
+Content-Type: application/json
 
+{
+    
+}
+###
 // List Matches
 GET http://localhost:8080/match/list/1
 Content-Type: application/json

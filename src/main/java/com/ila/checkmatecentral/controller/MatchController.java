@@ -25,8 +25,19 @@ public class MatchController {
     public final MatchService matchService;
 
     // get every match from ONE tournament
-    @GetMapping({"/list/{id}"})
-    public ResponseEntity<?> getMatchesFromTournament(@PathVariable("id") Integer tournamentId) {
+    @GetMapping({"/{matchId}"})
+    public ResponseEntity<?> getMatch(@PathVariable("matchId") Integer matchId) {
+        try {
+            Match match = matchService.getMatch(matchId);
+            return ResponseEntity.status(HttpStatus.OK).body(match);
+        } catch (TournamentNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+    }
+
+    // get every match from ONE tournament
+    @GetMapping({"/list/{tournamentId}"})
+    public ResponseEntity<?> getMatchesFromTournament(@PathVariable("tournamentId") Integer tournamentId) {
         try {
             List<Match> matchList = matchService.getMatches(tournamentId);
             return ResponseEntity.status(HttpStatus.OK).body(matchList);

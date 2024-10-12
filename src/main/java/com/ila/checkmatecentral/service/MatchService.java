@@ -1,6 +1,8 @@
 package com.ila.checkmatecentral.service;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,23 +22,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-
 public class MatchService {
     public final MatchRepository matchRepository;
     public final TournamentRepository tournamentRepository;
     public final GlickoService glickoService;
 
-
     public void createMatches(List<UserAccount> players, int round, int tournamentId) {
         // Sort players by ELO in descending order
-        players.sort((p1, p2) -> Double.compare(p2.getRating(), p1.getRating()));
+        UserAccount[] sortedPlayers = players.toArray(UserAccount[]::new);
+        Arrays.sort(sortedPlayers, (p1, p2) -> Double.compare(p2.getRating(), p1.getRating()));
         
-        int n = players.size();
+        int n = sortedPlayers.length;
 
         // Pair highest with lowest, second highest with second lowest, etc.
         for (int i = 0; i < n / 2; i++) {
-            UserAccount player1 = players.get(i);
-            UserAccount player2 = players.get(n - 1 - i);
+            UserAccount player1 = sortedPlayers[i];
+            UserAccount player2 = sortedPlayers[n - 1 - i];
 
             Match match = new Match(player1, player2, new Date(), round, tournamentId);
 

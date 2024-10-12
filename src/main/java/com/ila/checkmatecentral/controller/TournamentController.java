@@ -2,7 +2,6 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,9 +25,9 @@ import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
 import com.ila.checkmatecentral.service.UserAccountService;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -55,23 +54,21 @@ public class TournamentController {
 /* End of GET Mappings */
 
 
-
-
 /* Start of POST Mappings */
 
     @CrossOrigin
     @PostMapping("/")
-    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament,
-            BindingResult bindingResult) {
+    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<FieldError> errorMessages = bindingResult.getFieldErrors();
             String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
         }
+
         int numPlayers = tournament.getMaxPlayers();
-        // Bitwise operation
-        // Check if numPlayers is greater than 0 and if n & (n - 1) equals 0
+
+        // Number of players in tournament must be a power of 2
         if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Number of players must be power of 2");
         }
@@ -79,25 +76,6 @@ public class TournamentController {
         tournamentService.create(tournament);
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }
-
-    /*
-    @CrossOrigin
-    @PostMapping("/{id}/add/{playerId}")
-    public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId, @PathVariable("playerId") Long playerId) {
-        Tournament tournament = tournamentService.getTournament(tournamentId);
-        try {
-            if (tournament.getPlayerList().size() < tournament.getMaxPlayers() ) {
-                tournamentService.addPlayer(tournamentId, playerId);
-                return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
-            }else{
-                return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
-            }
-        } catch (PlayerAlreadyInTournamentException e) {
-            return ResponseEntity.status(HttpStatus.OK).body("Player is already in Tournament");
-        }
-        
-    }
-    */
 
     @CrossOrigin
     @PostMapping("/{id}/add")
@@ -149,8 +127,10 @@ public class TournamentController {
 /* Start of PUT Mappings */
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId, @Valid @RequestBody Tournament updatedTournament,
+    public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId,
+            @Valid @RequestBody Tournament updatedTournament,
             BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
             List<FieldError> errorMessages = bindingResult.getFieldErrors();
             String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();
@@ -172,6 +152,7 @@ public class TournamentController {
 
 
 /* Start of DELETE Mappings */
+
     @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
@@ -179,7 +160,7 @@ public class TournamentController {
             if (tournamentService.getTournament(id) != null) {
                 tournamentService.deleteById(id);
                 return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
-            }else{
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
             }
         } catch (TournamentNotFoundException e) {

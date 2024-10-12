@@ -6,21 +6,22 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.ila.checkmatecentral.entity.*;
-import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
-import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
-
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.ila.checkmatecentral.entity.Match;
+import com.ila.checkmatecentral.entity.MatchStatus;
+import com.ila.checkmatecentral.entity.Tournament;
+import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
+import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
@@ -31,11 +32,12 @@ public class TournamentService {
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
-        tournament.setCreateDate(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        tournament.setCreateDate(now);
         tournament.setRound(1);
 
         Instant currentDate = new Date().toInstant();
-        if(tournament.getStartDate().toInstant().isBefore(currentDate)) {
+        if (tournament.getStartDate().toInstant().isBefore(currentDate)) {
             tournament.setStatus(TournamentStatus.ONGOING);
         } else {
             tournament.setStatus(TournamentStatus.UPCOMING);
@@ -151,43 +153,29 @@ public class TournamentService {
     public ResponseEntity<?> setNextRound(Integer tournamentId){
         try {
             List<UserAccount> winners = getWinners(tournamentId);
-            if (checkLastRound(tournamentId)){
+
+            if (checkLastRound(tournamentId)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
             }
+
             Integer highestRound = getHighestRound(tournamentId);
             matchService.createMatches(winners, highestRound+1, tournamentId );
             return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
-        }
-        catch (MatchesNotCompletedException e) {
+
+        } catch (MatchesNotCompletedException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
-        // catch (Exception e) {
-        //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        //             .body("An error occurred while creating the next round");
-        // }
     }
 
     public boolean checkLastRound(Integer tournamentId){
         List<UserAccount> winners = getWinners(tournamentId);
-        if(winners.size() == 1){
+        if (winners.size() == 1) {
             Tournament tournament = getTournament(tournamentId);
             tournament.setStatus(TournamentStatus.COMPLETED);
             tournamentRepository.save(tournament);
             return true;
-        }else{
+        } else {
             return false;
         }
-    }
-
-    public void createMatches(){
-
-    }
-
-    public void getCurrentRoundMatches(){
-
-    }
-
-    public void getAllMatches(){
-        
     }
 }

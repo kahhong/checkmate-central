@@ -5,11 +5,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ila.checkmatecentral.entity.MatchStatus;
+import com.ila.checkmatecentral.exceptions.InvalidOutcomeException;
 import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.repository.UserAccountRepository;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Match;
@@ -58,6 +62,10 @@ public class MatchService {
 
     // update match - outcome
     public Match updateMatch(Integer matchId, double outcome) {
+        //check if outcome is of valid input value
+        if(outcome != 0.5 && outcome != 1 && outcome != 0) {
+            throw new InvalidOutcomeException(outcome);
+        }
         Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
         currentMatch.setOutcome(outcome);
         glickoService.updateRatings(currentMatch);

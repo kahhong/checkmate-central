@@ -1,19 +1,28 @@
 package com.ila.checkmatecentral.entity;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Slf4j
@@ -32,7 +41,7 @@ public class Tournament {
 
     @Getter
     @Setter
-    private LocalDateTime createDate;
+    private LocalDateTime lastUpdated;
 
     @Getter
     @Setter
@@ -98,23 +107,24 @@ public class Tournament {
     @NumberFormat
     private int minElo;
 
+    // TODO: Refactor name to startDateTime
     @Getter
     @Setter
     @JsonProperty("startDate")
     @NotNull(message = "Start date is required")
     @DateTimeFormat
     @FutureOrPresent(message = "Start date is in the past.")
-    private Date startDate;
+    private LocalDateTime startDate;
 
+    // TODO: Refactor name to endDateTime
     @Getter
     @Setter
     @JsonProperty("endDate")
     @NotNull(message = "End date is required")
     @DateTimeFormat
-    private Date endDate;
+    private LocalDateTime endDate;
 
      // End of user input fields
-
 
     public void addPlayer(UserAccount player){
         this.playerList.add(player);

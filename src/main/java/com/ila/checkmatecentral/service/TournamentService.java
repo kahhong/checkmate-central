@@ -1,7 +1,6 @@
 package com.ila.checkmatecentral.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -48,7 +47,7 @@ public class TournamentService {
         this.tournamentRepository.delete(tournament);
     }
 
-    public void deleteById(Integer id) {
+    public void deleteById(int id) {
         this.tournamentRepository.deleteById(id);
     }
 
@@ -56,11 +55,11 @@ public class TournamentService {
         return this.tournamentRepository.findAll();
     }
 
-    public Tournament getTournament(Integer id) {
+    public Tournament getTournament(int id) {
         return this.tournamentRepository.findById(id).orElseThrow(() -> new TournamentNotFoundException(id));
     }
 
-    public Tournament update(Integer tournamentId, Tournament updatedTournament) {
+    public Tournament update(int tournamentId, Tournament updatedTournament) {
         Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
@@ -77,24 +76,23 @@ public class TournamentService {
         return tournamentRepository.save(existingTournament);
     }
 
-    public void addPlayer(Integer tournamentId, Long playerId) throws PlayerAlreadyInTournamentException{
-        Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
-        List<UserAccount> playerList = getPlayers(tournamentId);
-        List<Long> playerListIds = new ArrayList<Long>();
-        for (UserAccount player : playerList) {
-            playerListIds.add(player.getId());
-        }
+    public void addPlayer(int tournamentId, long playerId) throws PlayerAlreadyInTournamentException{
+        final Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+
         UserAccount player = userAccountService.loadUserById(playerId);
-        if (playerListIds.contains(playerId)) {
+
+        if (getPlayers(tournamentId).stream().anyMatch(tournamentPlayer -> tournamentPlayer.getId() == playerId)) {
             throw new PlayerAlreadyInTournamentException(tournamentId);
         }
+
         currentTournament.addPlayer(player);
         tournamentRepository.save(currentTournament);
     }
 
-    public List<UserAccount> getPlayers(Integer tournamentId) {
-        Tournament currentTournament = this.tournamentRepository
-                .findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+    public List<UserAccount> getPlayers(int tournamentId) {
+        Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         return currentTournament.getPlayerList();
     }
     

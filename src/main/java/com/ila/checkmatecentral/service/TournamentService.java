@@ -7,9 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ila.checkmatecentral.entity.*;
-import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
-import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
-import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
+import com.ila.checkmatecentral.exceptions.*;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -91,19 +88,42 @@ public class TournamentService {
         return this.tournamentRepository.save(existingTournament);
     }
 
-    public void addPlayer(Integer tournamentId, Long playerId) throws PlayerAlreadyInTournamentException{
+    public void addPlayer(Integer tournamentId, Long playerId) {
         Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        if(currentTournament.getStatus().equals(TournamentStatus.ONGOING)) {
+            throw new TournamentStartedException(tournamentId);
+        }
+
         List<UserAccount> playerList = getPlayers(tournamentId);
+        if (currentTournament.getPlayerList().size() >= currentTournament.getMaxPlayers()) {
+            throw new TournamentFullException(tournamentId);
+        }
+
         List<Long> playerListIds = new ArrayList<Long>();
         for (UserAccount player : playerList) {
             playerListIds.add(player.getId());
         }
         UserAccount player = userAccountService.loadUserById(playerId);
+
         if (playerListIds.contains(playerId)) {
             throw new PlayerAlreadyInTournamentException(tournamentId);
         }
+
         currentTournament.addPlayer(player);
         tournamentRepository.save(currentTournament);
+
+    }
+
+    public void startTournament(Integer tournamentId) {
+        Tournament tournament = getTournament(tournamentId);
+//         ensure that tournament size is full before starting
+        if (tournament.getPlayerList().size() != tournament.getMaxPlayers()) {
+            int currentPlayers = tournament.getPlayerList().size();
+            int requiredPlayers = tournament.getMaxPlayers();
+            throw new InsufficientPlayersException(currentPlayers, requiredPlayers);
+        }
+        tournament.setStatus(TournamentStatus.ONGOING);
+        matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
     }
 
     public List<UserAccount> getPlayers(Integer tournamentId) {

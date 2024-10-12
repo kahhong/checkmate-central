@@ -41,8 +41,7 @@ public class TournamentService {
 
         updateTournamentStatus(tournament);
 
-        this.tournamentRepository.save(tournament);
-        return tournament;
+        return tournamentRepository.save(tournament);
     }
 
     public void delete(Tournament tournament) {
@@ -75,7 +74,7 @@ public class TournamentService {
         existingTournament.setLastUpdated(LocalDateTime.now());
 
         updateTournamentStatus(existingTournament);
-        return this.tournamentRepository.save(existingTournament);
+        return tournamentRepository.save(existingTournament);
     }
 
     public void addPlayer(Integer tournamentId, Long playerId) throws PlayerAlreadyInTournamentException{

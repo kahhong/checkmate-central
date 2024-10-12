@@ -1,7 +1,5 @@
 package com.ila.checkmatecentral.service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +13,6 @@ import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -32,16 +29,16 @@ public class TournamentService {
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
-        LocalDateTime now = LocalDateTime.now();
+        final Date now = new Date();
+        
+        if (tournament.getStartDate().after(tournament.getEndDate())) {
+            return null;
+        }
+        
         tournament.setCreateDate(now);
         tournament.setRound(1);
 
-        Instant currentDate = new Date().toInstant();
-        if (tournament.getStartDate().toInstant().isBefore(currentDate)) {
-            tournament.setStatus(TournamentStatus.ONGOING);
-        } else {
-            tournament.setStatus(TournamentStatus.UPCOMING);
-        }
+        updateTournamentStatus(tournament);
 
         this.tournamentRepository.save(tournament);
         return tournament;
@@ -74,15 +71,9 @@ public class TournamentService {
         existingTournament.setMinElo(updatedTournament.getMinElo());
         existingTournament.setStartDate(updatedTournament.getStartDate());
         existingTournament.setEndDate(updatedTournament.getEndDate());
-        existingTournament.setCreateDate(LocalDateTime.now());
+        existingTournament.setCreateDate(new Date());
 
-        Instant currentDate = new Date().toInstant();
-        if (updatedTournament.getStartDate().toInstant().isBefore(currentDate)) {
-            existingTournament.setStatus(TournamentStatus.ONGOING);
-        } else {
-            existingTournament.setStatus(TournamentStatus.UPCOMING);
-        }
-
+        updateTournamentStatus(existingTournament);
         return this.tournamentRepository.save(existingTournament);
     }
 
@@ -102,80 +93,59 @@ public class TournamentService {
     }
 
     public List<UserAccount> getPlayers(Integer tournamentId) {
-        Tournament currentTournament = this.tournamentRepository.findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        Tournament currentTournament = this.tournamentRepository
+                .findById(tournamentId).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         return currentTournament.getPlayerList();
     }
-
-    public List<UserAccount> getWinners(Integer tournamentId) {
-        // 1) get the match list from tournamentId
-        // 2) check if the round is completed
-        // 3) get highest round number
-        // 4) iteratrate all high round number matches -  and add winner to list of player
-        // 5) call createMatch
-        List<Match> matches = matchService.getMatches(tournamentId);
-        boolean matchesCompleted = matches.stream()
-                .allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED);
-
-        if(matchesCompleted) {
-            int highestRound = matches.stream()
-                    .mapToInt(Match::getRound)
-                    .max()
-                    .orElse(0);
-
-            List<UserAccount> winners = new ArrayList<>(
-                    matches.stream()
-                            .filter(match -> match.getRound() == highestRound)
-                            .map(Match::getWinnerSK)
-                            .toList());
-
-            return winners;
-        }
-        else{
-            throw new MatchesNotCompletedException();
-        }
-    }
-
-    public Integer getHighestRound(Integer tournamentId) {
-        List<Match> matches = matchService.getMatches(tournamentId);
-        boolean matchesCompleted = matches.stream()
-                .allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED);
-
-        int highestRound = 0;
-        if (matchesCompleted) {
-            highestRound = matches.stream()
-                    .mapToInt(Match::getRound)
-                    .max()
-                    .orElse(0);
-        }
-        return highestRound;
-    }
-
-    public ResponseEntity<?> setNextRound(Integer tournamentId){
-        try {
-            List<UserAccount> winners = getWinners(tournamentId);
-
-            if (checkLastRound(tournamentId)) {
-                return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
-            }
-
-            Integer highestRound = getHighestRound(tournamentId);
-            matchService.createMatches(winners, highestRound+1, tournamentId );
-            return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
-
-        } catch (MatchesNotCompletedException e) {
-            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
-        }
-    }
-
-    public boolean checkLastRound(Integer tournamentId){
-        List<UserAccount> winners = getWinners(tournamentId);
-        if (winners.size() == 1) {
-            Tournament tournament = getTournament(tournamentId);
-            tournament.setStatus(TournamentStatus.COMPLETED);
-            tournamentRepository.save(tournament);
-            return true;
+    
+    private static void updateTournamentStatus(Tournament tournament) {
+        if (tournament.getStartDate().before(new Date())) {
+            tournament.setStatus(TournamentStatus.ONGOING);
         } else {
-            return false;
+            tournament.setStatus(TournamentStatus.UPCOMING);
         }
+    }
+
+    private static List<UserAccount> getLastMatchWinners(List<Match> matches) {
+        int highestRound = getHighestRound(matches);
+
+        List<UserAccount> winners = matches.stream()
+                        .filter(match -> match.getRound() == highestRound)
+                        .map(Match::getWinnerSK)
+                        .toList();
+
+        return winners;
+    }
+
+    private static int getHighestRound(List<Match> matches) {
+        return matches.stream()
+                .mapToInt(Match::getRound)
+                .max()
+                .orElse(0);
+    }
+
+    public ResponseEntity<?> setNextRound(int tournamentId){
+        final List<Match> matches = matchService.getMatches(tournamentId);
+
+        if (!matches.stream().allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED)) {
+            return ResponseEntity.status(HttpStatus.OK).body("Matches are not complete");
+        }
+
+        final List<UserAccount> winners = getLastMatchWinners(matches);
+
+        if (winners.size() == 1) {
+            endTournament(tournamentId);
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
+        }
+
+        int highestRound = getHighestRound(matches);
+        matchService.createMatches(winners, highestRound + 1, tournamentId);
+        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+    }
+
+    private void endTournament(int tournamentId) {
+        Tournament tournament = getTournament(tournamentId);
+        tournament.setStatus(TournamentStatus.COMPLETED);
+        tournamentRepository.save(tournament);
     }
 }

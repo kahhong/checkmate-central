@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
-    private final UserAccountService userAccountService;
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
@@ -58,6 +57,10 @@ public class TournamentService {
     public Tournament getTournament(int id) {
         return this.tournamentRepository.findById(id).orElseThrow(() -> new TournamentNotFoundException(id));
     }
+    
+    public boolean exists(int id) {
+        return tournamentRepository.findById(id).isPresent();
+    }
 
     public Tournament update(int tournamentId, Tournament updatedTournament) {
         Tournament existingTournament = this.tournamentRepository.findById(tournamentId)
@@ -76,13 +79,11 @@ public class TournamentService {
         return tournamentRepository.save(existingTournament);
     }
 
-    public void addPlayer(int tournamentId, long playerId) throws PlayerAlreadyInTournamentException{
+    public void addPlayer(int tournamentId, UserAccount player) throws PlayerAlreadyInTournamentException {
         final Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
-        UserAccount player = userAccountService.loadUserById(playerId);
-
-        if (getPlayers(tournamentId).stream().anyMatch(tournamentPlayer -> tournamentPlayer.getId() == playerId)) {
+        if (getPlayers(tournamentId).stream().anyMatch(tournamentPlayer -> tournamentPlayer.getId() == player.getId())) {
             throw new PlayerAlreadyInTournamentException(tournamentId);
         }
 

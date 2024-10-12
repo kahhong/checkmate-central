@@ -80,21 +80,25 @@ public class TournamentController {
     @CrossOrigin
     @PostMapping("/{id}/add")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId,
-                                                    @RequestBody JsonNode json) {
+            @RequestBody JsonNode json) {
+
         String email = json.get("email").asText();
         Tournament tournament = tournamentService.getTournament(tournamentId);
+
+        if (tournament.getStatus().equals(TournamentStatus.ONGOING)){
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament is currently ongoing, player added unsuccessfully");
+        }
+
         try{
-            if (tournament.getStatus().equals(TournamentStatus.ONGOING)){
-                return ResponseEntity.status(HttpStatus.OK).body("Tournament is currently ongoing, player added unsuccessfully");
-            }
             if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
-                tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email).getId());
+                tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
                 return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+
             } else {
                 return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
             }
-        }
-        catch(PlayerAlreadyInTournamentException e) {
+
+        } catch(PlayerAlreadyInTournamentException e) {
             return ResponseEntity.status(HttpStatus.OK).body("Player is already in Tournament");
         }
     }
@@ -114,7 +118,6 @@ public class TournamentController {
         }
     }
 
-
     @CrossOrigin
     @PostMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
@@ -128,8 +131,7 @@ public class TournamentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTournament(@PathVariable("id") Integer tournamentId,
-            @Valid @RequestBody Tournament updatedTournament,
-            BindingResult bindingResult) {
+            @Valid @RequestBody Tournament updatedTournament, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             List<FieldError> errorMessages = bindingResult.getFieldErrors();
@@ -140,8 +142,10 @@ public class TournamentController {
         try {
             Tournament response = tournamentService.update(tournamentId, updatedTournament);
             return ResponseEntity.ok(response);
+
         } catch (TournamentNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while updating the tournament.");
@@ -156,16 +160,12 @@ public class TournamentController {
     @CrossOrigin
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
-        try {
-            if (tournamentService.getTournament(id) != null) {
-                tournamentService.deleteById(id);
-                return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
-            }
-        } catch (TournamentNotFoundException e) {
+        if (!tournamentService.exists(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
         }
+
+        tournamentService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
     }
 
 /* End of DELETE Mappings */

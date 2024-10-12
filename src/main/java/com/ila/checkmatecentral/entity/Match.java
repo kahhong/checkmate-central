@@ -1,10 +1,16 @@
 package com.ila.checkmatecentral.entity;
 
-import jakarta.persistence.*;
+import java.util.Date;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 
 @Getter
@@ -23,7 +29,7 @@ public class Match {
 
     private MatchType matchType;
 
-    private LocalDateTime matchDateTime;
+    private Date matchDateTime;
 
     private int round;
 
@@ -43,7 +49,7 @@ public class Match {
     private Tournament tournament;
 
 
-    public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round, Integer tournamentId) {
+    public Match(UserAccount player1, UserAccount player2, Date dateTime, int round, Integer tournamentId) {
         this.player1 = player1;
         this.player2 = player2;
         this.matchDateTime = dateTime;
@@ -56,19 +62,19 @@ public class Match {
         this.outcome = -1;
     }
 
-    public Match() {}
+    protected Match() {}
 
-
-    public UserAccount getWinnerSK(){
-        if(outcome == 1){
+    public UserAccount getWinnerSK() {
+        if (outcome == 1) {
             return player1;
-        }
-        else if(outcome == 0){
+
+        } else if (outcome == 0) {
             return player2;
         }
         // no draw in single knockout tournament -> assume draw, players will fight again until outcome is determined
         return null;
     }
+
     @Override
     public String toString() {
         return "Match{" +

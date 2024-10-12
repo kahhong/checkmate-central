@@ -8,5 +8,4 @@ import com.ila.checkmatecentral.entity.UserAccount;
 
 public interface UserAccountRepository extends CrudRepository<UserAccount, Long> {
     Optional<UserAccount> findByEmail(String email);
-    Optional<UserAccount> findById(Long id);
 }

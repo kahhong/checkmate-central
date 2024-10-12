@@ -1,12 +1,8 @@
 package com.ila.checkmatecentral.unitTests;
 
-import com.ila.checkmatecentral.config.SecurityConfig;
-import com.ila.checkmatecentral.controller.TournamentController;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-import com.ila.checkmatecentral.repository.UserAccountRepository;
-import com.ila.checkmatecentral.service.MatchService;
-import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +11,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.ila.checkmatecentral.config.SecurityConfig;
+import com.ila.checkmatecentral.controller.TournamentController;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+import com.ila.checkmatecentral.repository.UserAccountRepository;
+import com.ila.checkmatecentral.service.MatchService;
+import com.ila.checkmatecentral.service.TournamentService;
+import com.ila.checkmatecentral.service.UserAccountService;
 
 // TODO: Eventually when we decide on the exact error messages, we will add them into the tests
 
@@ -47,8 +48,6 @@ public class CreateTournamentControllerTest {
 
     @MockBean
     private UserAccountRepository userAccountRepository;
-
-
 
     @Test
     public void testCreateTournament_EmptyName_ReturnsBadRequest() throws Exception {
@@ -202,7 +201,6 @@ public class CreateTournamentControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
     public void testCreateTournament_StartDateInThePast_ReturnsBadRequest() throws Exception {
         // Arrange
@@ -221,7 +219,6 @@ public class CreateTournamentControllerTest {
                 .content(json.toString()))
             .andExpect(status().isBadRequest());
     }
-
 
     // TODO: Fail if endDate is earlier or equal to startDate
 }

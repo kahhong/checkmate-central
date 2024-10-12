@@ -13,6 +13,7 @@ import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.UserAccount;
 import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
+import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -140,6 +141,22 @@ public class TournamentService {
         int highestRound = getHighestRound(matches);
         matchService.createMatches(winners, highestRound + 1, tournamentId);
         return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+    }
+
+    public void startTournament(int tournamentId) throws InvalidTournamentStateException {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        
+        if (tournament.getPlayerList().size() != tournament.getMaxPlayers()) {
+            throw new InvalidTournamentStateException("Tournament player size is insufficient to start");
+        }
+        
+        if (tournament.getStatus() != TournamentStatus.UPCOMING) {
+            throw new InvalidTournamentStateException("Tournament has already started");
+        }
+
+        tournament.setStatus(TournamentStatus.ONGOING);
+        matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
     }
 
     private void endTournament(int tournamentId) {

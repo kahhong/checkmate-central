@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.service.MatchService;
@@ -85,7 +86,7 @@ public class TournamentController {
         String email = json.get("email").asText();
         Tournament tournament = tournamentService.getTournament(tournamentId);
 
-        if (tournament.getStatus().equals(TournamentStatus.ONGOING)){
+        if (tournament.getStatus() == TournamentStatus.ONGOING){
             return ResponseEntity.status(HttpStatus.OK).body("Tournament is currently ongoing, player added unsuccessfully");
         }
 
@@ -93,7 +94,6 @@ public class TournamentController {
             if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
                 tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
                 return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
-
             } else {
                 return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
             }
@@ -106,16 +106,13 @@ public class TournamentController {
     @CrossOrigin
     @PostMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
-        Tournament tournament = tournamentService.getTournament(tournamentId);
-//         ensure that tournament size is full before starting
-        if (tournament.getPlayerList().size() == tournament.getMaxPlayers()) {
-            tournament.setStatus(TournamentStatus.ONGOING);
-            matchService.createMatches(tournament.getPlayerList(), 1, tournamentId);
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
+        try {
+            tournamentService.startTournament(tournamentId);
+        } catch (InvalidTournamentStateException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
-        else {
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament player size is insufficient to start");
-        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
     }
 
     @CrossOrigin

@@ -1,7 +1,7 @@
 package com.ila.checkmatecentral.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -29,13 +29,13 @@ public class TournamentService {
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
-        final Date now = new Date();
+        final LocalDateTime now = LocalDateTime.now();
         
-        if (tournament.getStartDate().after(tournament.getEndDate())) {
+        if (tournament.getStartDate().isAfter(tournament.getEndDate())) {
             return null;
         }
         
-        tournament.setCreateDate(now);
+        tournament.setLastUpdated(now);
         tournament.setRound(1);
 
         updateTournamentStatus(tournament);
@@ -71,7 +71,7 @@ public class TournamentService {
         existingTournament.setMinElo(updatedTournament.getMinElo());
         existingTournament.setStartDate(updatedTournament.getStartDate());
         existingTournament.setEndDate(updatedTournament.getEndDate());
-        existingTournament.setCreateDate(new Date());
+        existingTournament.setLastUpdated(LocalDateTime.now());
 
         updateTournamentStatus(existingTournament);
         return this.tournamentRepository.save(existingTournament);
@@ -99,7 +99,7 @@ public class TournamentService {
     }
     
     private static void updateTournamentStatus(Tournament tournament) {
-        if (tournament.getStartDate().before(new Date())) {
+        if (tournament.getStartDate().isBefore(LocalDateTime.now())) {
             tournament.setStatus(TournamentStatus.ONGOING);
         } else {
             tournament.setStatus(TournamentStatus.UPCOMING);

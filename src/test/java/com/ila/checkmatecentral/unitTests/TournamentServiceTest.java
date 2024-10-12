@@ -1,23 +1,210 @@
 package com.ila.checkmatecentral.unitTests;
 
+import com.ila.checkmatecentral.entity.Tournament;
+import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.TournamentType;
+import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.entity.Match;
+import com.ila.checkmatecentral.entity.MatchStatus;
+import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
+import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
+import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
+import com.ila.checkmatecentral.service.UserAccountService;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class TournamentServiceTest {
 
-    @Autowired
-    TournamentService service;
+    @Mock
+    private TournamentRepository tournamentRepository;
+
+    @Mock
+    private UserAccountService userAccountService;
+
+    @Mock
+    private MatchService matchService;
+
+    @InjectMocks
+    private TournamentService tournamentService;
+
+    private Tournament tournament;
+    private UserAccount userAccount;
+
+    @BeforeEach
+    void setUp() {
+        // Initialize the Tournament object
+        tournament = new Tournament();
+
+        // Use ReflectionTestUtils to set the tournamentId
+        ReflectionTestUtils.setField(tournament, "tournamentId", 1);
+
+        // Use ReflectionTestUtils to set private fields without using the constructor or setter
+        ReflectionTestUtils.setField(tournament, "name", "Mock Tournament");
+        ReflectionTestUtils.setField(tournament, "description", "Mock Description");
+        ReflectionTestUtils.setField(tournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
+        ReflectionTestUtils.setField(tournament, "maxPlayers", 8);
+        ReflectionTestUtils.setField(tournament, "minElo", 1000);
+        ReflectionTestUtils.setField(tournament, "startDate", new Date());
+        ReflectionTestUtils.setField(tournament, "endDate", new Date());
+        ReflectionTestUtils.setField(tournament, "status", TournamentStatus.ONGOING);
+        ReflectionTestUtils.setField(tournament, "createDate", LocalDateTime.now());
+        ReflectionTestUtils.setField(tournament, "round", 1);
+
+        // Mocking an empty list for matches and players
+        ReflectionTestUtils.setField(tournament, "matches", new ArrayList<>());
+        ReflectionTestUtils.setField(tournament, "playerList", new ArrayList<>());
+
+
+
+        userAccount = new UserAccount("test@example.com", "Test User", "password123");
+    }
 
     @Test
-    public void canCreateTournament() {
-        //TODO
+    void testCreateTournament_InvalidNumberOfPlayers() {
+        // Arrange
+        Tournament invalidTournament = new Tournament();
+        ReflectionTestUtils.setField(invalidTournament, "name", "Invalid Tournament");
+        ReflectionTestUtils.setField(invalidTournament, "description", "Tournament with invalid number of players");
+        ReflectionTestUtils.setField(invalidTournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
+        ReflectionTestUtils.setField(invalidTournament, "maxPlayers", 5); // Invalid number of players (not 2^n)
+        ReflectionTestUtils.setField(invalidTournament, "minElo", 1000);
+        ReflectionTestUtils.setField(invalidTournament, "startDate", new Date());
+        ReflectionTestUtils.setField(invalidTournament, "endDate", new Date());
+        ReflectionTestUtils.setField(invalidTournament, "status", TournamentStatus.UPCOMING);
+        ReflectionTestUtils.setField(invalidTournament, "createDate", LocalDateTime.now());
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            tournamentService.create(invalidTournament);
+        });
+        assertEquals("Number of players must be power of 2", exception.getMessage());
+
+        // Verify no save operation is called
+        verify(tournamentRepository, times(0)).save(any(Tournament.class));
     }
+
+    @Test
+    void testCreateTournament_ValidNumberOfPlayers() {
+        // Arrange
+        Tournament validTournament = new Tournament();
+        ReflectionTestUtils.setField(validTournament, "name", "Valid Tournament");
+        ReflectionTestUtils.setField(validTournament, "description", "Tournament with valid number of players");
+        ReflectionTestUtils.setField(validTournament, "type", TournamentType.SINGLE_KNOCKOUT); // Enum
+        ReflectionTestUtils.setField(validTournament, "maxPlayers", 8); // Valid number of players (2^n)
+        ReflectionTestUtils.setField(validTournament, "minElo", 1000);
+        ReflectionTestUtils.setField(validTournament, "startDate", new Date());
+        ReflectionTestUtils.setField(validTournament, "endDate", new Date());
+        ReflectionTestUtils.setField(validTournament, "status", TournamentStatus.UPCOMING);
+        ReflectionTestUtils.setField(validTournament, "createDate", LocalDateTime.now());
+
+        // Mock behavior of the repository save
+        when(tournamentRepository.save(any(Tournament.class))).thenReturn(validTournament);
+
+        // Act
+        Tournament createdTournament = tournamentService.create(validTournament);
+
+        // Assert
+        assertNotNull(createdTournament); // The created tournament should not be null
+        assertEquals(8, createdTournament.getMaxPlayers()); // Ensure the number of players is correct
+
+        // Verify save operation is called exactly once
+        verify(tournamentRepository, times(1)).save(validTournament);
+    }
+
+    @Test
+    void testAddPlayer_PlayerAlreadyInTournament() {
+        // Given: Mock player is already in the tournament's player list
+        tournament.addPlayer(userAccount);
+
+        // Mocking repository and service calls
+        when(tournamentRepository.findById(any(Integer.class))).thenReturn(Optional.of(tournament));
+        when(userAccountService.loadUserById(any(Long.class))).thenReturn(userAccount); // Simulate loading the same
+                                                                                        // user
+
+        // When & Then: Expect PlayerAlreadyInTournamentException
+        assertThrows(PlayerAlreadyInTournamentException.class, () -> {
+            tournamentService.addPlayer(1, userAccount.getId()); // Trying to add the same user
+        });
+
+    // Verify interactions with the mocked repository
+    verify(tournamentRepository, times(1)).findById(any(Integer.class));
+    verify(userAccountService, times(1)).loadUserById(any(Long.class));
+    }
+
+    @Test
+    void testGetTournament_TournamentNotFound() {
+        // Given: No tournament exists for the given ID
+        when(tournamentRepository.findById(any(Integer.class))).thenReturn(Optional.empty());
+
+        // When & Then: Expect TournamentNotFoundException
+        assertThrows(TournamentNotFoundException.class, () -> {
+            tournamentService.getTournament(2);
+        });
+    }
+
+    @Test
+    void testGetPlayers_NoPlayersInTournament() {
+        // Given: Tournament with no players
+        when(tournamentRepository.findById(any(Integer.class))).thenReturn(Optional.of(tournament));
+
+        // When: Calling getPlayers
+        List<UserAccount> players = tournamentService.getPlayers(1);
+
+        // Then: The returned player list should be empty
+        assertTrue(players.isEmpty());
+    }
+
+    // @Test
+    // void testSetNextRound_MatchesNotCompleted() {
+    //     // Given: Mocking incomplete matches for the current round
+    //     when(tournamentRepository.findById(any(Integer.class))).thenReturn(Optional.of(tournament));
+    //     when(matchService.getMatches(any(Integer.class))).thenReturn(List.of(
+    //             new Match(MatchStatus.PENDING),
+    //             new Match(MatchStatus.COMPLETED)));
+
+    //     // When & Then: Expect MatchesNotCompletedException
+    //     assertThrows(MatchesNotCompletedException.class, () -> {
+    //         tournamentService.setNextRound(1);
+    //     });
+    // }
+
+    @Test
+    void testDeleteTournament() {
+        doNothing().when(tournamentRepository).deleteById(1);
+
+        tournamentService.deleteById(1);
+
+        verify(tournamentRepository, times(1)).deleteById(1);
+    }
+
+
 }

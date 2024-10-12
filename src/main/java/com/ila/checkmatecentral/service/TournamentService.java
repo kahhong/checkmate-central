@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ila.checkmatecentral.entity.*;
+import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
 import com.ila.checkmatecentral.exceptions.MatchesNotCompletedException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 
@@ -31,6 +32,12 @@ public class TournamentService {
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
+        int numPlayers = tournament.getMaxPlayers();
+        // Bitwise operation
+        // Check if numPlayers is greater than 0 and if n & (n - 1) equals 0
+        if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
+            throw new InvalidNumberOfPlayersException();
+        }
         tournament.setCreateDate(LocalDateTime.now());
         tournament.setRound(1);
 

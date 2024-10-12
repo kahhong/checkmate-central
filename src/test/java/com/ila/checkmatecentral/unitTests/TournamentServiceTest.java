@@ -147,17 +147,16 @@ public class TournamentServiceTest {
 
         // Mocking repository and service calls
         when(tournamentRepository.findById(any(Integer.class))).thenReturn(Optional.of(tournament));
-        when(userAccountService.loadUserById(any(Long.class))).thenReturn(userAccount); // Simulate loading the same
-                                                                                        // user
+        when(userAccountService.loadUserById(any(Long.class))).thenReturn(userAccount); // Simulate loading the same user
 
         // When & Then: Expect PlayerAlreadyInTournamentException
         assertThrows(PlayerAlreadyInTournamentException.class, () -> {
             tournamentService.addPlayer(1, userAccount.getId()); // Trying to add the same user
         });
 
-    // Verify interactions with the mocked repository
-    verify(tournamentRepository, times(1)).findById(any(Integer.class));
-    verify(userAccountService, times(1)).loadUserById(any(Long.class));
+        // Verify interactions with the mocked repository
+        verify(tournamentRepository, times(1)).findById(any(Integer.class));
+        verify(userAccountService, times(1)).loadUserById(any(Long.class));
     }
 
     @Test

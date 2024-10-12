@@ -1,5 +1,6 @@
 package com.ila.checkmatecentral.unitTests;
 
+import static org.assertj.core.api.AssertionsForClassTypes.withinPercentage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -136,19 +137,18 @@ public class TournamentServiceTest {
     void testAddPlayer_PlayerAlreadyInTournament() {
         // Given: Mock player is already in the tournament's player list
         tournament.addPlayer(userAccount);
+        tournament.setStatus(TournamentStatus.UPCOMING);
 
         // Mocking repository and service calls
         when(tournamentRepository.findById(any(Integer.class))).thenReturn(Optional.of(tournament));
-        when(userAccountService.loadUserById(any(Long.class))).thenReturn(userAccount); // Simulate loading the same user
 
         // When & Then: Expect PlayerAlreadyInTournamentException
         assertThrows(PlayerAlreadyInTournamentException.class,
-            () -> tournamentService.addPlayer(1, userAccount) // Trying to add the same user
+            () -> tournamentService.addPlayer(tournament.getTournamentId(), userAccount) // Trying to add the same user
         );
 
         // Verify interactions with the mocked repository
         verify(tournamentRepository, times(1)).findById(any(Integer.class));
-        verify(userAccountService, times(1)).loadUserById(any(Long.class));
     }
 
     @Test

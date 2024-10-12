@@ -93,7 +93,7 @@ public class TournamentService {
         final Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
-        if (currentTournament.getStatus() == TournamentStatus.ONGOING) {
+        if (currentTournament.getStatus() != TournamentStatus.UPCOMING) {
             throw new InvalidTournamentStateException(
                 "Tournament ID: " + tournamentId + " has been started, Player added Unsuccessful");
         }

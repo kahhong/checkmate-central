@@ -54,12 +54,6 @@ public class MatchService {
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
     }
 
-    public List<Match> getCompletedMatches(int tournamentId) {
-        return getMatches(tournamentId)
-            .stream().filter(match -> match.getMatchStatus() == MatchStatus.COMPLETED)
-            .toList();
-    }
-
     public Match updateMatchOutcome(int matchId, double outcome) {
         Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
         currentMatch.setOutcome(outcome);

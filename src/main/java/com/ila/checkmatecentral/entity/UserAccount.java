@@ -3,7 +3,6 @@ package com.ila.checkmatecentral.entity;
 import java.beans.Transient;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.CredentialsContainer;
@@ -24,7 +23,6 @@ import lombok.Setter;
 
 @Entity
 public class UserAccount implements UserDetails, CredentialsContainer {
-    
     public static final GrantedAuthority ROLE_PLAYER = new SimpleGrantedAuthority("PLAYER");
     public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ADMIN");
     
@@ -67,8 +65,6 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @Setter
     private Tournament tournament;
 
-
-
     protected UserAccount() {
     }
     
@@ -101,6 +97,4 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     public String getUsername() {
         return email;
     }
-
-
 }

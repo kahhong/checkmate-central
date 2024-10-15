@@ -1,4 +1,18 @@
-// Player Register
+// Workflow of the Demonstration
+// 1. Registering 8 Players 
+// 2. Create Tournament 
+// 3. Add 8 Players into Tournament 
+// 4. Start Tournament
+//    a. Matches Automatically Created
+//    b. Update Match Outcome
+// 6. Next Round 2 (last)
+//    a. Above Repeated
+// 7. Tournament Ended
+
+// Player Register 
+// Each Player created with default ELO value
+// ELO used to restrict players from Tournaments
+// Also used to match lowest ELO with Highest Elo 
 POST http://localhost:8080/auth/register
 Content-Type: application/json
 
@@ -39,98 +53,22 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/auth/register
-Content-Type: application/json
-
-{
-    "name": "john_doe5",
-	"email": "john5@example.com",
-    "password": "password123"
-}
-
-###
-POST http://localhost:8080/auth/register
-Content-Type: application/json
-
-{
-    "name": "john_doe6",
-	"email": "john6@example.com",
-    "password": "password123"
-}
-
-###
-POST http://localhost:8080/auth/register
-Content-Type: application/json
-
-{
-    "name": "john_doe7",
-	"email": "john7@example.com",
-    "password": "password123"
-}
-
-###
-POST http://localhost:8080/auth/register
-Content-Type: application/json
-
-{
-    "name": "john_doe8",
-	"email": "john8@example.com",
-    "password": "password123"
-}
-
-###
-# POST http://localhost:8080/auth/register
-# Content-Type: application/json
-
-# {
-#     "name": "john_doe9",
-# 	"email": "john9@example.com",
-#     "password": "password123"
-# }
-
-# ###
-# POST http://localhost:8080/auth/register
-# Content-Type: application/json
-
-# {
-#     "name": "john_doe10",
-# 	"email": "john10@example.com",
-#     "password": "password123"
-# }
-
-# ###
-
-
-// Delete Player
-
-###
 // Create Tournament
+// 
 POST http://localhost:8080/tournaments/
 Content-Type: application/json
 
 {
     "name": "Test_Tourney",
-    "description": "My first ever Tournament for 8 players",
+    "description": "My first ever Tournament for 4 players",
     "maxPlayers": "4",
     "minElo": "100",
     "type": "SINGLE_KNOCKOUT",
-    "startDate": "2024-10-13T05:09:10Z",
+    "startDate": "2024-10-17T05:09:10Z",
     "endDate": "2024-11-13T05:09:10Z"
 }
 ###
 
-# # POST http://localhost:8080/tournaments/
-# Content-Type: application/json
-# {
-#     "name": "Test_Tourney",
-#     "description": "My first ever Tournament for 8 players",
-#     "maxPlayers": "16",
-#     "minElo": "100",
-#     "type": "SINGLE_KNOCKOUT",
-#     "startDate": "2024-09-12T05:09:10Z",
-#     "endDate": "2024-10-12T05:09:10Z"
-# }
-# ###
 // Add player to Tournament using email
 POST http://localhost:8080/tournaments/1/add
 Content-Type: application/json
@@ -163,59 +101,18 @@ Content-Type: application/json
   "email": "john4@example.com"
 }
 ###
-POST http://localhost:8080/tournaments/1/add
+
+###
+// Start Tournament
+// 
+POST http://localhost:8080/tournaments/1/start
 Content-Type: application/json
 
 {
-  "email": "john5@example.com"
+
 }
-###
-POST http://localhost:8080/tournaments/1/add
-Content-Type: application/json
 
-{
-  "email": "john6@example.com"
-}
-###
-POST http://localhost:8080/tournaments/1/add
-Content-Type: application/json
-
-{
-  "email": "john7@example.com"
-}
-###
-POST http://localhost:8080/tournaments/1/add
-Content-Type: application/json
-
-{
-  "email": "john8@example.com"
-}
-###
-# POST http://localhost:8080/tournaments/1/add/9
-# Content-Type: application/json
-
-# {
-    
-# }
-# ###
-# POST http://localhost:8080/tournaments/1/add/10
-# Content-Type: application/json
-
-# {
-    
-# }
-# ###
-
-###
-// List Tournament
-
-
-// Update Tournament
-
-
-// Delete Tournament
-
-// get singular match
+// Get singular match
 ###
 GET http://localhost:8080/match/1
 Content-Type: application/json
@@ -224,28 +121,8 @@ Content-Type: application/json
     
 }
 ###
-// List Matches
-GET http://localhost:8080/match/list/1
-Content-Type: application/json
 
-{
-    
-}
-###
-
-// Start Tournament
-POST http://localhost:8080/tournaments/1/start
-Content-Type: application/json
-
-{
-
-}
-
-
-###
-
-// update match outcome
-
+// update match 1,2 outcome
 POST http://localhost:8080/match/1/update
 Content-Type: application/json
 
@@ -258,10 +135,20 @@ POST http://localhost:8080/match/2/update
 Content-Type: application/json
 
 {
-"outcome" : "1.0"
+"outcome" : "0.0"
 }
 
 ###
+
+// move to round 2
+POST http://localhost:8080/tournaments/1/nextround
+Content-Type: application/json
+
+{
+
+}
+###
+// update match 3 (Final Match)
 POST http://localhost:8080/match/3/update
 Content-Type: application/json
 
@@ -270,65 +157,13 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/match/4/update
-Content-Type: application/json
-
-{
-  "outcome" : "0"
-}
 
 
 ###
-
-
-// move to round 2
-
+// End Tournament
 POST http://localhost:8080/tournaments/1/nextround
 Content-Type: application/json
 
 {
 
 }
-###
-// update matches 5 and 6
-POST http://localhost:8080/match/5/update
-Content-Type: application/json
-
-{
-  "outcome" : "0"
-}
-
-###
-POST http://localhost:8080/match/6/update
-Content-Type: application/json
-
-{
-  "outcome" : "1"
-}
-
-
-###
-// Move to round 3
-POST http://localhost:8080/tournaments/1/nextround
-Content-Type: application/json
-
-{
-
-}
-###
-// update match 7
-POST http://localhost:8080/match/7/update
-Content-Type: application/json
-
-{
-  "outcome" : "1"
-}
-###
-// try to go round 4 (fail as only 1 player left, the winner)
-POST http://localhost:8080/tournaments/1/nextround
-Content-Type: application/json
-
-{
-
-}
-

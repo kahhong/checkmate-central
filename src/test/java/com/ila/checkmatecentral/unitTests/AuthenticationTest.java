@@ -2,8 +2,6 @@ package com.ila.checkmatecentral.unitTests;
 
 import com.ila.checkmatecentral.config.SecurityConfig;
 import com.ila.checkmatecentral.controller.TournamentController;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-import com.ila.checkmatecentral.repository.UserAccountRepository;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
 import com.ila.checkmatecentral.service.UserAccountService;
@@ -27,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(TournamentController.class)
 @Import(SecurityConfig.class)
-public class TournamentControllerAuthorizationTest {
+public class AuthenticationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,6 +44,7 @@ public class TournamentControllerAuthorizationTest {
     @Test
     public void testCreateTournament_EmptyName_ReturnsBadRequest() throws Exception {
         // Arrange
+        
         JSONObject json = new JSONObject();
         json.put("name", "");      // Empty tournament name
         json.put("description", "A description");

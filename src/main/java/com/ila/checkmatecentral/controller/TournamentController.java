@@ -33,7 +33,6 @@ import com.ila.checkmatecentral.service.UserAccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tournaments")
@@ -64,7 +63,6 @@ public class TournamentController {
     @CrossOrigin
     @PostMapping("/")
     public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult) {
-        log.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
         if (bindingResult.hasErrors()) {
             List<FieldError> errorMessages = bindingResult.getFieldErrors();
             String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();

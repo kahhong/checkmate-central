@@ -12,14 +12,27 @@
 // Player Register 
 // Each Player created with default ELO value
 // ELO used to restrict players from Tournaments
-// Also used to match lowest ELO with Highest Elo 
+// Also used to match lowest ELO with Highest Elo
+###
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "name": "admin_one",
+  "email": "admin1@example.com",
+  "password": "password123",
+  "grantedAuthorityString": "ROLE_ADMIN"
+}
+
+###
 POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
     "name": "john_doe",
-	"email": "john@gmail.com",
-    "password": "password123"
+	"email": "john@example.com",
+    "password": "password123",
+    "grantedAuthorityString": "ROLE_USER"
 }
 
 ###
@@ -57,6 +70,7 @@ Content-Type: application/json
 // 
 POST http://localhost:8080/tournaments/
 Content-Type: application/json
+Authorization: Basic admin1@example.com password123
 
 {
     "name": "Test_Tourney",
@@ -70,16 +84,17 @@ Content-Type: application/json
 ###
 
 // Add player to Tournament using email
-POST http://localhost:8080/tournaments/1/add
+PUT http://localhost:8080/tournaments/1/add
 Content-Type: application/json
+Authorization: Basic admin1@example.com password123
 
 {
-    "email": "john@gmail.com"
+    "email": "john@example.com"
 }
 
 ###
 // Add player to Tournament using Id
-POST http://localhost:8080/tournaments/1/add
+PUT http://localhost:8080/tournaments/1/add
 Content-Type: application/json
 
 {
@@ -87,25 +102,25 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/tournaments/1/add
+PUT http://localhost:8080/tournaments/1/add
 Content-Type: application/json
 
 {
   "email": "john3@example.com"
 }
 ###
-POST http://localhost:8080/tournaments/1/add
+PUT http://localhost:8080/tournaments/1/add
+Authorization: Basic admin_one:
 Content-Type: application/json
 
 {
   "email": "john4@example.com"
 }
-###
 
 ###
 // Start Tournament
 // 
-POST http://localhost:8080/tournaments/1/start
+PUT http://localhost:8080/tournaments/1/start
 Content-Type: application/json
 
 {
@@ -116,6 +131,7 @@ Content-Type: application/json
 ###
 GET http://localhost:8080/match/1
 Content-Type: application/json
+Authorization: Basic john@example.com password123
 
 {
     
@@ -123,7 +139,7 @@ Content-Type: application/json
 ###
 
 // update match 1,2 outcome
-POST http://localhost:8080/match/1/update
+PUT http://localhost:8080/match/1/update
 Content-Type: application/json
 
 {
@@ -131,7 +147,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/match/2/update
+PUT http://localhost:8080/match/2/update
 Content-Type: application/json
 
 {
@@ -141,7 +157,7 @@ Content-Type: application/json
 ###
 
 // move to round 2
-POST http://localhost:8080/tournaments/1/nextround
+PUT http://localhost:8080/tournaments/1/nextround
 Content-Type: application/json
 
 {
@@ -149,7 +165,7 @@ Content-Type: application/json
 }
 ###
 // update match 3 (Final Match)
-POST http://localhost:8080/match/3/update
+PUT http://localhost:8080/match/3/update
 Content-Type: application/json
 
 {
@@ -161,7 +177,7 @@ Content-Type: application/json
 
 ###
 // End Tournament
-POST http://localhost:8080/tournaments/1/nextround
+PUT http://localhost:8080/tournaments/1/nextround
 Content-Type: application/json
 
 {

@@ -1,6 +1,7 @@
 package com.ila.checkmatecentral.service;
 
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,7 +53,7 @@ public class UserAccountService implements UserDetailsService {
 
         String password = passwordEncoder.encode(rawPassword);
         
-        return repository.save(new UserAccount(user.getEmail(), user.getName(), password));
+        return repository.save(new UserAccount(user.getEmail(), user.getName(), password, user.getGrantedAuthorityString()));
     }
     
     // TODO: Externalize password validation into another class for more complex requirements

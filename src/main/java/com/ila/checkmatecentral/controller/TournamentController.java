@@ -2,8 +2,11 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -61,6 +64,7 @@ public class TournamentController {
     @CrossOrigin
     @PostMapping("/")
     public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult) {
+        log.info(SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString());
         if (bindingResult.hasErrors()) {
             List<FieldError> errorMessages = bindingResult.getFieldErrors();
             String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();
@@ -78,7 +82,7 @@ public class TournamentController {
     }
 
     @CrossOrigin
-    @PostMapping("/{id}/add")
+    @PutMapping("/{id}/add")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId,
             @RequestBody JsonNode json) {
 
@@ -103,7 +107,7 @@ public class TournamentController {
     }
 
     @CrossOrigin
-    @PostMapping("/{id}/start")
+    @PutMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
         try {
             tournamentService.startTournament(tournamentId);
@@ -115,7 +119,7 @@ public class TournamentController {
     }
 
     @CrossOrigin
-    @PostMapping("/{id}/nextround")
+    @PutMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
         return tournamentService.setNextRound(tournamentId);
     }

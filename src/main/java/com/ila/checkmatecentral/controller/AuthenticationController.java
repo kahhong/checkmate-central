@@ -22,8 +22,12 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserAccount user) {
-        userService.register(user);
-        return ResponseEntity.ok("User registered: " + user.getEmail());
+        // TODO: Refactor granted authority validation
+        if(user.validAuthority()) {
+            userService.register(user);
+            return ResponseEntity.ok("User registered: " + user.getEmail());
+        }
+        return ResponseEntity.badRequest().body("Invalid authority: " + user.getGrantedAuthorityString());
     }
     
     @ExceptionHandler(AuthenticationException.class)

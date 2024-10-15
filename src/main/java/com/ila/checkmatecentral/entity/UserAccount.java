@@ -2,9 +2,13 @@ package com.ila.checkmatecentral.entity;
 
 import java.beans.Transient;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,12 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -68,27 +66,41 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @JsonBackReference
     private Tournament tournament;
 
+
+    @Setter
+    @Getter
+    private String grantedAuthorityString;
+
+
     protected UserAccount() {
     }
     
-    public UserAccount(String email, String name, String password) {
+    public UserAccount(String email, String name, String password, String grantedAuthority) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.rating = 1500;
         this.ratingDeviation = 350;
         this.timeLastPlayed = LocalDateTime.now();
+        this.grantedAuthorityString = grantedAuthority;
     }
 
     @Override
     public void eraseCredentials() {
         password = null;
+        grantedAuthorityString = null;
     }
+
+    public boolean validAuthority() {
+        return ("ROLE_USER".equals(grantedAuthorityString) || "ROLE_ADMIN".equals(grantedAuthorityString));
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(ROLE_PLAYER);
+        return List.of(new SimpleGrantedAuthority(grantedAuthorityString));
     }
+
 
     @Override
     public String getPassword() {

@@ -13,7 +13,7 @@
 // Each Player created with default ELO value
 // ELO used to restrict players from Tournaments
 // Also used to match lowest ELO with Highest Elo
-###
+### Create Admin
 POST http://localhost:8080/auth/register
 Content-Type: application/json
 
@@ -24,7 +24,7 @@ Content-Type: application/json
   "grantedAuthorityString": "ROLE_ADMIN"
 }
 
-###
+### Create Players
 POST http://localhost:8080/auth/register
 Content-Type: application/json
 
@@ -96,7 +96,6 @@ Authorization: Basic admin1@example.com password123
 }
 
 ###
-// Add player to Tournament using Id
 PUT http://localhost:8080/tournaments/1/add
 Content-Type: application/json
 Authorization: Basic admin1@example.com password123

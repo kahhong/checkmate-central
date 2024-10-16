@@ -1,12 +1,7 @@
 package com.ila.checkmatecentral.unitTests;
 
-import com.ila.checkmatecentral.config.SecurityConfig;
-import com.ila.checkmatecentral.controller.TournamentController;
-import com.ila.checkmatecentral.service.MatchService;
-import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
-
-import groovy.transform.AnnotationCollector;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -14,16 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.ila.checkmatecentral.WithMockAdmin;
+import com.ila.checkmatecentral.config.SecurityConfig;
+import com.ila.checkmatecentral.controller.TournamentController;
+import com.ila.checkmatecentral.service.MatchService;
+import com.ila.checkmatecentral.service.TournamentService;
+import com.ila.checkmatecentral.service.UserAccountService;
 
 // TODO: Eventually when we decide on the exact error messages, we will add them into the tests
 
@@ -35,11 +28,6 @@ import java.lang.annotation.Target;
 @WebMvcTest(TournamentController.class)
 @Import(SecurityConfig.class)
 public class AuthenticationTest {
-
-    @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @WithMockUser(username = "admin", password = "password", roles = "ADMIN")
-    private @interface WithMockAdmin { }
 
     @Autowired
     private MockMvc mockMvc;

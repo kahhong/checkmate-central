@@ -5,16 +5,25 @@ import com.ila.checkmatecentral.controller.TournamentController;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
 import com.ila.checkmatecentral.service.UserAccountService;
+
+import groovy.transform.AnnotationCollector;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 // TODO: Eventually when we decide on the exact error messages, we will add them into the tests
 
@@ -26,6 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TournamentController.class)
 @Import(SecurityConfig.class)
 public class AuthenticationTest {
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @WithMockUser(username = "admin", password = "password", roles = "ADMIN")
+    private @interface WithMockAdmin { }
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,6 +56,7 @@ public class AuthenticationTest {
 
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_EmptyName_ReturnsBadRequest() throws Exception {
         // Arrange
         
@@ -62,6 +77,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_EmptyDescription_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -81,6 +97,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NullType_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -100,6 +117,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_MaxPlayersLessThan2_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -119,6 +137,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_MaxPlayersMoreThan100_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -138,6 +157,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NegativeElo_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -157,6 +177,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NonISOStartDate_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -176,6 +197,7 @@ public class AuthenticationTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NonISOEndDate_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -196,6 +218,7 @@ public class AuthenticationTest {
 
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_StartDateInThePast_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();

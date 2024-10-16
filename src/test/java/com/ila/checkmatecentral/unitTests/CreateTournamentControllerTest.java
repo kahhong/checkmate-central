@@ -1,5 +1,6 @@
 package com.ila.checkmatecentral.unitTests;
 
+import com.ila.checkmatecentral.WithMockAdmin;
 import com.ila.checkmatecentral.config.SecurityConfig;
 import com.ila.checkmatecentral.controller.TournamentController;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -48,9 +49,8 @@ public class CreateTournamentControllerTest {
     @MockBean
     private UserAccountRepository userAccountRepository;
 
-
-
     @Test
+    @WithMockAdmin
     public void testCreateTournament_EmptyName_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -70,6 +70,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_EmptyDescription_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -89,6 +90,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NullType_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -108,6 +110,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_MaxPlayersLessThan2_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -127,6 +130,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_MaxPlayersMoreThan100_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -146,6 +150,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NegativeElo_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -165,6 +170,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NonISOStartDate_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -184,6 +190,7 @@ public class CreateTournamentControllerTest {
     }
 
     @Test
+    @WithMockAdmin
     public void testCreateTournament_NonISOEndDate_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();
@@ -202,8 +209,8 @@ public class CreateTournamentControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-
     @Test
+    @WithMockAdmin
     public void testCreateTournament_StartDateInThePast_ReturnsBadRequest() throws Exception {
         // Arrange
         JSONObject json = new JSONObject();

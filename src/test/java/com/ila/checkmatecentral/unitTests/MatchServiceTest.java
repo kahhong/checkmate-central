@@ -58,7 +58,7 @@ public class MatchServiceTest {
         ReflectionTestUtils.setField(tournament, "matches", new ArrayList<>());
         ReflectionTestUtils.setField(tournament, "playerList", new ArrayList<>());
 
-        userAccount = new UserAccount("test@example.com", "Test User", "password123");
+        userAccount = new UserAccount("test@example.com", "Test User", "password123", "ROLE_PLAYER");
     }
 
 

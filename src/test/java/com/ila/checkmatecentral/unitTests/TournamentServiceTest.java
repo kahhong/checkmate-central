@@ -78,7 +78,7 @@ public class TournamentServiceTest {
 
 
 
-        userAccount = new UserAccount("test@example.com", "Test User", "password123");
+        userAccount = new UserAccount("test@example.com", "Test User", "password123", "ROLE_PLAYER");
     }
 
     @Test

@@ -2,13 +2,9 @@ package com.ila.checkmatecentral.entity;
 
 import java.beans.Transient;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import jakarta.persistence.*;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +12,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -23,8 +25,6 @@ import lombok.Setter;
 
 @Entity
 public class UserAccount implements UserDetails, CredentialsContainer {
-    public static final GrantedAuthority ROLE_PLAYER = new SimpleGrantedAuthority("PLAYER");
-    public static final GrantedAuthority ROLE_ADMIN = new SimpleGrantedAuthority("ADMIN");
     
     @Id
     @GeneratedValue
@@ -41,6 +41,10 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @NotBlank(message = "Name is mandatory")
     @Column(nullable = false)
     private String name;
+
+    @Getter
+    @NotBlank(message = "Authority is mandatory")
+    private String grantedAuthorityString;
     
     @NotBlank(message = "Password is mandatory")
     @Column(nullable = false)
@@ -66,12 +70,6 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @JsonBackReference
     private Tournament tournament;
 
-
-    @Setter
-    @Getter
-    private String grantedAuthorityString;
-
-
     protected UserAccount() {
     }
     
@@ -88,7 +86,6 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @Override
     public void eraseCredentials() {
         password = null;
-        grantedAuthorityString = null;
     }
 
     public boolean validAuthority() {

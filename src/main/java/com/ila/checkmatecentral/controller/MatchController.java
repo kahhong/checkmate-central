@@ -53,15 +53,15 @@ public class MatchController {
     @CrossOrigin
     @PutMapping("/{id}/update")
     public ResponseEntity<?> updateMatchOutcome(@PathVariable("id") Integer matchId, @RequestBody JsonNode json) {
-        double outcome = json.get("outcome").asDouble();
+        String outcomeText = json.get("outcome").asText();
+        Match.MatchOutcome outcome = Match.MatchOutcome.valueOf(outcomeText);
         try {
             matchService.updateMatchOutcome(matchId, outcome);
             return ResponseEntity.status(HttpStatus.OK).body("Match " + matchId + " has been updated with " + outcome);
 
         } catch (MatchNotFoundException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
-        } catch (InvalidOutcomeException e) {
-            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while updating the match.");

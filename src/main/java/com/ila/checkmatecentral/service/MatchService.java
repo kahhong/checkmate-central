@@ -54,11 +54,8 @@ public class MatchService {
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
     }
 
-    public Match updateMatchOutcome(Integer matchId, double outcome) {
+    public Match updateMatchOutcome(Integer matchId, Match.MatchOutcome outcome) {
         //check if outcome is of valid input value
-        if(outcome != 0.5 && outcome != 1 && outcome != 0) {
-            throw new InvalidOutcomeException(outcome);
-        }
 
         Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
         currentMatch.setOutcome(outcome);

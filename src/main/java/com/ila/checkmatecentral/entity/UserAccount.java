@@ -77,8 +77,8 @@ public class UserAccount implements UserDetails, CredentialsContainer {
         this.email = email;
         this.name = name;
         this.password = password;
-        this.rating = 1500;
-        this.ratingDeviation = 350;
+        this.rating = 1500.00;
+        this.ratingDeviation = 350.00;
         this.timeLastPlayed = LocalDateTime.now();
         this.grantedAuthorityString = grantedAuthority;
     }

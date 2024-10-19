@@ -27,11 +27,17 @@ public class GlickoService {
 
         player1 = inactivityAdjustment(player1);
         player2 = inactivityAdjustment(player2);
+        Match.MatchOutcome outcome = match.getOutcome();
 
-        double score = match.getOutcome();
+        if(outcome == Match.MatchOutcome.LOSE) {
+            updatePlayerRating(player2, player1, 1);
+            updatePlayerRating(player1, player2, 0);
+        }
+        else if(outcome == Match.MatchOutcome.WIN) {
+            updatePlayerRating(player1, player2, 1);
+            updatePlayerRating(player2, player1, 0);
+        }
 
-        updatePlayerRating(player1, player2, score);
-        updatePlayerRating(player2, player1, 1 - score);
     }
 
     public UserAccount inactivityAdjustment(UserAccount player) {

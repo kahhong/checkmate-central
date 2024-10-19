@@ -81,7 +81,7 @@ Authorization: Basic admin1@example.com password123
     "maxPlayers": "4",
     "minElo": "100",
     "type": "SINGLE_KNOCKOUT",
-    "startDate": "2024-10-17T05:09:10Z",
+    "startDate": "2024-10-20T05:09:10Z",
     "endDate": "2024-11-13T05:09:10Z"
 }
 ###
@@ -131,7 +131,7 @@ Content-Type: application/json
 {
 
 }
-
+###
 // Get singular match
 ###
 GET http://localhost:8080/match/1
@@ -149,7 +149,7 @@ Authorization: Basic admin1@example.com password123
 Content-Type: application/json
 
 {
-    "outcome" : "1.0"
+    "outcome" : "WIN"
 }
 
 ###
@@ -158,7 +158,7 @@ Authorization: Basic admin1@example.com password123
 Content-Type: application/json
 
 {
-"outcome" : "0.0"
+"outcome" : "LOSE"
 }
 
 ###
@@ -178,7 +178,7 @@ Authorization: Basic admin1@example.com password123
 Content-Type: application/json
 
 {
-  "outcome" : "0"
+  "outcome" : "LOSE"
 }
 
 ###

@@ -2,13 +2,7 @@ package com.ila.checkmatecentral.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,13 +36,16 @@ public class Match {
     @JoinColumn(name = "player2Id", referencedColumnName = "id")
     private UserAccount player2;
 
-    private double outcome;
+    @Enumerated(EnumType.STRING)
+    private MatchOutcome outcome;
 
     @ManyToOne
     @JoinColumn(name="tournamentId", insertable = false, updatable = false)
     private Tournament tournament;
 
-
+    public enum MatchOutcome {
+        WIN, LOSE, DRAW, NO_RESULT
+    }
     public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round, Integer tournamentId) {
         this.player1 = player1;
         this.player2 = player2;
@@ -57,18 +54,16 @@ public class Match {
         this.matchStatus = MatchStatus.ONGOING;
         this.matchType = MatchType.ONE_VS_ONE;
         this.tournamentId = tournamentId;
-        // -1 = no result yet ; 0 = player 1 lose
-        // 0.5 = tie ; 1 = player 2 lose
-        this.outcome = -1;
+        this.outcome = MatchOutcome.NO_RESULT;
     }
 
     protected Match() {}
 
     public UserAccount getWinnerSK() {
-        if (outcome == 1) {
+        if (outcome == MatchOutcome.WIN) {
             return player1;
 
-        } else if (outcome == 0) {
+        } else if (outcome == MatchOutcome.LOSE) {
             return player2;
         }
         // no draw in single knockout tournament -> assume draw, players will fight again until outcome is determined

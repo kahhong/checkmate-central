@@ -1,8 +1,11 @@
 package com.ila.checkmatecentral.service;
 
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.stream.Collectors;
 
+import org.hibernate.engine.internal.Collections;
+import org.hibernate.mapping.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,7 +40,7 @@ public class TournamentService {
         int numPlayers = tournament.getMaxPlayers();
 
         if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
-            throw new InvalidNumberOfPlayersException();
+            //throw new InvalidNumberOfPlayersException();
         }
         
         if (tournament.getStartDate().isAfter(tournament.getEndDate())) {
@@ -151,9 +154,18 @@ public class TournamentService {
             return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
         }
 
-        int highestRound = getHighestRound(matches);
-        matchService.createMatches(winners, highestRound + 1, tournamentId);
-        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+        //int highestRound = getHighestRound(matches);
+        // Increment tournament's round by 1
+        Tournament tournament = getTournament(tournamentId);
+        tournament.setRound(tournament.getRound()+1);
+        tournamentRepository.save(tournament);
+        if(!isPowerN(winners.size())){
+            eliminationRound(tournamentId);
+            return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+        }else{
+            matchService.createMatches(winners, tournament.getRound(), tournamentId);
+            return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+        }
     }
 
     public List<UserAccount> getPlayers(int tournamentId) {
@@ -166,17 +178,19 @@ public class TournamentService {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         List<UserAccount> players = tournament.getPlayerList();
-        
-        if (players.size() != tournament.getMaxPlayers()) {
-            throw new InsufficientPlayersException(players.size(), tournament.getMaxPlayers());
-        }
-        
         if (tournament.getStatus() != TournamentStatus.UPCOMING) {
             throw new InvalidTournamentStateException("Tournament has already started");
         }
+        
+        if(!isPowerN(players.size())){
+            eliminationRound(tournamentId);
+        }else{
 
-        tournament.setStatus(TournamentStatus.ONGOING);
-        matchService.createMatches(players, 1, tournamentId);
+            tournament.setStatus(TournamentStatus.ONGOING);
+            matchService.createMatches(players, 1, tournamentId);
+        }
+        
+        
     }
 
     private void endTournament(int tournamentId) {
@@ -184,4 +198,93 @@ public class TournamentService {
         tournament.setStatus(TournamentStatus.COMPLETED);
         tournamentRepository.save(tournament);
     }
+
+    private boolean isPowerN(int numPlayers){
+        if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private int findNextPowerN(int numPlayers){
+        if (numPlayers <= 1) {
+            throw new IllegalArgumentException("numPlayers must be greater than 1");
+        }
+
+        // Start with 1 (which is 2^0)
+        int powerOfTwo = 1;
+        
+        // Double powerOfTwo until it's larger than or equal to the given numPlayers
+        while (powerOfTwo * 2 < numPlayers) {
+            powerOfTwo *= 2;
+        }
+
+        return powerOfTwo;
+    }
+
+    private void eliminationRound(int tournamentId){
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        List<UserAccount> players = tournament.getPlayerList();
+        int numPlayers = players.size();
+        int nextPower = findNextPowerN(numPlayers);
+        int numOfElimMatch = numPlayers-nextPower;
+
+        // Sort players by ELO in descending order
+        List<UserAccount> sortedPlayers = players.stream()
+            .sorted((user1, user2) -> Double.compare(user1.getRating(), user2.getRating()))
+            .collect(Collectors.toList());
+        // Find which players are to go elimination round
+        List<UserAccount> elimPlayers = findEliminationPlayers(sortedPlayers, numOfElimMatch);
+        matchService.createMatches(elimPlayers, tournament.getRound(), tournamentId);
+        List<UserAccount> nonElimPlayers = findNonEliminatedPlayers(sortedPlayers, elimPlayers);
+    }
+
+    public static List<UserAccount> findEliminationPlayers(List<UserAccount> sortedPlayers, int numOfElimMatches) {
+        int numOfPlayersToEliminate = numOfElimMatches * 2;  // Total players for elimination matches
+
+        // Group players by their Elo ratings (same Elo ratings will be grouped together)
+        java.util.Map<Double, List<UserAccount>> playersByElo = sortedPlayers.stream()
+            .collect(Collectors.groupingBy(UserAccount::getRating, TreeMap::new, Collectors.toList()));
+
+        // A list to collect selected players for elimination
+        List<UserAccount> selectedPlayers = new ArrayList<>();
+
+        // Iterate over the players grouped by Elo (lowest Elo to highest, since TreeMap is sorted by key)
+        for (java.util.Map.Entry<Double, List<UserAccount>> entry : playersByElo.entrySet()) {
+            List<UserAccount> currentEloGroup = entry.getValue();
+            int playersRemainingToSelect = numOfPlayersToEliminate - selectedPlayers.size();
+
+            // If the number of players in this Elo group is less than or equal to what we need
+            if (currentEloGroup.size() <= playersRemainingToSelect) {
+                // Add all players from this Elo group
+                selectedPlayers.addAll(currentEloGroup);
+            } else {
+                // If we have more players in this Elo group than needed, randomly select the required number
+                java.util.Collections.shuffle(currentEloGroup);  // Shuffle for randomness
+                selectedPlayers.addAll(currentEloGroup.subList(0, playersRemainingToSelect)); // Select only needed players
+            }
+
+            // Break if we have selected enough players for elimination
+            if (selectedPlayers.size() >= numOfPlayersToEliminate) {
+                break;
+            }
+        }
+
+        return selectedPlayers;
+    }
+
+    public static List<UserAccount> findNonEliminatedPlayers(List<UserAccount> players, List<UserAccount> elimPlayers) {
+        // Create a set of eliminated players for fast lookup
+        Set<UserAccount> eliminatedSet = new HashSet<>(elimPlayers);
+
+        // Filter players who are not in the eliminated set
+        List<UserAccount> nonEliminatedPlayers = players.stream()
+            .filter(player -> !eliminatedSet.contains(player))
+            .collect(Collectors.toList());
+
+        return nonEliminatedPlayers;
+    }
+
 }

@@ -57,6 +57,11 @@ public class Tournament {
     @JsonManagedReference
     private List<UserAccount> playerList;
 
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "tournament")
+    private List<UserAccount> byesPlayers;
+
     // End of server generated fields
 
     /* Sample JSON from POST /tournaments:
@@ -127,5 +132,9 @@ public class Tournament {
     public void addPlayer(UserAccount player){
         this.playerList.add(player);
         player.setTournament(this);
+    }
+
+    public void addByesPlayer(UserAccount player){
+        this.byesPlayers.add(player);
     }
 }

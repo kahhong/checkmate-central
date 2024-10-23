@@ -4,8 +4,11 @@ import java.util.*;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
+import jakarta.transaction.Transactional;
 import org.hibernate.engine.internal.Collections;
 import org.hibernate.mapping.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TournamentService {
+    private static final Logger logger = LoggerFactory.getLogger(TournamentService.class);
+
     private final TournamentRepository tournamentRepository;
     private final MatchService matchService;
 
@@ -128,7 +133,7 @@ public class TournamentService {
         List<UserAccount> winners = matches.stream()
                         .filter(match -> match.getRound() == highestRound)
                         .map(Match::getWinnerSK)
-                        .toList();
+                        .collect(Collectors.toList());
 
         return winners;
     }
@@ -140,14 +145,30 @@ public class TournamentService {
                 .orElse(0);
     }
 
+
     public ResponseEntity<?> setNextRound(int tournamentId){
+        Tournament tournament = getTournament(tournamentId);
         final List<Match> matches = matchService.getMatches(tournamentId);
 
         if (!matches.stream().allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED)) {
             return ResponseEntity.status(HttpStatus.OK).body("Matches are not complete");
         }
 
-        final List<UserAccount> winners = getLastMatchWinners(matches);
+        List<UserAccount> winners = getLastMatchWinners(matches);
+
+        // add all the byesPlayers into the winner list
+        List<UserAccount> byesPlayers = tournament.getByesPlayers();
+        if(!byesPlayers.isEmpty()){
+            for(UserAccount byesPlayer : byesPlayers){
+                winners.add(byesPlayer);
+            }
+        }
+
+        // remove all the byesPlayers;
+        List<UserAccount> emptyByesPlayers = new ArrayList<>();
+        tournament.setByesPlayers(emptyByesPlayers);
+        tournamentRepository.save(tournament);
+
 
         if (winners.size() == 1) {
             endTournament(tournamentId);
@@ -156,16 +177,20 @@ public class TournamentService {
 
         //int highestRound = getHighestRound(matches);
         // Increment tournament's round by 1
-        Tournament tournament = getTournament(tournamentId);
         tournament.setRound(tournament.getRound()+1);
         tournamentRepository.save(tournament);
         if(!isPowerN(winners.size())){
-            eliminationRound(tournamentId);
+            List<UserAccount> byesPlayer= eliminationRound(winners, tournament.getRound(), tournamentId);
+            for(UserAccount player : byesPlayer){
+                tournament.addByesPlayer(player);
+            }
+            tournamentRepository.save(tournament);
             return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
         }else{
             matchService.createMatches(winners, tournament.getRound(), tournamentId);
             return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
         }
+
     }
 
     public List<UserAccount> getPlayers(int tournamentId) {
@@ -183,13 +208,15 @@ public class TournamentService {
         }
         
         if(!isPowerN(players.size())){
-            eliminationRound(tournamentId);
+            List<UserAccount> byesPlayer= eliminationRound(players, tournament.getRound(), tournamentId);
+            for(UserAccount player : byesPlayer){
+                tournament.addByesPlayer(player);
+            }
+            tournamentRepository.save(tournament);
         }else{
-
             tournament.setStatus(TournamentStatus.ONGOING);
-            matchService.createMatches(players, 1, tournamentId);
+            matchService.createMatches(players, tournament.getRound(), tournamentId);
         }
-        
         
     }
 
@@ -200,11 +227,7 @@ public class TournamentService {
     }
 
     private boolean isPowerN(int numPlayers){
-        if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
-            return true;
-        }else{
-            return false;
-        }
+        return numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0;
     }
 
     private int findNextPowerN(int numPlayers){
@@ -223,10 +246,8 @@ public class TournamentService {
         return powerOfTwo;
     }
 
-    private void eliminationRound(int tournamentId){
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
-        List<UserAccount> players = tournament.getPlayerList();
+    private List<UserAccount> eliminationRound(List<UserAccount> players, int round, int tournamentId){
+
         int numPlayers = players.size();
         int nextPower = findNextPowerN(numPlayers);
         int numOfElimMatch = numPlayers-nextPower;
@@ -237,8 +258,14 @@ public class TournamentService {
             .collect(Collectors.toList());
         // Find which players are to go elimination round
         List<UserAccount> elimPlayers = findEliminationPlayers(sortedPlayers, numOfElimMatch);
-        matchService.createMatches(elimPlayers, tournament.getRound(), tournamentId);
-        List<UserAccount> nonElimPlayers = findNonEliminatedPlayers(sortedPlayers, elimPlayers);
+        logger.info("ELIMINATION ROUND WORKKKIIINNNNGGGG");
+        matchService.createMatches(elimPlayers, round, tournamentId);
+        List<UserAccount> byesPlayers = findByesPlayers(sortedPlayers, elimPlayers);
+        for(UserAccount byesPlayer : byesPlayers){
+            logger.info("BYESSSSSS" + byesPlayer.getUsername());
+        }
+
+        return byesPlayers;
     }
 
     public static List<UserAccount> findEliminationPlayers(List<UserAccount> sortedPlayers, int numOfElimMatches) {
@@ -275,16 +302,17 @@ public class TournamentService {
         return selectedPlayers;
     }
 
-    public static List<UserAccount> findNonEliminatedPlayers(List<UserAccount> players, List<UserAccount> elimPlayers) {
-        // Create a set of eliminated players for fast lookup
-        Set<UserAccount> eliminatedSet = new HashSet<>(elimPlayers);
-
+    public static List<UserAccount> findByesPlayers(List<UserAccount> players, List<UserAccount> elimPlayers) {
         // Filter players who are not in the eliminated set
-        List<UserAccount> nonEliminatedPlayers = players.stream()
-            .filter(player -> !eliminatedSet.contains(player))
-            .collect(Collectors.toList());
-
-        return nonEliminatedPlayers;
+        List<UserAccount> byesPlayers = players.stream()
+                .filter(player -> !elimPlayers.contains(player))
+                .collect(Collectors.toList());
+        for(UserAccount player : byesPlayers){
+            logger.info("BYEEESSSSS:" + player.getEmail());
+        }
+        return byesPlayers;
     }
+
+
 
 }

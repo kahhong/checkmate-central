@@ -91,10 +91,11 @@ tasks.register('appNpmBuild', NpmTask) {
 
 tasks.register('copyToFrontEnd', Copy) {
 	from("$projectDir/src/main/frontend/checkmate-central-react/build")
-	into("$projectDir/build/resources/main/static")
+	into("$projectDir/src/main/resources/static")
 }
 
 appNpmBuild.dependsOn(appNpmInstall)
 //appNpxServe.dependsOn(appNpmBuild)
 copyToFrontEnd.dependsOn(appNpmBuild)
-compileJava.dependsOn(copyToFrontEnd)
+copyToFrontEnd.mustRunAfter(compileJava)
+processResources.dependsOn(copyToFrontEnd)

@@ -1,6 +1,8 @@
 package com.ila.checkmatecentral.config;
 
 import com.ila.checkmatecentral.repository.UserAccountRepository;
+import com.ila.checkmatecentral.service.UserAccountService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +41,7 @@ public class SecurityConfig {
     private final UserAccountRepository repository;
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
 //                .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
@@ -58,7 +60,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .authenticationManager(authenticationManager(userDetailsService(), passwordEncoder()))
+            .authenticationManager(authenticationManager)
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
             .headers(header -> header.disable())
@@ -81,13 +83,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException(username + " not found"));
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService,
+    public AuthenticationManager authenticationManager(UserAccountService userDetailsService,
                                                        PasswordEncoder passwordEncoder) throws Exception {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);

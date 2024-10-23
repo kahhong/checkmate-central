@@ -1,6 +1,8 @@
 package com.ila.checkmatecentral.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +45,7 @@ public class TournamentController {
 
 
 /* Start of GET Mappings */
-
+//    @CrossOrigin
     @GetMapping({"/lists", "/list"})
     public ResponseEntity<List<Tournament>> getAllTournaments() {
         List<Tournament> tournaments = tournamentService.getAllTournaments();
@@ -60,14 +62,11 @@ public class TournamentController {
 
 /* Start of POST Mappings */
 
-    @CrossOrigin
+//    @CrossOrigin
     @PostMapping("/")
     public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            List<FieldError> errorMessages = bindingResult.getFieldErrors();
-            String errorBody =  errorMessages.isEmpty() ? "Invalid request body" : errorMessages.get(0).toString();
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBody);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
 
         try {

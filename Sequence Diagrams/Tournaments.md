@@ -16,7 +16,7 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     actor User
-    User->>Web UI: List of documents
+    User->>Web UI: List of tournaments
     Web UI->>+TournamentController: GET /tournaments
     activate TournamentService
     TournamentController->>+TournamentService: findAll(id)

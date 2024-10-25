@@ -1,3 +1,0 @@
-[submodule "src/main/frontend/checkmate-central-react"]
-	path = src/main/frontend/checkmate-central-react
-	url = git@github.com:kahhong/checkmate-central-react.git

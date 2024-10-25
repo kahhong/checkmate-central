@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserAccountService implements UserDetailsService {
     private final UserAccountRepository repository;
+
     private final PasswordEncoder passwordEncoder;
 
     public UserAccountService(UserAccountRepository repository, PasswordEncoder passwordEncoder) {

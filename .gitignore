@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 logs/
 
+# Ignore the static resources as it will be populated by gradle tasks
+src/main/resources/static
+
 ### STS ###
 .apt_generated
 .classpath

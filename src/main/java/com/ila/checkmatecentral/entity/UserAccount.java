@@ -70,7 +70,7 @@ public class UserAccount implements UserDetails, CredentialsContainer {
     @JsonBackReference
     private Tournament tournament;
 
-    protected UserAccount() {
+    public UserAccount() {
     }
     
     public UserAccount(String email, String name, String password, String grantedAuthority) {

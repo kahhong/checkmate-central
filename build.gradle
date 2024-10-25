@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id "com.github.node-gradle.node" version "7.1.0"
 }
 
 group = 'com.ila'
@@ -11,6 +12,13 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
+}
+
+node {
+	download = false
+	workDir = file("${project.projectDir}/src/main/frontend/checkmate-central-react/nodejs")
+	npmWorkDir = file("${project.projectDir}/src/main/frontend/checkmate-central-react/npm")
+//	no = file("${project.projectDir}/src/main/frontend/checkmate-central-react")
 }
 
 configurations {
@@ -34,6 +42,15 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+
+
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -55,3 +72,30 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.register('appNpmInstall', NpmTask) {
+	workingDir = file("$projectDir/src/main/frontend/checkmate-central-react")
+	args = ["install", "-debug"]
+}
+
+tasks.register('appNpmBuild', NpmTask) {
+	workingDir = file("$projectDir/src/main/frontend/checkmate-central-react")
+	args = ["run", "build"]
+}
+
+//tasks.register('appNpxServe', NpxTask) {
+//	command = "serve"
+//	workingDir = file("$projectDir/src/main/frontend/checkmate-central-react")
+//	args = ["build/"]
+//}
+
+tasks.register('copyToFrontEnd', Copy) {
+	from("$projectDir/src/main/frontend/checkmate-central-react/build")
+	into("$projectDir/src/main/resources/static")
+}
+
+appNpmBuild.dependsOn(appNpmInstall)
+//appNpxServe.dependsOn(appNpmBuild)
+copyToFrontEnd.dependsOn(appNpmBuild)
+copyToFrontEnd.mustRunAfter(compileJava)
+processResources.dependsOn(copyToFrontEnd)

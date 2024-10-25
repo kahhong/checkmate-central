@@ -37,7 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/tournaments")
+@RequestMapping("/api/tournaments")
 public class TournamentController {
     public final TournamentService tournamentService;
     public final UserAccountService userAccountService;
@@ -58,7 +58,6 @@ public class TournamentController {
     }
 
 /* End of GET Mappings */
-
 
 /* Start of POST Mappings */
 

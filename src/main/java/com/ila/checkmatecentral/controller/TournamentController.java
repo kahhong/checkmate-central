@@ -119,7 +119,12 @@ public class TournamentController {
     @CrossOrigin
     @PutMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
-        return tournamentService.setNextRound(tournamentId);
+        try {
+            tournamentService.setNextRound(tournamentId);
+        } catch (InvalidTournamentStateException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
     }
 
 /* End of POST Mappings */

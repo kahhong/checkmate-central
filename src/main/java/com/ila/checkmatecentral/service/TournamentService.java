@@ -145,12 +145,13 @@ public class TournamentService {
                 .collect(Collectors.toList());
         int neededMatches = (int) Math.ceil(players.size()/2);
 
-        if(isPowerOf2(neededMatches) == false){
-            neededMatches = (int) Math.floor(log2(neededMatches) + 1);
+        if(!isPowerOf2(neededMatches)){
+            neededMatches = log2(neededMatches) + 1;
         }
 
         int round = getTournament(tournamentId).getRound();
 
+        
         for (int i = 0; i < neededMatches; i++) {
             UserAccount lowEloPlayer = sortedPlayers.get(i);
             UserAccount highEloPlayer = sortedPlayers.get(players.size() - 1 - i);
@@ -158,40 +159,43 @@ public class TournamentService {
         }
     }
     
-    public boolean isPowerOf2(int num){
+    public static boolean isPowerOf2(int num){
         return num > 0 && (num & (num - 1)) != 0;
     }
 
-    public int log2(int x) {
+    public static int log2(int x) {
         return (int) (Math.log(x) / Math.log(2));
     }
 
-    public ResponseEntity<?> setNextRound(int tournamentId){
+    public Tournament setNextRound(int tournamentId){
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
         if(tournament.getStatus() == TournamentStatus.COMPLETED){
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament is completed");
+            throw new InvalidTournamentStateException(
+                "Tournament is completed");
         }
 
         List<Match> matches = matchService.getMatches(tournamentId);
 
         if(!allCompleted(matches)){
-            return ResponseEntity.status(HttpStatus.OK).body("Not all matches are completed");
+            throw new InvalidTournamentStateException(
+                "Not all matches are completed");
         }
 
         List<UserAccount> playersLeft = getPlayersLeft(tournament);
 
         if (playersLeft.size() == 1) {
             endTournament(tournamentId);
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
+            throw new InvalidTournamentStateException(
+                "Tournament has ended");
         }
 
         tournament.setRound(tournament.getRound()+1);
         tournamentRepository.save(tournament);
 
         pairUp(playersLeft, tournamentId);
-        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+        return tournament;
     }
 
 

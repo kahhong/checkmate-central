@@ -43,7 +43,7 @@ function CreateTournamentForm() {
         method: "POST"
       });
 
-        console.log(response.json());
+        if(response.status === 200) { navigate('/dashboard'); }
 
     } catch (error) {
       console.error(error.message);

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { SERVER_URL } from "./env";
+import './index.css';
+import './vendor/bootstrap/css/bootstrap.min.css'
 
 const Table = ({data}) => {
   const headers = [
@@ -11,7 +13,7 @@ const Table = ({data}) => {
 
   return (
     <div>
-      <table>
+      <table className="table table-striped">
         <thead>
           <tr>
             {headers.map(head => (
@@ -34,41 +36,33 @@ const Table = ({data}) => {
 };
 
 function Dashboard() {
-
   const [data, setData] = useState([]);
 
-  async function getTournaments() {
-    const url = SERVER_URL + "/api/tournaments/list";
-    const requestHeader = {
-      'content-type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.accessToken
-    }
-
-    try {
-
-      const response = await fetch(url, {
-        headers: requestHeader,
-        method: 'GET'
-      });
-      console.log(response.json);
-
-    } catch (error) {
-      console.error(error.message);
-    }
-
+  const url = SERVER_URL + "/api/tournaments/list";
+  const requestHeader = {
+    'content-type': 'application/json',
+    'Authorization': 'Bearer ' + localStorage.accessToken
   }
+
+  useEffect(() => {
+    fetch(url, {
+      headers: requestHeader,
+      method: 'GET'
+    }).then(response => response.json())
+        .then(json => setData(json));
+  }, []);
 
   
   return (
     <div>
       <div className="hero-title container">
-        <div className="row justify-content-center">
+        <div>
           <h1>Checkmate Central</h1>
         </div>
       </div>
-      {getTournaments()}
-      <Table data={data} />
-
+      <div className="container">
+        <Table data={data} />
+      </div>
     </div>
   );
 }

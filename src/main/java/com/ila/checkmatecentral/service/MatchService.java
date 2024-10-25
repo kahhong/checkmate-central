@@ -45,6 +45,11 @@ public class MatchService {
         }
     }
 
+    public void createSingleMatch(UserAccount player1, UserAccount player2, int round, int tournamentId) {
+        Match match = new Match(player1, player2, LocalDateTime.now(), round, tournamentId);
+        matchRepository.save(match);
+    }
+
     public Match getMatch(Integer matchId) {
         return matchRepository.findByMatchIdWithoutPassword(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
     }

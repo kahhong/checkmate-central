@@ -2,6 +2,8 @@ package com.ila.checkmatecentral.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -119,64 +121,96 @@ public class TournamentService {
         }
     }
 
-    private static List<UserAccount> getLastMatchWinners(List<Match> matches) {
-        int highestRound = getHighestRound(matches);
-
-        List<UserAccount> winners = matches.stream()
-                        .filter(match -> match.getRound() == highestRound)
-                        .map(Match::getWinnerSK)
-                        .toList();
-
-        return winners;
+    private List<UserAccount> getPlayersLeft(Tournament tournament) {
+        List<UserAccount> players = tournament.getPlayerList();
+        List<Match> matches = matchService.getMatches(tournament.getTournamentId());
+        for (Match match : matches) {
+            players.remove(match.getLoser());
+        }
+        return players;
     }
 
-    private static int getHighestRound(List<Match> matches) {
-        return matches.stream()
-                .mapToInt(Match::getRound)
-                .max()
-                .orElse(0);
+    private boolean allCompleted(List<Match> matches){
+        for (Match match : matches) {
+            if (match.getMatchStatus() != MatchStatus.COMPLETED){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void pairUp(List<UserAccount> players, int tournamentId){
+        List<UserAccount> sortedPlayers = players.stream()
+                .sorted((user1, user2) -> Double.compare(user1.getRating(), user2.getRating()))
+                .collect(Collectors.toList());
+        int neededMatches = (int) Math.ceil(players.size()/2);
+
+        if(isPowerOf2(neededMatches) == false){
+            neededMatches = (int) Math.floor(log2(neededMatches) + 1);
+        }
+
+        int round = getTournament(tournamentId).getRound();
+
+        for (int i = 0; i < neededMatches; i++) {
+            UserAccount lowEloPlayer = sortedPlayers.get(i);
+            UserAccount highEloPlayer = sortedPlayers.get(players.size() - 1 - i);
+            matchService.createSingleMatch(lowEloPlayer, highEloPlayer, round, tournamentId);
+        }
+    }
+    
+    public boolean isPowerOf2(int num){
+        return num > 0 && (num & (num - 1)) != 0;
+    }
+
+    public int log2(int x) {
+        return (int) (Math.log(x) / Math.log(2));
     }
 
     public ResponseEntity<?> setNextRound(int tournamentId){
-        final List<Match> matches = matchService.getMatches(tournamentId);
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
-        if (!matches.stream().allMatch(match -> match.getMatchStatus() == MatchStatus.COMPLETED)) {
-            return ResponseEntity.status(HttpStatus.OK).body("Matches are not complete");
+        if(tournament.getStatus() == TournamentStatus.COMPLETED){
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament is completed");
         }
 
-        final List<UserAccount> winners = getLastMatchWinners(matches);
+        List<Match> matches = matchService.getMatches(tournamentId);
 
-        if (winners.size() == 1) {
+        if(!allCompleted(matches)){
+            return ResponseEntity.status(HttpStatus.OK).body("Not all matches are completed");
+        }
+
+        List<UserAccount> playersLeft = getPlayersLeft(tournament);
+
+        if (playersLeft.size() == 1) {
             endTournament(tournamentId);
             return ResponseEntity.status(HttpStatus.OK).body("Tournament has ended");
         }
 
-        int highestRound = getHighestRound(matches);
-        matchService.createMatches(winners, highestRound + 1, tournamentId);
+        tournament.setRound(tournament.getRound()+1);
+        tournamentRepository.save(tournament);
+
+        pairUp(playersLeft, tournamentId);
         return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
     }
 
-    public List<UserAccount> getPlayers(int tournamentId) {
-        Tournament currentTournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
-        return currentTournament.getPlayerList();
-    }
+
 
     public void startTournament(int tournamentId) throws InvalidTournamentStateException {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         List<UserAccount> players = tournament.getPlayerList();
         
-        if (players.size() != tournament.getMaxPlayers()) {
-            throw new InsufficientPlayersException(players.size(), tournament.getMaxPlayers());
-        }
+        // if (players.size() != tournament.getMaxPlayers()) {
+        //     throw new InsufficientPlayersException(players.size(), tournament.getMaxPlayers());
+        // }
         
         if (tournament.getStatus() != TournamentStatus.UPCOMING) {
             throw new InvalidTournamentStateException("Tournament has already started");
         }
 
         tournament.setStatus(TournamentStatus.ONGOING);
-        matchService.createMatches(players, 1, tournamentId);
+        pairUp(players, tournamentId);
     }
 
     private void endTournament(int tournamentId) {

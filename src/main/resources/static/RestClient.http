@@ -81,7 +81,7 @@ Authorization: Basic admin1@example.com password123
     "maxPlayers": "4",
     "minElo": "100",
     "type": "SINGLE_KNOCKOUT",
-    "startDate": "2024-10-20T05:09:10Z",
+    "startDate": "2024-10-26T05:09:10Z",
     "endDate": "2024-11-13T05:09:10Z"
 }
 ###

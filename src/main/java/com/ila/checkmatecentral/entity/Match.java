@@ -59,7 +59,7 @@ public class Match {
 
     protected Match() {}
 
-    public UserAccount getWinnerSK() {
+    public UserAccount getWinner() {
         if (outcome == MatchOutcome.WIN) {
             return player1;
 
@@ -68,6 +68,21 @@ public class Match {
         }
         // no draw in single knockout tournament -> assume draw, players will fight again until outcome is determined
         return null;
+    }
+
+    public UserAccount getLoser() {
+        if (outcome == MatchOutcome.WIN) {
+            return player2;
+
+        } else if (outcome == MatchOutcome.LOSE) {
+            return player1;
+        }
+        // no draw in single knockout tournament -> assume draw, players will fight again until outcome is determined
+        return null;
+    }
+
+    public MatchStatus getMatchStatus() {
+        return matchStatus;
     }
 
     @Override

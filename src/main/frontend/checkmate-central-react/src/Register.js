@@ -1,5 +1,6 @@
 import { useState } from "react";
-
+import { SERVER_URL } from "./env.js";
+import { useNavigate } from "react-router-dom";
 
 
 function RegisterForm() {
@@ -7,32 +8,45 @@ function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate();
 
-  function submitForm(e) {
+  async function register(e) {
     e.preventDefault();
 
-    let xhttp = new XMLHttpRequest();
-      let requestBody = {
-        name: name,
-        email: email,
-        password: password,
-        grantedAuthorityString: "ROLE_USER"
-      }
-  
-      xhttp.onreadystatechange = function() {
-          if (this.readyState === XMLHttpRequest.DONE && this.status === 201)  {
-              window.location.href = "/dashboard.html";
-              
-          } else if (this.readyState === XMLHttpRequest.DONE) {
-              console.error(this.responseText);
-          }
-      };
-  
-      xhttp.open("POST", "http://localhost:8080/auth/register", true);
-      xhttp.setRequestHeader('Content-type', 'application/json');
-      xhttp.send(JSON.stringify(requestBody));
-  }
 
+    const registerUrl = SERVER_URL + '/api/auth/register';
+
+    let requestBody = {
+      name: name,
+      email: email,
+      password: password,
+      grantedAuthorityString: "ROLE_ADMIN"
+    }
+    
+    const requestheader = {
+      'content-type': 'application/json',
+    }
+
+
+    try{
+      console.log(requestheader);
+      const response = await fetch(registerUrl, {
+        headers: requestheader,
+        body: JSON.stringify(requestBody),
+        method: "POST"
+      });
+
+      if(response.status === 201) {
+        navigate("/login");
+      }
+
+
+    } catch (error) {
+      
+      console.error(error.message);
+
+    }
+  }
 
   return (
     <div>
@@ -44,7 +58,7 @@ function RegisterForm() {
 
 
       <div className="container register-dialog">
-        <form onSubmit={submitForm}>
+        <form onSubmit={register}>
           <div className="mb-3">
             <label htmlFor="usernameInput" className="form-label">Username</label>
             <input type="text" className="form-control" id="usernameInput" 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SERVER_URL } from "./env";
 
 const Table = ({data}) => {
   const headers = [
@@ -36,22 +37,25 @@ function Dashboard() {
 
   const [data, setData] = useState([]);
 
-  function getTournaments() {
-    let xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function() {
-          if (this.readyState === XMLHttpRequest.DONE && this.status === 200)  {
-            const data = JSON.parse(this.responseText);
-            setData(data);
-              
-          } else if (this.readyState === XMLHttpRequest.DONE) {
-          }
-      };
-  
-      xhttp.open("GET", "http://localhost:8080/tournaments/list", true);
-      xhttp.setRequestHeader('Content-type', 'application/json');
-      xhttp.setRequestHeader('Authorization', 'Basic ' + btoa('admin1@example.com:password123'));
-      xhttp.withCredentials = true;
-      xhttp.send();
+  async function getTournaments() {
+    const url = SERVER_URL + "/api/tournaments/list";
+    const requestHeader = {
+      'content-type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.accessToken
+    }
+
+    try {
+
+      const response = await fetch(url, {
+        headers: requestHeader,
+        method: 'GET'
+      });
+      console.log(response.json);
+
+    } catch (error) {
+      console.error(error.message);
+    }
+
   }
 
   

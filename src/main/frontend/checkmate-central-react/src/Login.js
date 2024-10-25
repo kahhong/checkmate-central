@@ -12,7 +12,7 @@ function LoginForm() {
   async function login(e) {
     e.preventDefault();
 
-    const loginUrl = SERVER_URL + '/auth/login';
+    const loginUrl = SERVER_URL + '/api/auth/login';
 
     let requestBody = {
       email: email,
@@ -25,21 +25,18 @@ function LoginForm() {
 
 
     try{
-        const response = await fetch(loginUrl, {
-            headers: requestheader,
-            body: JSON.stringify(requestBody),
-            method: "POST"
-        });
-
-        response.json().then((data) => {
-            localStorage.setItem("accessToken", data.token);
-            localStorage.setItem("tokenExpiry", data.expiry);
-        });
-
-        if(response.status === 200) {
-            navigate("/createTournament");
-        }
-
+       fetch(loginUrl, {
+        headers: requestheader,
+        body: JSON.stringify(requestBody),
+        method: "POST"
+      })
+       .then((response) => response.json())
+       .then((data) => {
+          localStorage.setItem("accessToken", data.token);
+          localStorage.setItem("tokenExpiry", data.expiry);
+      });
+        
+      navigate("/createTournament");
 
     } catch (error) {
         console.error(error.message);

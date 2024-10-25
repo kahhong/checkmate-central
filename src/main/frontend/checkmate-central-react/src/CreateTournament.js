@@ -18,7 +18,7 @@ function CreateTournamentForm() {
     e.preventDefault();
 
 
-    const registerUrl = SERVER_URL + '/tournaments/';
+    const registerUrl = SERVER_URL + '/api/tournaments/';
 
     let requestBody = {
       name: name,
@@ -44,7 +44,6 @@ function CreateTournamentForm() {
       });
 
         console.log(response.json());
-        navigate('/dashboard');
 
     } catch (error) {
       console.error(error.message);

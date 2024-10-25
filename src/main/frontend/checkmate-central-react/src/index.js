@@ -2,16 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import './vendor/bootstrap/css/bootstrap.min.css'
-import Register from './Register';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import RegisterForm from './Register';
+import LoginForm from './Login';
 import Dashboard from './Dashboard';
+import CreateTournamentForm from './CreateTournament.js'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Register />
-    <Dashboard />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RegisterForm />}></Route>
+        <Route path="/login" element={<LoginForm />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/createTournament" element={<CreateTournamentForm />}></Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

@@ -34,6 +34,7 @@ function LoginForm() {
        .then((data) => {
           localStorage.setItem("accessToken", data.token);
           localStorage.setItem("tokenExpiry", data.expiry);
+          localStorage.setItem("userName", data.username);
       });
         
       navigate("/createTournament");

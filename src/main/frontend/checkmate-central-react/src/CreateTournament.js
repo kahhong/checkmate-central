@@ -89,6 +89,7 @@ function CreateTournamentForm() {
           
           <div className="mb-3">
             <label htmlFor="tournamentType" className="form-label">Tournament Type</label>
+            <br></br>
             <select id="tournamentType" name="type" defaultValue="SINGLE_KNOCKOUT"
               onChange={e => setTournamentType(e.target.value)}>
 
@@ -108,10 +109,13 @@ function CreateTournamentForm() {
               value={endDate} onChange={e => setEndDate(e.target.value)}></input>
           </div>
           
-          <button type="submit" className="btn btn-primary" id="create-button">Register</button>
+          <button type="submit" className="btn btn-primary" id="create-button">Create</button>
 
         </form>
       </div>
+      <footer>
+
+      </footer>
     </div>
   );
 }

@@ -2,6 +2,7 @@ package com.ila.checkmatecentral.controller;
 
 import com.ila.checkmatecentral.entity.LoginRequest;
 import com.ila.checkmatecentral.utility.JwtUtil;
+import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -105,7 +105,7 @@ public class TournamentService {
             throw new TournamentFullException(tournamentId);
         }
 
-        if (players.stream().anyMatch(tournamentPlayer -> tournamentPlayer.getId() == player.getId())) {
+        if (player.getTournament() != null) {
             throw new PlayerAlreadyInTournamentException(tournamentId);
         }
 

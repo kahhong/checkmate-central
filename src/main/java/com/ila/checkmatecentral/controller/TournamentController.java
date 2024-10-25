@@ -90,7 +90,7 @@ public class TournamentController {
         }
 
         try{
-        if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
+            if(tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
                 tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
                 return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
             } else {

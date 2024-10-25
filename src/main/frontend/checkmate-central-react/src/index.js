@@ -12,7 +12,7 @@ import CreateTournamentForm from './CreateTournament.js'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RegisterForm />}></Route>
@@ -21,7 +21,7 @@ root.render(
         <Route path="/createTournament" element={<CreateTournamentForm />}></Route>
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

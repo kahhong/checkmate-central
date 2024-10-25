@@ -3,20 +3,50 @@ import { SERVER_URL } from "./env";
 import './index.css';
 import './vendor/bootstrap/css/bootstrap.min.css'
 
+import Button from './components/Button'
+
 const Table = ({data}) => {
-  const headers = [
+  const dataHeaders = [
     "name",
     "description",
     "maxPlayers",
     "minElo"
   ];
 
+  const tableHeaders = [
+      "Name",
+      "Description",
+      "Capacity",
+      "Minimum Elo"
+  ]
+
+  const handleJoin = (event) => {
+    event.preventDefault();
+
+    const tournamentId = event.target.value;
+    const url = `${SERVER_URL}/api/tournaments/${tournamentId}/add`;
+    const requestHeader = {
+      'content-type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.accessToken
+    }
+
+    const requestBody = {
+      email: localStorage.userName
+    }
+    fetch(url, {
+      headers: requestHeader,
+      method: 'PUT',
+      body: JSON.stringify(requestBody)
+    })
+      .then(response => response.json());
+  }
+
   return (
-    <div>
+    <div className="container">
       <table className="table table-striped">
         <thead>
           <tr>
-            {headers.map(head => (
+            {tableHeaders.map(head => (
               <th>{head}</th>
             ))}
           </tr>
@@ -24,9 +54,14 @@ const Table = ({data}) => {
         <tbody>
           {data.map(row => (
             <tr>
-              {headers.map(head => (
-                <td>{row[head]}</td>
-              ))}
+              {dataHeaders.map(head => {
+                if (head === 'maxPlayers') {
+                  return <td>{row['playerList'].length + "/" + row[head]}</td>
+                }
+                return <td>{row[head]}</td>
+                }
+              )}
+              <td><Button children="Join" onClick={handleJoin} value={row['tournamentId']} disabled={false}/></td>
             </tr>
           ))}
         </tbody>
@@ -36,7 +71,7 @@ const Table = ({data}) => {
 };
 
 function Dashboard() {
-  const [data, setData] = useState([]);
+  let [data, setData] = useState([]);
 
   const url = SERVER_URL + "/api/tournaments/list";
   const requestHeader = {
@@ -50,21 +85,20 @@ function Dashboard() {
       method: 'GET'
     }).then(response => response.json())
         .then(json => setData(json));
-  }, []);
+  }, [])
 
-  
+
   return (
-    <div>
+    <>
       <div className="hero-title container">
-        <div>
-          <h1>Checkmate Central</h1>
-        </div>
+        <h1>List of Tournaments</h1>
       </div>
-      <div className="container">
-        <Table data={data} />
-      </div>
-    </div>
-  );
+      {/*<input onChange={(v) => setI(v.target.value)} value={i}></input>*/}
+      <Table data={data}/>
+    </>
+  )
 }
+
+
 
 export default Dashboard;

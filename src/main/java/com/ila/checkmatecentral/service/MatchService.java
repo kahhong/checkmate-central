@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.ila.checkmatecentral.entity.Match;
 import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.InvalidOutcomeException;
 import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.MatchRepository;

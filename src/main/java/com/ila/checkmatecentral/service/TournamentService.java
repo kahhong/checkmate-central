@@ -2,11 +2,8 @@ package com.ila.checkmatecentral.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Match;
@@ -14,7 +11,6 @@ import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.InsufficientPlayersException;
 import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
 import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
 import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
@@ -38,8 +34,11 @@ public class TournamentService {
         
         int numPlayers = tournament.getMaxPlayers();
 
+        /*
+         * TODO: Refactor this statement
+         */
         if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
-            throw new InvalidNumberOfPlayersException();
+            throw new InvalidNumberOfPlayersException(numPlayers);
         }
         
         if (tournament.getStartDate().isAfter(tournament.getEndDate())) {
@@ -204,10 +203,6 @@ public class TournamentService {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
         List<UserAccount> players = tournament.getPlayerList();
-        
-        // if (players.size() != tournament.getMaxPlayers()) {
-        //     throw new InsufficientPlayersException(players.size(), tournament.getMaxPlayers());
-        // }
         
         if (tournament.getStatus() != TournamentStatus.UPCOMING) {
             throw new InvalidTournamentStateException("Tournament has already started");

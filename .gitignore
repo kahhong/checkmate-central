@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+node_modules/
 logs/
 
 # Ignore the static resources as it will be populated by gradle tasks

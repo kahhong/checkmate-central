@@ -2,11 +2,9 @@ package com.ila.checkmatecentral.controller;
 
 import com.ila.checkmatecentral.entity.LoginRequest;
 import com.ila.checkmatecentral.utility.JwtUtil;
-import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,14 +13,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.ila.checkmatecentral.entity.UserAccount;
 import com.ila.checkmatecentral.service.UserAccountService;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +33,8 @@ public class AuthenticationController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, Model model) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, Model model, BindingResult bindingResults) {
+
         Authentication authenticationRequest =
             UsernamePasswordAuthenticationToken.unauthenticated(request.getEmail(), request.getPassword());
 
@@ -58,12 +55,17 @@ public class AuthenticationController {
             }
 
         } catch (BadCredentialsException e) {
-            log.error(e.getMessage());
+            Map<String, String> body = new HashMap<>();
+            body.put("message", "Could not login");
+            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+
         } catch (Exception e) {
-            log.error(e.getMessage());
+            Map<String, String> body = new HashMap<>();
+            body.put("message", "Internal Error");
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return ResponseEntity.badRequest().body("Could not log in");
+        return null;
     }
 
     @PostMapping("/register")

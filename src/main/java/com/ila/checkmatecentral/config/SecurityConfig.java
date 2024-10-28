@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -46,7 +47,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
-//                .requestMatchers(HttpMethod.GET, "/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
 
 //                .requestMatchers(HttpMethod.GET, "/match/*").hasAnyRole("USER", "ADMIN")
 //                .requestMatchers(HttpMethod.GET, "/match/list/*").hasAnyRole("USER", "ADMIN")
@@ -57,7 +58,7 @@ public class SecurityConfig {
 //                .requestMatchers(HttpMethod.PUT, "/tournaments/**").hasRole("ADMIN")
 //                .requestMatchers(HttpMethod.DELETE, "/tournaments/*").hasRole("ADMIN")
 
-//                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
 //                .anyRequest().authenticated()
                 .anyRequest().permitAll()
             )
@@ -86,7 +87,7 @@ public class SecurityConfig {
     
     @Bean
     RouterFunction<ServerResponse> spaRouter() {
-        final List<String> extensions = Arrays.asList("js", "css", "ico", "png", "jpg", "gif");
+        final List<String> extensions = Arrays.asList("js", "css", "ico", "png", "jpg", "gif", "svg");
         RequestPredicate spaPredicate = path("/api/**")
                 .or(path("/error"))
                 .or(pathExtension(extensions::contains))

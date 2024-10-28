@@ -93,7 +93,6 @@ function Dashboard() {
       <div className="hero-title container">
         <h1>List of Tournaments</h1>
       </div>
-      {/*<input onChange={(v) => setI(v.target.value)} value={i}></input>*/}
       <Table data={data}/>
     </>
   )

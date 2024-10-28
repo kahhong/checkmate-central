@@ -79,11 +79,11 @@ function LoginForm({setParentState}) {
             <Form.Group controlId="validationCustom01">
               <Form.Label>Email address</Form.Label>
               <Form.Control
-                  required
-                  type="email"
-                  placeholder="User Email"
-                  id="emailInput" aria-describedby="emailHelp"
-                  value={email} onChange={e => setEmail(e.target.value)}
+                required
+                type="email"
+                placeholder="User Email"
+                id="emailInput" aria-describedby="emailHelp"
+                value={email} onChange={e => setEmail(e.target.value)}
               />
               <Form.Control.Feedback type="invalid">Email is empty</Form.Control.Feedback>
             </Form.Group>
@@ -92,11 +92,11 @@ function LoginForm({setParentState}) {
             <Form.Group controlId="validationCustom02">
               <Form.Label htmlFor="password" className="form-label">Password</Form.Label>
               <Form.Control
-                  required
-                  type="password"
-                  placeholder="Password"
-                  id="password"
-                  value={password} onChange={e => setPassword(e.target.value)}
+                required
+                type="password"
+                placeholder="Password"
+                id="password"
+                value={password} onChange={e => setPassword(e.target.value)}
               />
                 <Form.Control.Feedback type="invalid">Password is empty</Form.Control.Feedback>
             </Form.Group>

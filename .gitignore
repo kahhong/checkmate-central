@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 node_modules/
+src/main/frontend/checkmate-central-react/build/**
 logs/
 
 # Ignore the static resources as it will be populated by gradle tasks

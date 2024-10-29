@@ -24,14 +24,19 @@ public class GlobalExceptionHandler {
     }
 
     private static ResponseEntity<Object> handleException(Exception ex, String message) {
+        return handleException(ex, message, HttpStatus.OK);
+    }
 
+    
+    private static ResponseEntity<Object> handleException(Exception ex, String message, HttpStatus httpStatus) {
         return new ResponseEntity<>(Map.of(
             "timestamp", LocalDateTime.now(),
-            "status", HttpStatus.OK.value(),
+            "status", httpStatus.value(),
             "error", "EXCEPTION: " + message,
             "message", ex.getMessage()
-        ), HttpStatus.OK);
+        ), httpStatus);
     }
+
 
     /*
      * TODO: Check whether all agree with HttpStatus.OK

@@ -10,6 +10,7 @@ import Dashboard from './Dashboard';
 import CreateTournamentForm from './CreateTournament.js'
 import App from "./App";
 import Register from "./Register";
+import Profile from "./Profile"; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -21,6 +22,7 @@ root.render(
             <Route path="/register" element={<Register />}></Route>
             <Route path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/createTournament" element={<CreateTournamentForm />}></Route>
+            <Route path="/profile" element={<Profile />}></Route>
       </Routes>
     </BrowserRouter>
   // </React.StrictMode>

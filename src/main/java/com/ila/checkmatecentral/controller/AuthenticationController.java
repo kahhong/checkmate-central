@@ -83,6 +83,7 @@ public class AuthenticationController {
 
 
 
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<?> handleUserExistsException(AuthenticationException ex) {
         return ResponseEntity.ok(ex.getMessage());

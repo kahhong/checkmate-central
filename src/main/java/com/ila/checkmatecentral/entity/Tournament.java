@@ -128,4 +128,9 @@ public class Tournament {
         this.playerList.add(player);
         player.setTournament(this);
     }
+
+    public void removePlayer(UserAccount player){
+        this.playerList.remove(player);
+        player.setTournament(this);
+    }
 }

@@ -11,10 +11,12 @@ import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.entity.Match.MatchOutcome;
 import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
 import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
 import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
+import com.ila.checkmatecentral.exceptions.PlayerNotInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentFullException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
@@ -110,6 +112,32 @@ public class TournamentService {
 
         currentTournament.addPlayer(player);
         tournamentRepository.save(currentTournament);
+    }
+
+    public void withdrawPlayer(int tournamentId, UserAccount player) {
+        final Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        List<UserAccount> players = currentTournament.getPlayerList();
+        List<Match> matches = matchService.getMatches(currentTournament.getTournamentId());
+        if (players.contains(player)) {
+            players.remove(player);
+            currentTournament.setPlayerList(players);
+            tournamentRepository.save(currentTournament);
+        }else{
+            throw new PlayerNotInTournamentException(tournamentId);
+        }
+        for (Match match : matches) {
+            if(match.getMatchStatus() == MatchStatus.ONGOING){
+                if(match.getPlayer1().equals(player)){
+                    matchService.updateMatchOutcome(match.getMatchId(), MatchOutcome.LOSE);
+                    break;
+                }else if(match.getPlayer2().equals(player)){
+                    matchService.updateMatchOutcome(match.getMatchId(), MatchOutcome.WIN);
+                    break;
+                }
+            }
+        }
+
     }
     
     private static void updateTournamentStatus(Tournament tournament) {

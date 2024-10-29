@@ -84,6 +84,27 @@ public class TournamentController {
     }
 
     @CrossOrigin
+    @PutMapping("/{id}/withdraw")
+    public ResponseEntity<?> withdrawTournament(@PathVariable("id") Integer tournamentId,
+            @RequestBody JsonNode json) {
+
+        String email = json.get("email").asText();
+        Tournament tournament = tournamentService.getTournament(tournamentId);
+
+        if (tournament.getStatus() == TournamentStatus.ONGOING) {
+            tournamentService.withdrawPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            return ResponseEntity.status(HttpStatus.OK).body("Player Withdrawed successfully");
+        }
+
+        if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
+            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+        }
+    }
+
+    @CrossOrigin
     @PutMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
         tournamentService.startTournament(tournamentId);

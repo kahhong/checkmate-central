@@ -84,6 +84,12 @@ public class GlobalExceptionHandler {
         return handleException(ex, "Player already in tournament");
     }
 
+    @ExceptionHandler(PlayerNotInTournamentException.class)
+    public ResponseEntity<Object> handlePlayerNotInTournament(PlayerAlreadyInTournamentException ex,
+            WebRequest request) {
+        return handleException(ex, "Player already in tournament");
+    }
+
     @ExceptionHandler(TournamentFullException.class)
     public ResponseEntity<Object> handleTournamentFullException(TournamentFullException ex, WebRequest request) {
         return handleException(ex, "Tournament is full");

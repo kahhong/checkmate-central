@@ -63,7 +63,7 @@ public class CreateTournamentControllerTest {
         json.put("endDate", "2024-11-01T15:35:41Z");
 
         // Action and Assert
-        mockMvc.perform(post("/tournaments/")
+        mockMvc.perform(post("/api/tournaments/")
                 .contentType("application/json")
                 .content(json.toString()))
             .andExpect(status().isBadRequest());

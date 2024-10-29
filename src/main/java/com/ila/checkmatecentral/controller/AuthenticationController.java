@@ -32,6 +32,9 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
+    /*
+     * TODO: Move Exception Handling to Global Exception Handler
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, Model model, BindingResult bindingResults) {
 

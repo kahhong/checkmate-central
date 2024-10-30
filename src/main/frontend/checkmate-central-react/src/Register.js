@@ -76,7 +76,7 @@ function RegisterForm() {
           <Container className="register-dialog">
             <Form noValidate onSubmit={handleSubmit}>
               <Row className="mb-3">
-                <Form.Group>
+                <Form.Group controlId="username">
                   <Form.Label>Username</Form.Label>
                   <Form.Control
                     type="text"
@@ -96,7 +96,7 @@ function RegisterForm() {
               </Row>
 
               <Row className="mb-3">
-                <Form.Group>
+                <Form.Group controlId="email">
                   <Form.Label>Email address</Form.Label>
                   <Form.Control
                     type="email"
@@ -114,7 +114,7 @@ function RegisterForm() {
               </Row>
 
               <Row className="mb-3">
-                <Form.Group>
+                <Form.Group controlId="password">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
@@ -133,7 +133,7 @@ function RegisterForm() {
               </Row>
 
               <Row className="mb-3">
-                <Form.Group>
+                <Form.Group controlId="confirmPassword">
                   <Form.Label>Confirm Password</Form.Label>
                   <Form.Control
                     type="password"

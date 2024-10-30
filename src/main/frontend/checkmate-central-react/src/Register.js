@@ -15,17 +15,17 @@ function RegisterForm() {
 
   const navigate = useNavigate();
 
-  async function register(e) {
-    e.preventDefault();
+  async function register({usernameInput, emailInput, password}) {
+    // e.preventDefault();
 
-    const form = e.currentTarget;
-    console.log(form)
+    // const form = e.currentTarget;
+    // console.log(values);
 
     const registerUrl = SERVER_URL + '/api/auth/register';
 
     let requestBody = {
-      name: name,
-      email: email,
+      name: usernameInput,
+      email: emailInput,
       password: password,
       grantedAuthorityString: "ROLE_ADMIN"
     }
@@ -62,11 +62,6 @@ function RegisterForm() {
     confirmPassword: Yup.string().required('Password is empty')
       .equals([Yup.ref("password")], "Passwords do not match")
   });
-
-  // const myHandleChange = (e) => {
-  //   useFormik(e).setFieldTouched(e.currentTarget);
-  //   useFormik(e).handleChange(e);
-  // }
 
   return (
     <>

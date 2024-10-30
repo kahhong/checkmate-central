@@ -1,26 +1,16 @@
-import { useState } from "react";
 import { SERVER_URL } from "./env.js";
 import { useNavigate } from "react-router-dom";
 
 import {Button, Container} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import {Formik, useFormik} from "formik";
+import {Formik} from "formik";
 import * as Yup from 'yup';
 
 function RegisterForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
   const navigate = useNavigate();
 
   async function register({usernameInput, emailInput, password}) {
-    // e.preventDefault();
-
-    // const form = e.currentTarget;
-    // console.log(values);
-
     const registerUrl = SERVER_URL + '/api/auth/register';
 
     let requestBody = {

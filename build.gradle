@@ -83,19 +83,12 @@ tasks.register('appNpmBuild', NpmTask) {
 	args = ["run", "build"]
 }
 
-//tasks.register('appNpxServe', NpxTask) {
-//	command = "serve"
-//	workingDir = file("$projectDir/src/main/frontend/checkmate-central-react")
-//	args = ["build/"]
-//}
-
 tasks.register('copyToFrontEnd', Copy) {
 	from("$projectDir/src/main/frontend/checkmate-central-react/build")
 	into("$projectDir/src/main/resources/static")
 }
 
 appNpmBuild.dependsOn(appNpmInstall)
-//appNpxServe.dependsOn(appNpmBuild)
 copyToFrontEnd.dependsOn(appNpmBuild)
 copyToFrontEnd.mustRunAfter(compileJava)
 processResources.dependsOn(copyToFrontEnd)

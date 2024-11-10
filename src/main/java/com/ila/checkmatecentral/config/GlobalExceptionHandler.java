@@ -101,5 +101,4 @@ public class GlobalExceptionHandler {
             WebRequest request) {
         return handleException(ex, "Tournament not found");
     }
-
 }

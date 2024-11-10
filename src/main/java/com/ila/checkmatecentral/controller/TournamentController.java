@@ -2,6 +2,8 @@ package com.ila.checkmatecentral.controller;
 
 import java.util.List;
 
+import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.service.AccountCredentialService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,7 +23,6 @@ import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +32,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/tournaments")
 public class TournamentController {
     public final TournamentService tournamentService;
-    public final UserAccountService userAccountService;
+    public final AccountCredentialService credentialService;
     public final MatchService matchService;
 
     /* Start of GET Mappings */
-    // @CrossOrigin
-    @GetMapping({ "/lists", "/list" })
+
+    @GetMapping("/list")
     public ResponseEntity<List<Tournament>> getAllTournaments() {
         List<Tournament> tournaments = tournamentService.getAllTournaments();
         return ResponseEntity.ok(tournaments);
@@ -49,9 +50,10 @@ public class TournamentController {
 
     /* End of GET Mappings */
 
+
+
     /* Start of POST Mappings */
 
-    // @CrossOrigin
     @PostMapping("/")
     public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -62,7 +64,6 @@ public class TournamentController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }
 
-    @CrossOrigin
     @PutMapping("/{id}/add")
     public ResponseEntity<?> addPlayersToTournament(@PathVariable("id") Integer tournamentId,
             @RequestBody JsonNode json) {
@@ -76,14 +77,13 @@ public class TournamentController {
         }
 
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
-            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            tournamentService.addPlayer(tournamentId, (Player) credentialService.loadUserByUsername(email));
             return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
         }
     }
 
-    @CrossOrigin
     @PutMapping("/{id}/withdraw")
     public ResponseEntity<?> withdrawTournament(@PathVariable("id") Integer tournamentId,
             @RequestBody JsonNode json) {
@@ -92,26 +92,24 @@ public class TournamentController {
         Tournament tournament = tournamentService.getTournament(tournamentId);
 
         if (tournament.getStatus() == TournamentStatus.ONGOING) {
-            tournamentService.withdrawPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            tournamentService.withdrawPlayer(tournamentId, (Player) credentialService.loadUserByUsername(email));
             return ResponseEntity.status(HttpStatus.OK).body("Player Withdrawed successfully");
         }
 
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
-            tournamentService.addPlayer(tournamentId, userAccountService.loadUserByUsername(email));
+            tournamentService.addPlayer(tournamentId, (Player) credentialService.loadUserByUsername(email));
             return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
         }
     }
 
-    @CrossOrigin
     @PutMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
         tournamentService.startTournament(tournamentId);
         return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
     }
 
-    @CrossOrigin
     @PutMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
         tournamentService.setNextRound(tournamentId);
@@ -119,6 +117,8 @@ public class TournamentController {
     }
 
     /* End of POST Mappings */
+
+
 
     /* Start of PUT Mappings */
 
@@ -138,6 +138,8 @@ public class TournamentController {
 
     /* End of PUT Mappings */
 
+
+
     /* Start of DELETE Mappings */
 
     @CrossOrigin
@@ -152,5 +154,4 @@ public class TournamentController {
     }
 
     /* End of DELETE Mappings */
-
 }

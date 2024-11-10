@@ -55,7 +55,7 @@ public class Tournament {
     @Setter
     @OneToMany(mappedBy = "tournament")
     @JsonManagedReference
-    private List<UserAccount> playerList;
+    private List<Player> playerList;
 
     // End of server generated fields
 
@@ -124,12 +124,12 @@ public class Tournament {
 
      // End of user input fields
 
-    public void addPlayer(UserAccount player){
+    public void addPlayer(Player player){
         this.playerList.add(player);
         player.setTournament(this);
     }
 
-    public void removePlayer(UserAccount player){
+    public void removePlayer(Player player){
         this.playerList.remove(player);
         player.setTournament(this);
     }

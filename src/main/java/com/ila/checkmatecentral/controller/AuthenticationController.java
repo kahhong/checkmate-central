@@ -1,7 +1,9 @@
 package com.ila.checkmatecentral.controller;
 
+import com.ila.checkmatecentral.entity.Admin;
 import com.ila.checkmatecentral.entity.LoginRequest;
 import com.ila.checkmatecentral.exceptions.InvalidCredentialsException;
+import com.ila.checkmatecentral.service.AccountCredentialService;
 import com.ila.checkmatecentral.utility.JwtUtil;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -12,60 +14,56 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.service.UserAccountService;
+import com.ila.checkmatecentral.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@Slf4j
 @RequiredArgsConstructor
 public class AuthenticationController {
-    private final UserAccountService userService;
-    @Resource(name = "userAuthenticationManager")
-    private final AuthenticationManager userAuthenticationManager;
-    private final JwtUtil jwtUtil;
+    private final AccountCredentialService credentialService;
+    private final AuthenticationManager authenticationManager;
 
-    /*
-     * TODO: Move Exception Handling to Global Exception Handler
-     */
+
+    @PostMapping("/register/player")
+    public ResponseEntity<?> registerPlayer(@RequestBody Map<String, String> map) {
+        Player player = new Player(map.get("email"), map.get("name"), map.get("password"));
+        credentialService.registerPlayer(player);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Player created successfully.");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/register/admin")
+    public ResponseEntity<?> registerAdmin(@RequestBody Map<String, String> map) {
+        Admin admin = new Admin(map.get("email"), map.get("name"), map.get("password"));
+        credentialService.registerAdmin(admin);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Admin created successfully.");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-
         Authentication authenticationRequest =
             UsernamePasswordAuthenticationToken.unauthenticated(request.getEmail(), request.getPassword());
 
-        try {
-            Authentication authResponse = this.userAuthenticationManager.authenticate(authenticationRequest);
-            final UserDetails userDetails;
-            final String jwtToken;
-            if (authResponse.getPrincipal() instanceof UserDetails) {
-                userDetails = (UserDetails) authResponse.getPrincipal();
-                jwtToken = jwtUtil.generateToken(userDetails);
+            Authentication authResponse = authenticationManager.authenticate(authenticationRequest);
+            if (authResponse.getPrincipal() instanceof UserDetails userDetails) {
+                final String jwtToken = JwtUtil.generateToken(userDetails);
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("token", jwtToken);
-                response.put("expiry", jwtUtil.extractExpiration(jwtToken));
+                response.put("expiry", JwtUtil.extractExpiration(jwtToken));
                 response.put("username", userDetails.getUsername());
 
                 return ResponseEntity.ok().body(response);
             }
-
-        } catch (Exception e) {
-            throw new InvalidCredentialsException("Invalid credentials");
-        }
-
         return null;
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserAccount user) {
-        // TODO: Refactor granted authority validation
-        UserAccount createdUser =  userService.register(user);
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 }

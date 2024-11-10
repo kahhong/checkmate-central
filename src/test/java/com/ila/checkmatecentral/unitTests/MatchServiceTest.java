@@ -12,11 +12,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.TournamentType;
-import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.entity.Player;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
 
 public class MatchServiceTest {
     @Mock
@@ -32,7 +31,7 @@ public class MatchServiceTest {
     private MatchService matchService;
 
     private Tournament tournament;
-    private UserAccount userAccount;
+    private Player player;
 
     @BeforeEach
     void setUp() {
@@ -58,7 +57,7 @@ public class MatchServiceTest {
         ReflectionTestUtils.setField(tournament, "matches", new ArrayList<>());
         ReflectionTestUtils.setField(tournament, "playerList", new ArrayList<>());
 
-        userAccount = new UserAccount("test@example.com", "Test User", "password123", "ROLE_PLAYER");
+        player = new Player("test@example.com", "Test User", "password123");
     }
 
 

@@ -16,7 +16,6 @@ import com.ila.checkmatecentral.config.SecurityConfig;
 import com.ila.checkmatecentral.controller.TournamentController;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
 
 // TODO: Eventually when we decide on the exact error messages, we will add them into the tests
 

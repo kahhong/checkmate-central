@@ -1,6 +1,6 @@
 package com.ila.checkmatecentral;
 
-import com.ila.checkmatecentral.entity.AdminAccount;
+import com.ila.checkmatecentral.entity.Admin;
 import com.ila.checkmatecentral.entity.TournamentType;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,12 +29,12 @@ public class AdminIntegrationTest {
 
     @BeforeAll
     static void setUp(@Autowired MockMvc mockMvc) throws Exception {
-        AdminAccount admin = new AdminAccount("admin@gmail.com", "admin", "password");
+        Admin admin = new Admin("admin@gmail.com", "admin", "password");
         adminToken = getAdminToken(admin, mockMvc);
         adminToken = getAdminToken(admin, mockMvc);
     }
 
-    static String getAdminToken(AdminAccount user, MockMvc mockMvc) throws Exception {
+    static String getAdminToken(Admin user, MockMvc mockMvc) throws Exception {
         final JSONObject userJSON = new JSONObject()
             .put("name", user.getName())
             .put("email", user.getEmail())
@@ -62,7 +62,7 @@ public class AdminIntegrationTest {
     void testAdminRegister() throws Exception {
         // Arrange
         JSONObject expectedResponse = new JSONObject().put("message", "Admin account registered successfully.");
-        AdminAccount admin = new AdminAccount("admin@gmail.com", "admin", "password");
+        Admin admin = new Admin("admin@gmail.com", "admin", "password");
 
         // Act
         final JSONObject adminJSON = new JSONObject()

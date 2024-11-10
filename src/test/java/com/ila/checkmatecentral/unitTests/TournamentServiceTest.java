@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,13 +25,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.entity.TournamentType;
-import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.entity.Player;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
 
 @SpringBootTest
 public class TournamentServiceTest {
@@ -50,7 +48,7 @@ public class TournamentServiceTest {
     private TournamentService tournamentService;
 
     private Tournament tournament;
-    private UserAccount userAccount;
+    private Player player;
 
     @BeforeEach
     void setUp() {
@@ -78,7 +76,7 @@ public class TournamentServiceTest {
 
 
 
-        userAccount = new UserAccount("test@example.com", "Test User", "password123", "ROLE_PLAYER");
+        player = new Player("test@example.com", "Test User", "password123");
     }
 
     @Test
@@ -136,7 +134,7 @@ public class TournamentServiceTest {
     @Test
     void testAddPlayer_PlayerAlreadyInTournament() {
         // Given: Mock player is already in the tournament's player list
-        tournament.addPlayer(userAccount);
+        tournament.addPlayer(player);
         tournament.setStatus(TournamentStatus.UPCOMING);
 
         // Mocking repository and service calls
@@ -144,7 +142,7 @@ public class TournamentServiceTest {
 
         // When & Then: Expect PlayerAlreadyInTournamentException
         assertThrows(PlayerAlreadyInTournamentException.class,
-            () -> tournamentService.addPlayer(tournament.getTournamentId(), userAccount) // Trying to add the same user
+            () -> tournamentService.addPlayer(tournament.getTournamentId(), player) // Trying to add the same user
         );
 
         // Verify interactions with the mocked repository

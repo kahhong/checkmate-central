@@ -3,16 +3,13 @@ package com.ila.checkmatecentral.unitTests;
 import com.ila.checkmatecentral.WithMockAdmin;
 import com.ila.checkmatecentral.config.SecurityConfig;
 import com.ila.checkmatecentral.controller.TournamentController;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-import com.ila.checkmatecentral.repository.UserAccountRepository;
 import com.ila.checkmatecentral.service.MatchService;
 import com.ila.checkmatecentral.service.TournamentService;
-import com.ila.checkmatecentral.service.UserAccountService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,21 +30,15 @@ public class CreateTournamentControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    // TODO: Remove these when the dependencies are removed from TournamentController.class
-    @MockBean
+    @Mock
     private TournamentService tournamentService;
 
-    @MockBean
-    private TournamentRepository tournamentRepository;
-
-    @MockBean
-    private MatchService matchService;
-
-    @MockBean
+    @Mock
     private UserAccountService userAccountService;
 
-    @MockBean
-    private UserAccountRepository userAccountRepository;
+    @Mock
+    private MatchService matchService;
+
 
     @Test
     @WithMockAdmin

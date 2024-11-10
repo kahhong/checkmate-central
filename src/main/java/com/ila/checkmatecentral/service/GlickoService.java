@@ -3,11 +3,11 @@ package com.ila.checkmatecentral.service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import com.ila.checkmatecentral.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 
 import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.repository.UserAccountRepository;
+import com.ila.checkmatecentral.entity.Player;
 import com.ila.checkmatecentral.utility.GlickoCalculator;
 
 import jakarta.transaction.Transactional;
@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 
 public class GlickoService {
 
-    public final UserAccountRepository userAccountRepository;
+    public final PlayerRepository playerRepository;
 
     // Given a match object, it will retrieve both player and the score and update each player's Rating and RD accordingly.
     public void updateRatings(Match match) {
-        UserAccount player1 = match.getPlayer1();
-        UserAccount player2 = match.getPlayer2();
+        Player player1 = match.getPlayer1();
+        Player player2 = match.getPlayer2();
 
         player1 = inactivityAdjustment(player1);
         player2 = inactivityAdjustment(player2);
@@ -40,20 +40,20 @@ public class GlickoService {
 
     }
 
-    public UserAccount inactivityAdjustment(UserAccount player) {
+    public Player inactivityAdjustment(Player player) {
         long weeks = ChronoUnit.WEEKS.between(player.getTimeLastPlayed(), LocalDateTime.now());
 
         if (weeks > 2) {
             double adjustedRatingDeviation = GlickoCalculator.adjustRatingDeviationForInactivity(player.getRatingDeviation(), weeks);
             player.setRatingDeviation(adjustedRatingDeviation);
-            userAccountRepository.save(player);
+            playerRepository.save(player);
         }
 
         return player;
     }
     // for now it will just print out
     @Transactional
-    public void updatePlayerRating(UserAccount player, UserAccount opponent, double score) {
+    public void updatePlayerRating(Player player, Player opponent, double score) {
         double newRating = GlickoCalculator.calculateNewRating(
                 player.getRating(),
                 player.getRatingDeviation(),
@@ -74,6 +74,6 @@ public class GlickoService {
         player.setRating(newRating);
         player.setRatingDeviation(newRD);
         player.setTimeLastPlayed(LocalDateTime.now());
-        userAccountRepository.save(player);
+        playerRepository.save(player);
     }
 }

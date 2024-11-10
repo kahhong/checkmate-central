@@ -1,7 +1,7 @@
 package com.ila.checkmatecentral;
 
 import com.ila.checkmatecentral.entity.TournamentType;
-import com.ila.checkmatecentral.entity.UserAccount;
+import com.ila.checkmatecentral.entity.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,19 +29,18 @@ public class IntegrationTest {
 
     @BeforeAll
     static void setUp(@Autowired MockMvc mockMvc) throws Exception {
-        UserAccount user = new UserAccount("user@gmail.com", "user", "password", "ROLE_USER");
-        UserAccount admin = new UserAccount("admin@gmail.com", "admin", "password", "ROLE_ADMIN");
+        Player user = new Player("user@gmail.com", "user", "password");
+        Player admin = new Player("admin@gmail.com", "admin", "password");
         userToken = getUserToken(user, mockMvc);
         adminToken = getUserToken(admin, mockMvc);
     }
     
-    @Test
-    static String getUserToken(UserAccount user, MockMvc mockMvc) throws Exception {
+
+    static String getUserToken(Player user, MockMvc mockMvc) throws Exception {
         final JSONObject userJSON = new JSONObject()
             .put("name", user.getName())
             .put("email", user.getEmail())
-            .put("password", user.getPassword())
-            .put("grantedAuthorityString", user.getGrantedAuthorityString());
+            .put("password", user.getPassword());
 
         mockMvc.perform(post("/api/auth/register")
                 .contentType("application/json")

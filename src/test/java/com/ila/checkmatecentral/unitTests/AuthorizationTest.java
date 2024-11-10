@@ -36,9 +36,7 @@ public class AuthorizationTest {
     @Mock
     private MatchService matchService;
 
-
     @Test
-    @WithMockUser
     public void testCreateTournament_withUser_returnsUnauthorized() throws Exception {
         mockMvc.perform(post("/api/tournaments/")
                 .contentType("application/json")

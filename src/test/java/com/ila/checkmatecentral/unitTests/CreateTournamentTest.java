@@ -27,7 +27,7 @@ import com.ila.checkmatecentral.service.TournamentService;
  */
 @WebMvcTest(TournamentController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class CreateTournamentControllerTest {
+public class CreateTournamentTest {
     private static String END_POINT = "/api/tournaments/";
 
     @Autowired

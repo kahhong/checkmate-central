@@ -9,10 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,7 +35,7 @@ public class AuthenticationController {
      * TODO: Move Exception Handling to Global Exception Handler
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, Model model, BindingResult bindingResults) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
 
         Authentication authenticationRequest =
             UsernamePasswordAuthenticationToken.unauthenticated(request.getEmail(), request.getPassword());
@@ -70,7 +68,7 @@ public class AuthenticationController {
         // TODO: Refactor granted authority validation
         if(user.validAuthority()) {
             UserAccount createdUser =  userService.register(user);
-            return new ResponseEntity<UserAccount>(createdUser, HttpStatus.CREATED);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         }
         return ResponseEntity.badRequest().body("Invalid authority: " + user.getGrantedAuthorityString());
     }

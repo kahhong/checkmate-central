@@ -30,11 +30,11 @@ public class Match {
     // one player can enter multiple matches
     @ManyToOne
     @JoinColumn(name = "player1Id", referencedColumnName = "id")
-    private UserAccount player1;
+    private Player player1;
 
     @ManyToOne
     @JoinColumn(name = "player2Id", referencedColumnName = "id")
-    private UserAccount player2;
+    private Player player2;
 
     @Enumerated(EnumType.STRING)
     private MatchOutcome outcome;
@@ -46,7 +46,7 @@ public class Match {
     public enum MatchOutcome {
         WIN, LOSE, DRAW, NO_RESULT
     }
-    public Match(UserAccount player1, UserAccount player2, LocalDateTime dateTime, int round, Integer tournamentId) {
+    public Match(Player player1, Player player2, LocalDateTime dateTime, int round, Integer tournamentId) {
         this.player1 = player1;
         this.player2 = player2;
         this.matchDateTime = dateTime;
@@ -59,7 +59,7 @@ public class Match {
 
     protected Match() {}
 
-    public UserAccount getWinner() {
+    public Player getWinner() {
         if (outcome == MatchOutcome.WIN) {
             return player1;
 
@@ -70,7 +70,7 @@ public class Match {
         return null;
     }
 
-    public UserAccount getLoser() {
+    public Player getLoser() {
         if (outcome == MatchOutcome.WIN) {
             return player2;
 

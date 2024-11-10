@@ -7,8 +7,11 @@ import static org.springframework.web.servlet.function.RouterFunctions.route;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ila.checkmatecentral.entity.AdminAccount;
+import com.ila.checkmatecentral.service.AdminAccountService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -96,9 +99,9 @@ public class SecurityConfig {
         return route().resource(spaPredicate, index).build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(UserAccountService userDetailsService,
-                                                       PasswordEncoder passwordEncoder) throws Exception {
+    @Bean(name = "userAuthenticationManager")
+    @Primary
+    public AuthenticationManager userAuthenticationManager(UserAccountService userDetailsService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
@@ -106,6 +109,14 @@ public class SecurityConfig {
         return new ProviderManager(authProvider);
     }
 
+    @Bean(name = "adminAuthenticationManager")
+    public AuthenticationManager adminAuthenticationManager(AdminAccountService adminDetailsService, PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(adminDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+
+        return new ProviderManager(authProvider);
+    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

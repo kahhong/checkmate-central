@@ -16,8 +16,7 @@ function RegisterForm() {
     let requestBody = {
       name: usernameInput,
       email: emailInput,
-      password: password,
-      grantedAuthorityString: "ROLE_ADMIN"
+      password: password
     }
 
     const requestHeader = {
@@ -30,8 +29,6 @@ function RegisterForm() {
         body: JSON.stringify(requestBody),
         method: "POST"
       });
-
-      const json = await response.json();
 
       if (response.status === 201) {
         navigate("/login");

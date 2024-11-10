@@ -1,35 +1,34 @@
 package com.ila.checkmatecentral.service;
 
+import com.ila.checkmatecentral.entity.AdminAccount;
+import com.ila.checkmatecentral.exceptions.AccountExistsException;
 import com.ila.checkmatecentral.exceptions.InvalidCredentialsException;
+import com.ila.checkmatecentral.repository.AdminAccountRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.AccountExistsException;
-import com.ila.checkmatecentral.repository.UserAccountRepository;
-
-import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Slf4j
-public class UserAccountService implements UserDetailsService {
-    private final UserAccountRepository repository;
+public class AdminAccountService implements UserDetailsService {
+    private final AdminAccountRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserAccountService(UserAccountRepository repository, PasswordEncoder passwordEncoder) {
+    public AdminAccountService(AdminAccountRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public UserAccount loadUserByUsername(String email) throws UsernameNotFoundException {
+    public AdminAccount loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
-    public UserAccount loadUserById(long id) throws UsernameNotFoundException {
+    public AdminAccount loadUserById(long id) throws UsernameNotFoundException {
         return repository.findById(id)
             .orElseThrow(() -> new UsernameNotFoundException("" + id));
     }
@@ -38,9 +37,8 @@ public class UserAccountService implements UserDetailsService {
         return repository.findByEmail(email).isPresent();
     }
     
-    public UserAccount register(UserAccount user) throws AccountExistsException {
-        
-        if (exists(user.getEmail())) {
+    public AdminAccount register(AdminAccount user) throws AuthenticationException {
+        if(exists(user.getEmail())) {
             throw new AccountExistsException(user);
         }
         
@@ -51,7 +49,7 @@ public class UserAccountService implements UserDetailsService {
 
         String password = passwordEncoder.encode(rawPassword);
         
-        return repository.save(new UserAccount(user.getEmail(), user.getName(), password));
+        return repository.save(new AdminAccount(user.getEmail(), user.getName(), password));
     }
     
     // TODO: Externalize password validation into another class for more complex requirements

@@ -14,36 +14,41 @@
 // ELO used to restrict players from Tournaments
 // Also used to match lowest ELO with Highest Elo
 ### Create Admin
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/auth/admin/register
 Content-Type: application/json
 
 {
   "name": "admin_one",
   "email": "admin1@example.com",
-  "password": "password123",
-  "grantedAuthorityString": "ROLE_ADMIN"
+  "password": "password123"
+}
+
+### Login Admin
+POST http://localhost:8080/api/auth/admin/login
+Content-Type: application/json
+
+{
+  "email": "admin1@example.com",
+  "password": "password123"
 }
 
 ### Create Players
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
     "name": "john_doe",
 	"email": "john@example.com",
-    "password": "password123",
-    "grantedAuthorityString": "ROLE_USER"
+    "password": "password123"
 }
 
 ###
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-    "name": "john_doe2",
-	"email": "john2@example.com",
-    "password": "password123",
-  "grantedAuthorityString": "ROLE_USER"
+	"email": "john@example.com",
+    "password": "password123"
 }
 
 ###

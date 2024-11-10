@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return handleException(ex, message, HttpStatus.OK);
     }
 
-    
+
     private static ResponseEntity<Object> handleException(Exception ex, String message, HttpStatus httpStatus) {
         return new ResponseEntity<>(Map.of(
             "timestamp", LocalDateTime.now(),

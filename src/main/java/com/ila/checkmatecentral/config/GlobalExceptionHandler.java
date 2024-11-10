@@ -58,9 +58,10 @@ public class GlobalExceptionHandler {
         return handleException(ex, "Invalid number of players");
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException ex, WebRequest request) {
-        return handleException(ex, "Invalid password");
+    @ExceptionHandler({InvalidCredentialsException.class})
+    public ResponseEntity<Object> handleInvalidCredentialsException(InvalidCredentialsException ex, WebRequest request) {
+        log.error("caught bad credentials error");
+        return handleException(ex, "Invalid credentials", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidTournamentException.class)

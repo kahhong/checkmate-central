@@ -1,6 +1,7 @@
 package com.ila.checkmatecentral.controller;
 
 import com.ila.checkmatecentral.entity.LoginRequest;
+import com.ila.checkmatecentral.exceptions.InvalidCredentialsException;
 import com.ila.checkmatecentral.utility.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,15 +58,8 @@ public class AuthenticationController {
                 return ResponseEntity.ok().body(response);
             }
 
-        } catch (BadCredentialsException e) {
-            Map<String, String> body = new HashMap<>();
-            body.put("message", "Could not login");
-            return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
-
         } catch (Exception e) {
-            Map<String, String> body = new HashMap<>();
-            body.put("message", "Internal Error");
-            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new InvalidCredentialsException("Invalid credentials");
         }
 
         return null;
@@ -79,15 +73,5 @@ public class AuthenticationController {
             return new ResponseEntity<UserAccount>(createdUser, HttpStatus.CREATED);
         }
         return ResponseEntity.badRequest().body("Invalid authority: " + user.getGrantedAuthorityString());
-    }
-
-
-
-
-
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<?> handleUserExistsException(AuthenticationException ex) {
-        return ResponseEntity.ok(ex.getMessage());
     }
 }

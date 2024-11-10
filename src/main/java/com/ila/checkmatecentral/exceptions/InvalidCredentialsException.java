@@ -2,9 +2,9 @@ package com.ila.checkmatecentral.exceptions;
 
 import org.springframework.security.core.AuthenticationException;
 
-public class InvalidPasswordException extends AuthenticationException {
+public class InvalidCredentialsException extends AuthenticationException {
 
-	public InvalidPasswordException(String msg) {
+	public InvalidCredentialsException(String msg) {
 		super(msg);
 	}
 

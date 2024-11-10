@@ -1,28 +1,16 @@
 package com.ila.checkmatecentral.service;
 
+import com.ila.checkmatecentral.entity.*;
+import com.ila.checkmatecentral.entity.Match.MatchOutcome;
+import com.ila.checkmatecentral.exceptions.*;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
-import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.MatchStatus;
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
-import com.ila.checkmatecentral.entity.Player;
-import com.ila.checkmatecentral.entity.Match.MatchOutcome;
-import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
-import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
-import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
-import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
-import com.ila.checkmatecentral.exceptions.PlayerNotInTournamentException;
-import com.ila.checkmatecentral.exceptions.TournamentFullException;
-import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service

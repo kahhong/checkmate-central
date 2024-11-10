@@ -1,10 +1,10 @@
 package com.ila.checkmatecentral.entity;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Getter
 @AllArgsConstructor

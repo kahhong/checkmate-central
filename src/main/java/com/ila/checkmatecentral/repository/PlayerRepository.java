@@ -1,12 +1,11 @@
 package com.ila.checkmatecentral.repository;
 
-import java.util.Optional;
-
 import com.ila.checkmatecentral.entity.AccountCredential;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.ila.checkmatecentral.entity.Player;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
+
+import java.util.Optional;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     @NonNull

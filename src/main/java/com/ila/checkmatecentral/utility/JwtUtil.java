@@ -1,25 +1,15 @@
 package com.ila.checkmatecentral.utility;
 
-import java.security.*;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
-import java.util.function.Function;
-
-import io.jsonwebtoken.impl.security.DefaultJwkContext;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
-import org.aspectj.apache.bcel.classfile.annotation.RuntimeTypeAnnos;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
+import java.util.Base64;
+import java.util.Date;
+import java.util.function.Function;
 
 public class JwtUtil {
     private JwtUtil() {}

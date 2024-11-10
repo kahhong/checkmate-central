@@ -1,12 +1,6 @@
 package com.ila.checkmatecentral.service;
 
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.ila.checkmatecentral.entity.Match;
 import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.Player;
@@ -14,9 +8,13 @@ import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.MatchRepository;
 import com.ila.checkmatecentral.repository.TournamentRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -3,7 +3,6 @@ package com.ila.checkmatecentral.repository;
 import com.ila.checkmatecentral.entity.AccountCredential;
 import com.ila.checkmatecentral.entity.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.NonNull;
 
 import java.util.Optional;

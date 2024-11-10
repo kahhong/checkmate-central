@@ -1,15 +1,14 @@
 package com.ila.checkmatecentral.entity;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Setter
 @Getter

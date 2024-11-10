@@ -1,13 +1,8 @@
 package com.ila.checkmatecentral.config;
 
-import static org.springframework.web.servlet.function.RequestPredicates.path;
-import static org.springframework.web.servlet.function.RequestPredicates.pathExtension;
-import static org.springframework.web.servlet.function.RouterFunctions.route;
-
-import java.util.Arrays;
-import java.util.List;
-
 import com.ila.checkmatecentral.service.AccountCredentialService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -29,8 +24,12 @@ import org.springframework.web.servlet.function.RequestPredicate;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.springframework.web.servlet.function.RequestPredicates.path;
+import static org.springframework.web.servlet.function.RequestPredicates.pathExtension;
+import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 @Slf4j
 @Configuration

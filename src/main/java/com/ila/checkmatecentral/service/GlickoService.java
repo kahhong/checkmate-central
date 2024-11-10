@@ -1,17 +1,15 @@
 package com.ila.checkmatecentral.service;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
-import com.ila.checkmatecentral.repository.PlayerRepository;
-import org.springframework.stereotype.Service;
-
 import com.ila.checkmatecentral.entity.Match;
 import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.repository.PlayerRepository;
 import com.ila.checkmatecentral.utility.GlickoCalculator;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @RequiredArgsConstructor
 @Service

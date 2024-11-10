@@ -4,7 +4,9 @@ import './index.css';
 import './vendor/bootstrap/css/bootstrap.min.css'
 
 import Button from './components/Button'
+import {Container} from "react-bootstrap";
 
+import {MyNavbar} from "./components/MyNavbar";
 const Table = ({data}) => {
   const dataHeaders = [
     "name",
@@ -90,9 +92,12 @@ function Dashboard() {
 
   return (
     <>
-      <div className="hero-title container">
+      <MyNavbar></MyNavbar>
+
+      <Container className="hero-title">
         <h1>List of Tournaments</h1>
-      </div>
+      </Container>
+
       <Table data={data}/>
     </>
   )

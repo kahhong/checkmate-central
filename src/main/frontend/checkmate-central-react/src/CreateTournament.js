@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { SERVER_URL } from "./env.js";
 import { useNavigate } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import { MyNavbar } from "./components/MyNavbar";
 
 
 function CreateTournamentForm() {
@@ -51,12 +53,13 @@ function CreateTournamentForm() {
   }
 
   return (
-    <div>
-      <div className="hero-title container">
+    <>
+      <MyNavbar></MyNavbar>
+      <Container className="hero-title container">
         <div className="row justify-content-center">
-          <h1>Checkmate Central</h1>
+          <h1>Create a new tournament</h1>
         </div>
-      </div>
+      </Container>
 
 
       <div className="container register-dialog">
@@ -116,7 +119,7 @@ function CreateTournamentForm() {
       <footer>
 
       </footer>
-    </div>
+    </>
   );
 }
 

@@ -38,6 +38,8 @@ jobs:
         cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/release' }}
 
     - name: Build with Gradle Wrapper
+      env:
+        CI: false  # npm ignore warnings for CI builds
       run: chmod +x ./gradlew && ./gradlew build
     
     - name: Upload build

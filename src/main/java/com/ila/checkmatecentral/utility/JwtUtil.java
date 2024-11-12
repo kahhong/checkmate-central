@@ -4,16 +4,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.experimental.UtilityClass;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
-
-public final class JwtUtil {
-    private JwtUtil() {}
-
+@UtilityClass
+public class JwtUtil {
     private static final SecretKey key = Jwts.SIG.HS256.key().build();
     private static final String SECRET = Base64.getEncoder().encodeToString(key.getEncoded());
 

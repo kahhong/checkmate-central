@@ -4,7 +4,7 @@ package com.ila.checkmatecentral.utility;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public final class GlickoCalculator {
+public class GlickoCalculator {
     private static final double Q = Math.log(10) / 400;
     private static final double RD_CONSTANT = 50;
     private static final double MAX_RD = 350;

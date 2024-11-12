@@ -11,7 +11,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
 
-public class JwtUtil {
+public final class JwtUtil {
     private JwtUtil() {}
 
     private static final SecretKey key = Jwts.SIG.HS256.key().build();

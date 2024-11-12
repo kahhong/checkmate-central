@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,8 +28,8 @@ public class MatchController {
     // get every match from ONE tournament
     @GetMapping({ "/list/{tournamentId}" })
     public ResponseEntity<?> getMatchesFromTournament(@PathVariable("tournamentId") Integer tournamentId) {
-        List<Match> match = matchService.getMatches(tournamentId);
-        return ResponseEntity.status(HttpStatus.OK).body(match);
+        List<Match> matches = matchService.getMatches(tournamentId);
+        return ResponseEntity.status(HttpStatus.OK).body(matches);
     }
 
     @CrossOrigin
@@ -38,6 +39,7 @@ public class MatchController {
         Match.MatchOutcome outcome = Match.MatchOutcome.valueOf(outcomeText);
 
         matchService.updateMatchOutcome(matchId, outcome);
-        return ResponseEntity.status(HttpStatus.OK).body("Match " + matchId + " has been updated with " + outcome);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            Map.of("message", "Match " + matchId + " has been updated with " + outcome));
     }
 }

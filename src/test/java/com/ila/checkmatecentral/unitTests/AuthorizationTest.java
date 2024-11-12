@@ -61,7 +61,7 @@ public class AuthorizationTest {
                         "endDate", LocalDateTime.now().plusDays(2))
                 ).toString()))
             .andExpect(status().isCreated())
-            .andExpect(content().string("Tournament Created Successfully"));
+            .andExpect(content().json("{\"message\":\"Tournament Created Successfully\"}"));
     }
     
     @Test

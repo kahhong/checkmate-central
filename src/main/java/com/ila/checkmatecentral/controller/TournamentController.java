@@ -20,6 +20,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -57,7 +58,7 @@ public class TournamentController {
         }
         tournamentService.create(tournament, userName);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Tournament Created Successfully"));
     }
 
     @PutMapping("/{id}/add")
@@ -68,20 +69,23 @@ public class TournamentController {
         Tournament tournament = tournamentService.getTournament(tournamentId);
         
         if (tournament.getStatus() == TournamentStatus.ONGOING) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body("Tournament is currently ongoing, player added unsuccessfully");
+            return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("message", "Tournament is currently ongoing", "success", false));
         }
 
-        if (!playerService.getAvailability((Player) credentialService.loadUserByUsername(email))){
+        Player player = (Player) credentialService.loadUserByUsername(email);
+        if (!player.isAvailability()){
             return ResponseEntity.status(HttpStatus.OK)
-                    .body("Player is currently unavailable");
+                    .body(Map.of("message", "Player is currently unavailable", "success", false));
         }
 
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
-            tournamentService.addPlayer(tournamentId, (Player) credentialService.loadUserByUsername(email));
-            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+            tournamentService.addPlayer(tournamentId, player);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("message", "Player Added successfully", "success", true));
         } else {
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+            return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("message","Tournament is full", "success", false));
         }
     }
 
@@ -94,27 +98,27 @@ public class TournamentController {
 
         if (tournament.getStatus() == TournamentStatus.ONGOING) {
             tournamentService.withdrawPlayer(tournamentId, (Player) credentialService.loadUserByUsername(email));
-            return ResponseEntity.status(HttpStatus.OK).body("Player Withdrawed successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Player Withdrawed successfully"));
         }
 
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {
             tournamentService.addPlayer(tournamentId, (Player) credentialService.loadUserByUsername(email));
-            return ResponseEntity.status(HttpStatus.OK).body("Player Added successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Player Withdrawed successfully"));
         } else {
-            return ResponseEntity.status(HttpStatus.OK).body("Tournament is full");
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Tournament is full"));
         }
     }
 
     @PutMapping("/{id}/start")
     public ResponseEntity<?> startTournament(@PathVariable("id") Integer tournamentId) {
         tournamentService.startTournament(tournamentId);
-        return ResponseEntity.status(HttpStatus.OK).body("Tournament has started");
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Tournament has started"));
     }
 
     @PutMapping("/{id}/nextround")
     public ResponseEntity<?> nextRound(@PathVariable("id") Integer tournamentId) {
         tournamentService.setNextRound(tournamentId);
-        return ResponseEntity.status(HttpStatus.OK).body("Next round has started");
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Next round has started"));
     }
 
     /* End of POST Mappings */
@@ -147,11 +151,11 @@ public class TournamentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTournament(@PathVariable Integer id) {
         if (!tournamentService.exists(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Tournament not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Tournament not found"));
         }
 
         tournamentService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Tournament deleted successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Tournament deleted successfully"));
     }
 
     /* End of DELETE Mappings */

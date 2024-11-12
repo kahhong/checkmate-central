@@ -1,5 +1,6 @@
 package com.ila.checkmatecentral.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -39,6 +40,13 @@ public class Tournament {
     @Getter
     @Setter
     private int round;
+
+    @Getter
+    @Setter
+    @ManyToOne(targetEntity = Admin.class)
+    @JoinColumn(name = "admin_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Admin admin;
 
 
     @OneToMany(mappedBy = "tournament")

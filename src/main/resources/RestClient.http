@@ -14,7 +14,7 @@
 // ELO used to restrict players from Tournaments
 // Also used to match lowest ELO with Highest Elo
 ### Create Admin
-POST http://localhost:8080/api/auth/register/admin
+POST https://localhost:8080/api/auth/register/admin
 Content-Type: application/json
 
 {
@@ -24,14 +24,31 @@ Content-Type: application/json
 }
 
 ### Login Admin
-POST http://localhost:8080/api/auth/login
+POST https://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
   "email": "admin1@example.com",
   "password": "password123"
 }
+### Create Admin
+POST https://localhost:8080/api/auth/register/admin
+Content-Type: application/json
 
+{
+  "name": "admin_two",
+  "email": "admin2@example.com",
+  "password": "password123"
+}
+
+### Login Admin
+POST https://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin2@example.com",
+  "password": "password123"
+}
 ### Create Players
 POST http://localhost:8080/api/auth/register/player
 Content-Type: application/json
@@ -76,9 +93,9 @@ Content-Type: application/json
 ###
 // Create Tournament
 // 
-POST http://localhost:8080/api/tournaments/
+POST https://localhost:8080/api/tournaments/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzMxMjUwMjcyLCJleHAiOjE3MzEyNTA1NzJ9.X97EChaJNsZAwfrapf9vjX7AWlyjAvJHbSYrVW_9ZBI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzE0MDg1OTQsImV4cCI6MTczMTQwODg5NH0.VN7eiwcHEBGLtFBdwRu_rFbeK3Kz8ZigGqEa5fMxMds
 
 {
     "name": "Test_Tourney",

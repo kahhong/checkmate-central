@@ -1,6 +1,8 @@
 package com.ila.checkmatecentral.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -9,16 +11,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class Admin extends AccountCredential {
-    @OneToMany
-    @JoinColumn(name="tournamentId")
-    @JsonBackReference
-    private List<Tournament> tournaments;
+    @OneToMany(mappedBy = "admin", targetEntity = Tournament.class)
+    @JsonManagedReference
+    private Set<Tournament> tournaments;
 
 
     public Admin(String email, String name, String password) {

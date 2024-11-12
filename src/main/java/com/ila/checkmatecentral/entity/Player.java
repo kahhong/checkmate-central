@@ -21,6 +21,10 @@ public class Player extends AccountCredential{
 
     private LocalDateTime timeLastPlayed;
 
+    private boolean availability;
+
+    private String profileDescription;
+
     @ManyToOne
     @JoinColumn(name="tournamentId")
     @JsonBackReference
@@ -32,5 +36,6 @@ public class Player extends AccountCredential{
         this.rating = 1500.00;
         this.ratingDeviation = 350.00;
         this.timeLastPlayed = LocalDateTime.now();
+        this.availability = false;
     }
 }

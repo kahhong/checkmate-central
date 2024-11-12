@@ -1,3 +1,3 @@
 // Do not user localhost for loopback address
 // as it will break on production server
-export const SERVER_URL = 'https://checkmatecentral.southeastasia.cloudapp.azure.com:8080';
+export const BASE_URL = process.env.REACT_APP_BASE_URL;

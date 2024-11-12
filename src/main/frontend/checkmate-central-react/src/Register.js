@@ -1,17 +1,18 @@
-import { SERVER_URL } from "./env.js";
+import {BASE_URL} from "./env.js";
 import { useNavigate } from "react-router-dom";
 
 import {Button, Container} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import {Formik} from "formik";
-import * as Yup from 'yup';
+import * as Yup from "yup";
 
 function RegisterForm() {
   const navigate = useNavigate();
 
   async function register({usernameInput, emailInput, password}) {
-    const registerUrl = SERVER_URL + '/api/auth/register/player';
+    const registerUrl = BASE_URL + '/api/auth/register/player';
+    console.log(registerUrl)
 
     let requestBody = {
       name: usernameInput,

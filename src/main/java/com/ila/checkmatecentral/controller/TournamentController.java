@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/tournaments")
+@CrossOrigin
 public class TournamentController {
     public final TournamentService tournamentService;
     public final AccountCredentialService credentialService;

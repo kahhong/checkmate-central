@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { SERVER_URL } from "./env";
+import { BASE_URL } from "./env";
 import './index.css';
 import './vendor/bootstrap/css/bootstrap.min.css'
 
@@ -26,7 +26,7 @@ const Table = ({data}) => {
     event.preventDefault();
 
     const tournamentId = event.target.value;
-    const url = `${SERVER_URL}/api/tournaments/${tournamentId}/add`;
+    const url = `${BASE_URL}/api/tournaments/${tournamentId}/add`;
     const requestHeader = {
       'content-type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.accessToken
@@ -75,7 +75,7 @@ const Table = ({data}) => {
 function Dashboard() {
   let [data, setData] = useState([]);
 
-  const url = SERVER_URL + "/api/tournaments/list";
+  const url = BASE_URL + "/api/tournaments/list";
   const requestHeader = {
     'content-type': 'application/json',
     'Authorization': 'Bearer ' + localStorage.accessToken

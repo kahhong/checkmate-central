@@ -6,6 +6,7 @@ import com.ila.checkmatecentral.exceptions.*;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TournamentService {
     private final TournamentRepository tournamentRepository;
+    private final AccountCredentialService accountCredentialService;
     private final MatchService matchService;
 
     public Tournament create(Tournament tournament) {
@@ -37,6 +39,9 @@ public class TournamentService {
         
         tournament.setLastUpdated(now);
         tournament.setRound(1);
+
+        Admin admin = (Admin) accountCredentialService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        tournament.setAdmin(admin);
 
         updateTournamentStatus(tournament);
 

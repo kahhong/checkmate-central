@@ -59,7 +59,7 @@ public class SecurityConfig {
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
             .headers(header -> header.disable())
-            .cors(cors -> corsConfigurationSource());
+            .cors(cors -> cors.disable());
         return http.build();
     }
 

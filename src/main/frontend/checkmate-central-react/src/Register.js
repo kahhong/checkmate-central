@@ -1,4 +1,3 @@
-import {BASE_URL} from "./env.js";
 import { useNavigate } from "react-router-dom";
 
 import {Button, Container} from "react-bootstrap";
@@ -11,7 +10,7 @@ function RegisterForm() {
   const navigate = useNavigate();
 
   async function register({usernameInput, emailInput, password}) {
-    const registerUrl = BASE_URL + '/api/auth/register/player';
+    const registerUrl = '/api/auth/register/player';
     console.log(registerUrl)
 
     let requestBody = {

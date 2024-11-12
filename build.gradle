@@ -86,10 +86,10 @@ tasks.register('appNpmBuild', NpmTask) {
 	}
 }
 
-tasks.register('appNpmStart', NpmTask) {
-	workingDir = file("$projectDir/src/main/frontend/checkmate-central-react")
-	args = ["start"]
-}
-
 appNpmBuild.dependsOn(appNpmInstall)
+
+// should run when building jar for production
 bootJar.dependsOn(appNpmBuild)
+
+// should run when starting development server locally
+bootRun.dependsOn(appNpmBuild)

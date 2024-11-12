@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/match")
+@CrossOrigin
 public class MatchController {
     public final MatchService matchService;
 

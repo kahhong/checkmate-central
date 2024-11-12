@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SERVER_URL } from "./env.js";
+import { BASE_URL } from "./env.js";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { MyNavbar } from "./components/MyNavbar";
@@ -20,7 +20,7 @@ function CreateTournamentForm() {
     e.preventDefault();
 
 
-    const registerUrl = SERVER_URL + '/api/tournaments/';
+    const registerUrl = BASE_URL + '/api/tournaments/';
 
     let requestBody = {
       name: name,

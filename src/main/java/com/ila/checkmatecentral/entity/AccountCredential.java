@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 public class AccountCredential implements UserDetails, CredentialsContainer {
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 

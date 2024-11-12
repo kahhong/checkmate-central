@@ -1,21 +1,8 @@
 package com.ila.checkmatecentral.entity;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.hibernate.validator.constraints.Range;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.NumberFormat;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +10,12 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Range;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.NumberFormat;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Slf4j
@@ -55,7 +48,7 @@ public class Tournament {
     @Setter
     @OneToMany(mappedBy = "tournament")
     @JsonManagedReference
-    private List<UserAccount> playerList;
+    private List<Player> playerList;
 
     // End of server generated fields
 
@@ -124,8 +117,13 @@ public class Tournament {
 
      // End of user input fields
 
-    public void addPlayer(UserAccount player){
+    public void addPlayer(Player player){
         this.playerList.add(player);
+        player.setTournament(this);
+    }
+
+    public void removePlayer(Player player){
+        this.playerList.remove(player);
         player.setTournament(this);
     }
 }

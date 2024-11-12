@@ -1,7 +1,7 @@
 package com.ila.checkmatecentral.config;
 
-import java.util.Map;
-import java.time.LocalDateTime;
+import com.ila.checkmatecentral.exceptions.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import com.ila.checkmatecentral.exceptions.*;
-
-import lombok.extern.slf4j.Slf4j;
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @ControllerAdvice
 @Slf4j
@@ -27,7 +26,7 @@ public class GlobalExceptionHandler {
         return handleException(ex, message, HttpStatus.OK);
     }
 
-    
+
     private static ResponseEntity<Object> handleException(Exception ex, String message, HttpStatus httpStatus) {
         return new ResponseEntity<>(Map.of(
             "timestamp", LocalDateTime.now(),
@@ -58,9 +57,10 @@ public class GlobalExceptionHandler {
         return handleException(ex, "Invalid number of players");
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<Object> handleInvalidPasswordException(InvalidPasswordException ex, WebRequest request) {
-        return handleException(ex, "Invalid password");
+    @ExceptionHandler({InvalidCredentialsException.class})
+    public ResponseEntity<Object> handleInvalidCredentialsException(InvalidCredentialsException ex, WebRequest request) {
+        log.error("caught bad credentials error");
+        return handleException(ex, "Invalid credentials", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(InvalidTournamentException.class)
@@ -84,6 +84,12 @@ public class GlobalExceptionHandler {
         return handleException(ex, "Player already in tournament");
     }
 
+    @ExceptionHandler(PlayerNotInTournamentException.class)
+    public ResponseEntity<Object> handlePlayerNotInTournament(PlayerAlreadyInTournamentException ex,
+            WebRequest request) {
+        return handleException(ex, "Player already in tournament");
+    }
+
     @ExceptionHandler(TournamentFullException.class)
     public ResponseEntity<Object> handleTournamentFullException(TournamentFullException ex, WebRequest request) {
         return handleException(ex, "Tournament is full");
@@ -94,5 +100,4 @@ public class GlobalExceptionHandler {
             WebRequest request) {
         return handleException(ex, "Tournament not found");
     }
-
 }

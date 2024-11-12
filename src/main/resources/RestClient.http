@@ -14,36 +14,41 @@
 // ELO used to restrict players from Tournaments
 // Also used to match lowest ELO with Highest Elo
 ### Create Admin
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/auth/register/admin
 Content-Type: application/json
 
 {
   "name": "admin_one",
   "email": "admin1@example.com",
-  "password": "password123",
-  "grantedAuthorityString": "ROLE_ADMIN"
+  "password": "password123"
+}
+
+### Login Admin
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin1@example.com",
+  "password": "password123"
 }
 
 ### Create Players
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/auth/register/player
 Content-Type: application/json
 
 {
     "name": "john_doe",
 	"email": "john@example.com",
-    "password": "password123",
-    "grantedAuthorityString": "ROLE_USER"
+    "password": "password123"
 }
 
 ###
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-    "name": "john_doe2",
-	"email": "john2@example.com",
-    "password": "password123",
-  "grantedAuthorityString": "ROLE_USER"
+	"email": "john@example.com",
+    "password": "password123"
 }
 
 ###
@@ -71,9 +76,9 @@ Content-Type: application/json
 ###
 // Create Tournament
 // 
-POST http://localhost:8080/tournaments/
+POST http://localhost:8080/api/tournaments/
 Content-Type: application/json
-Authorization: Basic admin1@example.com password123
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzMxMjUwMjcyLCJleHAiOjE3MzEyNTA1NzJ9.X97EChaJNsZAwfrapf9vjX7AWlyjAvJHbSYrVW_9ZBI
 
 {
     "name": "Test_Tourney",
@@ -81,8 +86,8 @@ Authorization: Basic admin1@example.com password123
     "maxPlayers": "4",
     "minElo": "100",
     "type": "SINGLE_KNOCKOUT",
-    "startDate": "2024-10-26T05:09:10Z",
-    "endDate": "2024-11-13T05:09:10Z"
+    "startDate": "2024-12-13T05:09:10Z",
+    "endDate": "2024-12-26T05:09:10Z"
 }
 ###
 

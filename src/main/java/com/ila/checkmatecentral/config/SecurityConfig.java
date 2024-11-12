@@ -1,12 +1,8 @@
 package com.ila.checkmatecentral.config;
 
-import static org.springframework.web.servlet.function.RequestPredicates.path;
-import static org.springframework.web.servlet.function.RequestPredicates.pathExtension;
-import static org.springframework.web.servlet.function.RouterFunctions.route;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.ila.checkmatecentral.service.AccountCredentialService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -20,7 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,41 +24,37 @@ import org.springframework.web.servlet.function.RequestPredicate;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
-import com.ila.checkmatecentral.repository.UserAccountRepository;
-import com.ila.checkmatecentral.service.UserAccountService;
+import java.util.Arrays;
+import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static org.springframework.web.servlet.function.RequestPredicates.path;
+import static org.springframework.web.servlet.function.RequestPredicates.pathExtension;
+import static org.springframework.web.servlet.function.RouterFunctions.route;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserAccountRepository repository;
-
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+    SecurityFilterChain filterChain(JwtAuthenticationFilter jwtAuthenticationFilter, HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         http
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
 
-//                .requestMatchers(HttpMethod.GET, "/match/*").hasAnyRole("USER", "ADMIN")
-//                .requestMatchers(HttpMethod.GET, "/match/list/*").hasAnyRole("USER", "ADMIN")
-//                .requestMatchers(HttpMethod.PUT, "/match/*/update").hasRole("ADMIN")
-//
-//                .requestMatchers(HttpMethod.GET, "/tournaments/list").permitAll()
-//                .requestMatchers(HttpMethod.POST, "/tournaments/").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.PUT, "/tournaments/**").hasRole("ADMIN")
-//                .requestMatchers(HttpMethod.DELETE, "/tournaments/*").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/match/*").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/match/list/*").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/match/*/update").hasRole("ADMIN")
+
+                .requestMatchers(HttpMethod.GET, "/api/tournaments/list").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/tournaments/").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/tournaments/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/tournaments/*").hasRole("ADMIN")
 
                 .requestMatchers("/h2-console/**").permitAll()
-//                .anyRequest().authenticated()
                 .anyRequest().permitAll()
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
             .authenticationManager(authenticationManager)
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
@@ -97,10 +89,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(UserAccountService userDetailsService,
-                                                       PasswordEncoder passwordEncoder) throws Exception {
+    public AuthenticationManager userAuthenticationManager(AccountCredentialService accountCredentialService, PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setUserDetailsService(accountCredentialService);
         authProvider.setPasswordEncoder(passwordEncoder);
 
         return new ProviderManager(authProvider);

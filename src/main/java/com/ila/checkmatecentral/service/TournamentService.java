@@ -1,26 +1,16 @@
 package com.ila.checkmatecentral.service;
 
+import com.ila.checkmatecentral.entity.*;
+import com.ila.checkmatecentral.entity.Match.MatchOutcome;
+import com.ila.checkmatecentral.exceptions.*;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
-import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.MatchStatus;
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
-import com.ila.checkmatecentral.entity.UserAccount;
-import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
-import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
-import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
-import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
-import com.ila.checkmatecentral.exceptions.TournamentFullException;
-import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
@@ -90,7 +80,7 @@ public class TournamentService {
         return tournamentRepository.save(existingTournament);
     }
 
-    public void addPlayer(int tournamentId, UserAccount player) throws PlayerAlreadyInTournamentException {
+    public void addPlayer(int tournamentId, Player player) throws PlayerAlreadyInTournamentException {
         final Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
@@ -99,7 +89,7 @@ public class TournamentService {
                 "Tournament ID: " + tournamentId + " has been started, Player added Unsuccessful");
         }
 
-        final List<UserAccount> players = currentTournament.getPlayerList();
+        final List<Player> players = currentTournament.getPlayerList();
         if (players.size() >= currentTournament.getMaxPlayers()) {
             throw new TournamentFullException(tournamentId);
         }
@@ -111,6 +101,32 @@ public class TournamentService {
         currentTournament.addPlayer(player);
         tournamentRepository.save(currentTournament);
     }
+
+    public void withdrawPlayer(int tournamentId, Player player) {
+        final Tournament currentTournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        List<Player> players = currentTournament.getPlayerList();
+        List<Match> matches = matchService.getMatches(currentTournament.getTournamentId());
+        if (players.contains(player)) {
+            players.remove(player);
+            currentTournament.setPlayerList(players);
+            tournamentRepository.save(currentTournament);
+        }else{
+            throw new PlayerNotInTournamentException(tournamentId);
+        }
+        for (Match match : matches) {
+            if(match.getMatchStatus() == MatchStatus.ONGOING){
+                if(match.getPlayer1().equals(player)){
+                    matchService.updateMatchOutcome(match.getMatchId(), MatchOutcome.LOSE);
+                    break;
+                }else if(match.getPlayer2().equals(player)){
+                    matchService.updateMatchOutcome(match.getMatchId(), MatchOutcome.WIN);
+                    break;
+                }
+            }
+        }
+
+    }
     
     private static void updateTournamentStatus(Tournament tournament) {
         if (tournament.getStartDate().isBefore(LocalDateTime.now())) {
@@ -120,8 +136,8 @@ public class TournamentService {
         }
     }
 
-    private List<UserAccount> getPlayersLeft(Tournament tournament) {
-        List<UserAccount> players = tournament.getPlayerList();
+    private List<Player> getPlayersLeft(Tournament tournament) {
+        List<Player> players = tournament.getPlayerList();
         List<Match> matches = matchService.getMatches(tournament.getTournamentId());
         for (Match match : matches) {
             players.remove(match.getLoser());
@@ -138,8 +154,8 @@ public class TournamentService {
         return true;
     }
 
-    public void pairUp(List<UserAccount> players, int tournamentId){
-        List<UserAccount> sortedPlayers = players.stream()
+    public void pairUp(List<Player> players, int tournamentId){
+        List<Player> sortedPlayers = players.stream()
                 .sorted((user1, user2) -> Double.compare(user1.getRating(), user2.getRating()))
                 .collect(Collectors.toList());
         int neededMatches = (int) Math.ceil(players.size()/2);
@@ -152,8 +168,8 @@ public class TournamentService {
 
         
         for (int i = 0; i < neededMatches; i++) {
-            UserAccount lowEloPlayer = sortedPlayers.get(i);
-            UserAccount highEloPlayer = sortedPlayers.get(players.size() - 1 - i);
+            Player lowEloPlayer = sortedPlayers.get(i);
+            Player highEloPlayer = sortedPlayers.get(players.size() - 1 - i);
             matchService.createSingleMatch(lowEloPlayer, highEloPlayer, round, tournamentId);
         }
     }
@@ -182,7 +198,7 @@ public class TournamentService {
                 "Not all matches are completed");
         }
 
-        List<UserAccount> playersLeft = getPlayersLeft(tournament);
+        List<Player> playersLeft = getPlayersLeft(tournament);
 
         if (playersLeft.size() == 1) {
             endTournament(tournamentId);
@@ -202,7 +218,7 @@ public class TournamentService {
     public void startTournament(int tournamentId) throws InvalidTournamentStateException {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
-        List<UserAccount> players = tournament.getPlayerList();
+        List<Player> players = tournament.getPlayerList();
         
         if (tournament.getStatus() != TournamentStatus.UPCOMING) {
             throw new InvalidTournamentStateException("Tournament has already started");

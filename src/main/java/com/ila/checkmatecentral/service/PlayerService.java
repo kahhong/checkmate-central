@@ -27,7 +27,7 @@ public class PlayerService {
     }
 
     public void updateAvailability(Player player, String availabilityText){
-        if(!availabilityText.equals("True")||!availabilityText.equals("True")){
+        if(!availabilityText.equals("True")&&!availabilityText.equals("False")){
             throw new InvalidAvailabilityException("Only accept True or False for availability");
         }
         if(availabilityText.equals("True")){

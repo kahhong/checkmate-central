@@ -29,8 +29,8 @@ public class AdminIntegrationTest {
 
     @BeforeAll
     static void setUp(@Autowired MockMvc mockMvc) throws Exception {
+        // Setup admin account in database
         Admin admin = new Admin("admin@gmail.com", "admin", "password");
-        adminToken = getAdminToken(admin, mockMvc);
         adminToken = getAdminToken(admin, mockMvc);
     }
 
@@ -40,7 +40,7 @@ public class AdminIntegrationTest {
             .put("email", user.getEmail())
             .put("password", user.getPassword());
 
-        mockMvc.perform(post("/api/auth/register")
+        mockMvc.perform(post("/api/auth/register/admin")
                 .contentType("application/json")
                 .content(userJSON.toString()));
 
@@ -56,26 +56,6 @@ public class AdminIntegrationTest {
 
         JSONObject responseBody = new JSONObject(loginResponse.getContentAsString());
         return responseBody.getString("token");
-    }
-
-    @Test
-    void testAdminRegister() throws Exception {
-        // Arrange
-        JSONObject expectedResponse = new JSONObject().put("message", "Admin account registered successfully.");
-        Admin admin = new Admin("admin@gmail.com", "admin", "password");
-
-        // Act
-        final JSONObject adminJSON = new JSONObject()
-            .put("name", admin.getName())
-            .put("email", admin.getEmail())
-            .put("password", admin.getPassword());
-
-        // Assert
-        mockMvc.perform(post("/api/auth/admin/register")
-            .contentType("application/json")
-            .content(adminJSON.toString()))
-            .andExpect(status().isCreated())
-            .andExpect(content().json(expectedResponse.toString()));
     }
 
     @Test

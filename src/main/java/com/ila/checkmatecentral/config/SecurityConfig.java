@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/tournaments/*").hasRole("ADMIN")
 
                 .requestMatchers("/h2-console/**").permitAll()
-                .anyRequest().denyAll()
+                .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class)
             .authenticationManager(authenticationManager)

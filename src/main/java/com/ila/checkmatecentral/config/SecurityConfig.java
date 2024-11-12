@@ -59,7 +59,7 @@ public class SecurityConfig {
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
             .headers(header -> header.disable())
-            .cors(cors -> corsConfigurationSource());
+            .cors(cors -> cors.disable());
         return http.build();
     }
 
@@ -67,7 +67,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000/"));
+        configuration.setAllowedOrigins(List.of("http://127.0.0.1:8080/"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowCredentials(true);

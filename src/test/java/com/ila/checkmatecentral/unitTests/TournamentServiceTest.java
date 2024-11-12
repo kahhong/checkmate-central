@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.ila.checkmatecentral.entity.*;
+import com.ila.checkmatecentral.service.AccountCredentialService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,11 +24,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.ila.checkmatecentral.entity.Match;
-import com.ila.checkmatecentral.entity.Player;
-import com.ila.checkmatecentral.entity.Tournament;
-import com.ila.checkmatecentral.entity.TournamentStatus;
-import com.ila.checkmatecentral.entity.TournamentType;
 import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
 import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
@@ -45,6 +42,9 @@ public class TournamentServiceTest {
 
     @Mock
     private MatchService matchService;
+
+    @Mock
+    private AccountCredentialService credentialService;
 
     private Tournament tournament;
 
@@ -76,8 +76,9 @@ public class TournamentServiceTest {
     @Test
     void testCreateTournament_InvalidNumberOfPlayers() {
         ReflectionTestUtils.setField(tournament, "maxPlayers", 5);
+        when(credentialService.loadUserByUsername(any(String.class))).thenReturn(new Admin("mockAdmin@test.com", "mockAdmin", "mockpassword"));
 
-        assertThrows(IllegalArgumentException.class, () -> tournamentService.create(tournament),
+        assertThrows(IllegalArgumentException.class, () -> tournamentService.create(tournament, "mockAdmin@test.com"),
                 "Number of players must be power of 2");
 
         verifyNoInteractions(tournamentRepository);
@@ -86,10 +87,10 @@ public class TournamentServiceTest {
     @Test
     void testCreateTournament_ValidNumberOfPlayers() {
         ReflectionTestUtils.setField(tournament, "maxPlayers", 8);
-
+        when(credentialService.loadUserByUsername(any(String.class))).thenReturn(new Admin("mockAdmin@test.com", "mockAdmin", "mockpassword"));
         when(tournamentRepository.save(any(Tournament.class))).thenReturn(tournament);
 
-        Tournament createdTournament = tournamentService.create(tournament);
+        Tournament createdTournament = tournamentService.create(tournament, "mockAdmin@test.com");
 
         assertNotNull(createdTournament);
         assertEquals(8, createdTournament.getMaxPlayers());

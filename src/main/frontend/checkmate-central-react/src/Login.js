@@ -1,4 +1,3 @@
-import {BASE_URL} from "./env.js";
 import {Link, useNavigate} from "react-router-dom";
 
 import Button from 'react-bootstrap/Button';
@@ -14,7 +13,7 @@ function Login() {
   const navigate = useNavigate();
   const {setLogin} = useAuth();
   async function login(values) {
-      const loginUrl = BASE_URL + '/api/auth/login';
+      const loginUrl = '/api/auth/login';
 
       let requestBody = {
         email: values.email,

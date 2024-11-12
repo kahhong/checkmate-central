@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -48,11 +49,11 @@ public class TournamentController {
     /* Start of POST Mappings */
 
     @PostMapping("/")
-    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult) {
+    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult, @AuthenticationPrincipal AuthenticationPrincipal principal) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
-        tournamentService.create(tournament);
+        tournamentService.create(tournament, principal.toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }

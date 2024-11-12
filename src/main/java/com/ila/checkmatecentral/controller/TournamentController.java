@@ -6,6 +6,7 @@ import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
 import com.ila.checkmatecentral.service.AccountCredentialService;
 import com.ila.checkmatecentral.service.MatchService;
+import com.ila.checkmatecentral.service.PlayerService;
 import com.ila.checkmatecentral.service.TournamentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class TournamentController {
     public final TournamentService tournamentService;
     public final AccountCredentialService credentialService;
     public final MatchService matchService;
+    public final PlayerService playerService;
 
     /* Start of GET Mappings */
 
@@ -60,10 +62,15 @@ public class TournamentController {
 
         String email = json.get("email").asText();
         Tournament tournament = tournamentService.getTournament(tournamentId);
-
+        
         if (tournament.getStatus() == TournamentStatus.ONGOING) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Tournament is currently ongoing, player added unsuccessfully");
+        }
+
+        if (!playerService.getAvailability((Player) credentialService.loadUserByUsername(email))){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Player is currently unavailable");
         }
 
         if (tournament.getPlayerList().size() < tournament.getMaxPlayers()) {

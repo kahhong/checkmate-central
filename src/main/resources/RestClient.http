@@ -38,9 +38,45 @@ Content-Type: application/json
 
 {
     "name": "john_doe",
-	"email": "john@example.com",
+	  "email": "john@example.com",
     "password": "password123"
 }
+
+// eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzMxNDIzODU5LCJleHAiOjE3MzE0MjQxNTl9.cMn9Zjd0HuCs-jfMk3oojU1AWnydmhcztQyN5WAChHM
+
+### test GET availability
+GET http://localhost:8080/api/player/1/availability
+Content-Type: application/json
+
+{
+ 
+}
+
+### test update avail
+PUT http://localhost:8080/api/player/1/updateAvailability
+Content-Type: application/json
+
+{
+ "availability": "True"
+}
+
+### get profile
+GET http://localhost:8080/api/player/1/profile
+Content-Type: application/json
+
+{
+ 
+}
+
+### update profile
+PUT http://localhost:8080/api/player/1/updateProfile
+Content-Type: application/json
+
+{
+ "description":"I am newbie"
+}
+
+////////////////////////////
 
 ###
 POST http://localhost:8080/api/auth/login
@@ -78,7 +114,7 @@ Content-Type: application/json
 // 
 POST http://localhost:8080/api/tournaments/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJqb2huQGV4YW1wbGUuY29tIiwiaWF0IjoxNzMxMjUwMjcyLCJleHAiOjE3MzEyNTA1NzJ9.X97EChaJNsZAwfrapf9vjX7AWlyjAvJHbSYrVW_9ZBI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjFAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzE0MjU4NTgsImV4cCI6MTczMTQyNjE1OH0.HMo1lU6z-egJuP5TPglFhP-LTmwjSrsCkYC_s1DjZ7A
 
 {
     "name": "Test_Tourney",
@@ -92,9 +128,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJqb2huQGV4Y
 ###
 
 // Add player to Tournament using email
-PUT http://localhost:8080/tournaments/1/add
+PUT http://localhost:8080/api/tournaments/1/add
 Content-Type: application/json
-Authorization: Basic admin1@example.com password123
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjFAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzE0MjU4NTgsImV4cCI6MTczMTQyNjE1OH0.HMo1lU6z-egJuP5TPglFhP-LTmwjSrsCkYC_s1DjZ7A
 
 {
     "email": "john@example.com"

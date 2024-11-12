@@ -26,19 +26,12 @@ public class PlayerService {
         playerRepository.save(player);
     }
 
-    public void updateAvailability(Player player, String availabilityText){
-        if(!availabilityText.equals("True")&&!availabilityText.equals("False")){
+    public Player updateAvailability(Player player, String availabilityText){
+        if (!("true".equalsIgnoreCase(availabilityText) || "false".equalsIgnoreCase(availabilityText)))
             throw new InvalidAvailabilityException("Only accept True or False for availability");
-        }
-        if(availabilityText.equals("True")){
-            player.setAvailability(true);
-        }else if (availabilityText.equals("False")) {
-            player.setAvailability(false);
-        }
-        playerRepository.save(player);
-    }
 
-    public boolean getAvailability(Player player){
-        return player.isAvailability();
+        boolean availability = Boolean.parseBoolean(availabilityText);
+        player.setAvailability(availability);
+        return playerRepository.save(player);
     }
 }

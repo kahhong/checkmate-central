@@ -50,7 +50,7 @@ Content-Type: application/json
   "password": "password123"
 }
 ### Create Players
-POST http://localhost:8080/api/auth/register/player
+POST https://localhost:8080/api/auth/register/player
 Content-Type: application/json
 
 {
@@ -58,6 +58,32 @@ Content-Type: application/json
 	"email": "john@example.com",
     "password": "password123"
 }
+
+### Create Players
+GET https://localhost:8080/api/player/1/availability
+Content-Type: application/json
+
+{
+    
+}
+
+### Create Players
+PUT https://localhost:8080/api/player/1/updateAvailability
+Content-Type: application/json
+
+{
+    "availability": "True"
+}
+
+### Create Players
+PUT https://localhost:8080/api/player/1/updateAvailability
+Content-Type: application/json
+
+{
+    "availability": "True"
+}
+
+
 
 ###
 POST http://localhost:8080/api/auth/login
@@ -95,7 +121,7 @@ Content-Type: application/json
 // 
 POST https://localhost:8080/api/tournaments/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjJAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzE0MDg1OTQsImV4cCI6MTczMTQwODg5NH0.VN7eiwcHEBGLtFBdwRu_rFbeK3Kz8ZigGqEa5fMxMds
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjFAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzE0NDExOTksImV4cCI6MTczMTQ0MTQ5OX0.DvTe52cPBaROLRIIdcFFF2--jmy53_xmwscRM1gLA4Y
 
 {
     "name": "Test_Tourney",
@@ -109,9 +135,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjJAZ
 ###
 
 // Add player to Tournament using email
-PUT http://localhost:8080/tournaments/1/add
+PUT https://localhost:8080/tournaments/1/add
 Content-Type: application/json
-Authorization: Basic admin1@example.com password123
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJJTEEiLCJzdWIiOiJhZG1pbjFAZXhhbXBsZS5jb20iLCJpYXQiOjE3MzE0NDExOTksImV4cCI6MTczMTQ0MTQ5OX0.DvTe52cPBaROLRIIdcFFF2--jmy53_xmwscRM1gLA4Y
 
 {
     "email": "john@example.com"

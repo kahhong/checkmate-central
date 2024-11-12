@@ -5,6 +5,9 @@ import com.ila.checkmatecentral.entity.Player;
 import com.ila.checkmatecentral.service.PlayerService;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,16 +23,19 @@ public class PlayerController {
     public ResponseEntity<?> getAvailability(@PathVariable("playerId") Long playerId) {
         Player player = playerService.getPlayer(playerId);
         
-        return ResponseEntity.status(HttpStatus.OK).body(player.isAvailability());
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("availability", player.isAvailability()));
     }
     
-    @PutMapping("/{playerId}/updateAvailability")
-    public ResponseEntity<?> updateAvailability(@PathVariable("playerId") Long playerId, @RequestBody JsonNode json){
+    @PutMapping("/{playerId}/availability")
+    public ResponseEntity<?> updateAvailability(@PathVariable("playerId") Long playerId, @RequestBody JsonNode json) {
         Player player = playerService.getPlayer(playerId);
         String availabilityText = json.get("availability").asText();
-        playerService.updateAvailability(player, availabilityText);
+        player = playerService.updateAvailability(player, availabilityText);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Player availability has been updated");
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+            "message", "Player availability has been updated",
+            "availability", player.isAvailability()
+        ));
     }
 
     // get Player description
@@ -39,7 +45,9 @@ public class PlayerController {
 
         player.eraseCredentials();
         
-        return ResponseEntity.status(HttpStatus.OK).body(player);
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                    "message", "message",
+                    "player", player));
     }
 
     @PutMapping("/{playerId}/updateProfile")
@@ -49,7 +57,8 @@ public class PlayerController {
         String description = json.get("description").asText();
         Player player = playerService.getPlayer(playerId);
         playerService.updateProfileDescription(player,description);
-        return ResponseEntity.status(HttpStatus.OK).body("Player description updated successfully");
+        return ResponseEntity.status(HttpStatus.OK).body(
+            Map.of("message", "Player description updated successfully"));
     }
     
 }

@@ -1,6 +1,7 @@
 package com.ila.checkmatecentral.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.ila.checkmatecentral.entity.Admin;
 import com.ila.checkmatecentral.entity.Player;
 import com.ila.checkmatecentral.entity.Tournament;
 import com.ila.checkmatecentral.entity.TournamentStatus;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -49,11 +51,11 @@ public class TournamentController {
     /* Start of POST Mappings */
 
     @PostMapping("/")
-    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult, @AuthenticationPrincipal AuthenticationPrincipal principal) {
+    public ResponseEntity<?> createTournament(@Valid @RequestBody Tournament tournament, BindingResult bindingResult, @AuthenticationPrincipal String userName) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
         }
-        tournamentService.create(tournament, principal.toString());
+        tournamentService.create(tournament, userName);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Tournament Created Successfully");
     }

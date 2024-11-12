@@ -21,6 +21,7 @@ import com.ila.checkmatecentral.controller.TournamentController;
 import com.ila.checkmatecentral.entity.TournamentType;
 import com.ila.checkmatecentral.service.AccountCredentialService;
 import com.ila.checkmatecentral.service.MatchService;
+import com.ila.checkmatecentral.service.PlayerService;
 import com.ila.checkmatecentral.service.TournamentService;
 
 @WebMvcTest(TournamentController.class)
@@ -37,6 +38,9 @@ public class AuthorizationTest {
 
     @MockBean
     private AccountCredentialService userAccountService;
+
+    @MockBean
+    private PlayerService playerService;
 
     @MockBean
     private MatchService matchService;

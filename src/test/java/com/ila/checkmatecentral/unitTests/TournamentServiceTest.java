@@ -80,7 +80,7 @@ public class TournamentServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> tournamentService.create(tournament, "mockAdmin@test.com"),
                 "Number of players must be power of 2");
-
+        //verify(credentialService.loadUserByUsername);
         verifyNoInteractions(tournamentRepository);
     }
 

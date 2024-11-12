@@ -18,6 +18,7 @@ import com.ila.checkmatecentral.controller.TournamentController;
 import com.ila.checkmatecentral.entity.TournamentType;
 import com.ila.checkmatecentral.service.AccountCredentialService;
 import com.ila.checkmatecentral.service.MatchService;
+import com.ila.checkmatecentral.service.PlayerService;
 import com.ila.checkmatecentral.service.TournamentService;
 
 /**
@@ -41,6 +42,9 @@ public class CreateTournamentTest {
 
     @MockBean
     private MatchService matchService;
+
+    @MockBean
+    private PlayerService playerService;
 
     private static JSONObject createJsonTemplate() throws JSONException {
         return new JSONObject()

@@ -21,7 +21,7 @@ public class TournamentService {
     private final AccountCredentialService accountCredentialService;
     private final MatchService matchService;
 
-    public Tournament create(Tournament tournament) {
+    public Tournament create(Tournament tournament, String adminPrincipal) {
         final LocalDateTime now = LocalDateTime.now();
         
         int numPlayers = tournament.getMaxPlayers();
@@ -40,7 +40,7 @@ public class TournamentService {
         tournament.setLastUpdated(now);
         tournament.setRound(1);
 
-        Admin admin = (Admin) accountCredentialService.loadUserByUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        Admin admin = (Admin) accountCredentialService.loadUserByUsername(adminPrincipal);
         tournament.setAdmin(admin);
 
         updateTournamentStatus(tournament);

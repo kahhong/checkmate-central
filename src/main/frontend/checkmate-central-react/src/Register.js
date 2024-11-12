@@ -11,7 +11,7 @@ function RegisterForm() {
   const navigate = useNavigate();
 
   async function register({usernameInput, emailInput, password}) {
-    const registerUrl = SERVER_URL + '/api/auth/register';
+    const registerUrl = SERVER_URL + '/api/auth/register/player';
 
     let requestBody = {
       name: usernameInput,

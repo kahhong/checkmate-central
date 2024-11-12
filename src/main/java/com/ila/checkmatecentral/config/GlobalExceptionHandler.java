@@ -47,6 +47,11 @@ public class GlobalExceptionHandler {
         return handleException(ex, "Account already exists");
     }
 
+    @ExceptionHandler(InvalidAvailabilityException.class)
+    public ResponseEntity<Object> handleInvalidAvailabilityException(InvalidAvailabilityException ex, WebRequest request) {
+        return handleException(ex, "Player is not available");
+    }
+
     /*
      * TODO: Checks what code to be returned
      * - Put the valid number of players but FIX
@@ -79,24 +84,30 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PlayerAlreadyInTournamentException.class)
-    public ResponseEntity<Object> handlePlayerAlreadyInTournament(PlayerAlreadyInTournamentException ex,
+    public ResponseEntity<Object> handlePlayerAlreadyInTournamentException(PlayerAlreadyInTournamentException ex,
             WebRequest request) {
         return handleException(ex, "Player already in tournament");
     }
 
+    @ExceptionHandler(PlayerNotFoundException.class)
+    public ResponseEntity<Object> handlePlayerNotFoundException(PlayerNotFoundException ex,
+            WebRequest request) {
+        return handleException(ex, "Could not find player");
+    }
+
     @ExceptionHandler(PlayerNotInTournamentException.class)
-    public ResponseEntity<Object> handlePlayerNotInTournament(PlayerAlreadyInTournamentException ex,
+    public ResponseEntity<Object> handlePlayerNotInTournamentException(PlayerAlreadyInTournamentException ex,
             WebRequest request) {
         return handleException(ex, "Player already in tournament");
     }
 
     @ExceptionHandler(TournamentFullException.class)
-    public ResponseEntity<Object> handleTournamentFullException(TournamentFullException ex, WebRequest request) {
+    public ResponseEntity<Object> handleTournamentFullExceptionException(TournamentFullException ex, WebRequest request) {
         return handleException(ex, "Tournament is full");
     }
 
     @ExceptionHandler(TournamentNotFoundException.class)
-    public ResponseEntity<Object> handleTournamentNotFoundException(TournamentNotFoundException ex,
+    public ResponseEntity<Object> handleTournamentNotFoundExceptionException(TournamentNotFoundException ex,
             WebRequest request) {
         return handleException(ex, "Tournament not found");
     }

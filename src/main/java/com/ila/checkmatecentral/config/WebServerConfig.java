@@ -11,7 +11,7 @@ import org.apache.catalina.Context;
 public class WebServerConfig {
     @Bean
     public ServletWebServerFactory servletContainer() {
-        // Enable SSL Trafic
+        // Enable SSL Traffic
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory() {
             @Override
             protected void postProcessContext(Context context) {

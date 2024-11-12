@@ -5,8 +5,12 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 node_modules/
-src/main/frontend/checkmate-central-react/build/**
+/src/main/frontend/checkmate-central-react/build/
 logs/
+
+# Environment variable files
+.env.properties
+.env.local
 
 # Ignore the static resources as it will be populated by gradle tasks
 src/main/resources/static

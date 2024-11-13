@@ -1,22 +1,28 @@
 package com.ila.checkmatecentral.controller;
 
-import com.ila.checkmatecentral.entity.Admin;
-import com.ila.checkmatecentral.entity.LoginRequest;
-import com.ila.checkmatecentral.entity.Player;
-import com.ila.checkmatecentral.service.AccountCredentialService;
-import com.ila.checkmatecentral.utility.JwtUtil;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.ila.checkmatecentral.entity.AccountCredential;
+import com.ila.checkmatecentral.entity.Admin;
+import com.ila.checkmatecentral.entity.LoginRequest;
+import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.service.AccountCredentialService;
+import com.ila.checkmatecentral.utility.JwtUtil;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -31,8 +37,7 @@ public class AuthenticationController {
     public ResponseEntity<?> registerPlayer(@RequestBody Map<String, String> map) {
         Player player = new Player(map.get("email"), map.get("name"), map.get("password"));
         credentialService.registerPlayer(player);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Player created successfully.");
+        Map<String, String> response = Map.of("message", "Player created successfully.");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -40,8 +45,7 @@ public class AuthenticationController {
     public ResponseEntity<?> registerAdmin(@RequestBody Map<String, String> map) {
         Admin admin = new Admin(map.get("email"), map.get("name"), map.get("password"));
         credentialService.registerAdmin(admin);
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Admin created successfully.");
+        Map<String, String> response = Map.of("message", "Admin created successfully.");
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -50,17 +54,21 @@ public class AuthenticationController {
         Authentication authenticationRequest =
             UsernamePasswordAuthenticationToken.unauthenticated(request.getEmail(), request.getPassword());
 
-            Authentication authResponse = authenticationManager.authenticate(authenticationRequest);
-            if (authResponse.getPrincipal() instanceof UserDetails userDetails) {
-                final String jwtToken = JwtUtil.generateToken(userDetails);
+        Authentication authResponse = authenticationManager.authenticate(authenticationRequest);
+        if (authResponse.getPrincipal() instanceof UserDetails userDetails) {
+            final String jwtToken = JwtUtil.generateToken(userDetails);
 
-                Map<String, Object> response = new HashMap<>();
-                response.put("token", jwtToken);
-                response.put("expiry", JwtUtil.extractExpiration(jwtToken));
-                response.put("username", userDetails.getUsername());
+            AccountCredential credential = credentialService.loadUserByUsername(request.getEmail());
 
-                return ResponseEntity.ok().body(response);
-            }
+            Map<String, Object> response = Map.of(
+                    "id", credential.getId(),
+                    "token", jwtToken,
+                    "expiry", JwtUtil.extractExpiration(jwtToken),
+                    "username", userDetails.getUsername()
+            );
+
+            return ResponseEntity.ok().body(response);
+        }
         return null;
     }
 }

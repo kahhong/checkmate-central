@@ -60,5 +60,17 @@ public class PlayerController {
         return ResponseEntity.status(HttpStatus.OK).body(
             Map.of("message", "Player description updated successfully"));
     }
+
+    @GetMapping("/{playerId}/getRank")
+    public ResponseEntity<?> getRank(@PathVariable("playerId") Long playerId,
+            @RequestBody JsonNode json) {
+
+        Player player = playerService.getPlayer(playerId);
+        long count = playerService.getNumberOfPlayersWithHigherRating(player)+1;
+
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                "message", "Count retrieved successfully",
+                "count", count));
+    }
     
 }

@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -257,6 +258,43 @@ public class AdminIntegrationTest {
                 "outcome", "WIN")).toString()))
         .andExpect(status().isOk())
         .andExpect(content().json("{\"message\":\"Match 3 has been updated with WIN\"}"));
+
+        // mockMvc.perform(put("/api/match/2/update")
+        // .contentType("application/json")
+        // .header("Authorization", "Bearer " + adminToken)
+        // .content(new JSONObject(
+        //     Map.of(
+        //         "outcome", "WIN")).toString()))
+        // .andExpect(status().isOk())
+        // .andExpect(content().json("{\"message\":\"Match 2 has been updated with WIN\"}"));
+    }
+
+    @Test
+    @Order(9)
+    void testGetRank() throws Exception {
+        mockMvc.perform(get("/api/player/3/getRank")
+        .contentType("application/json")
+        .content("null"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("{\"message\":\"Count retrieved successfully\",\"count\":2}")); //4
+
+        mockMvc.perform(get("/api/player/1/getRank")
+        .contentType("application/json")
+        .content("null"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("{\"message\":\"Count retrieved successfully\",\"count\":1}")); //2
+
+        mockMvc.perform(get("/api/player/2/getRank")
+        .contentType("application/json")
+        .content("null"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("{\"message\":\"Count retrieved successfully\",\"count\":3}"));
+
+        mockMvc.perform(get("/api/player/4/getRank")
+        .contentType("application/json")
+        .content("null"))
+        .andExpect(status().isOk())
+        .andExpect(content().json("{\"message\":\"Count retrieved successfully\",\"count\":3}"));
     }
 
 }

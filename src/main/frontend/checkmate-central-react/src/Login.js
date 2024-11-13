@@ -1,55 +1,63 @@
-import {Link, useNavigate} from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import {Container} from "react-bootstrap";
-import {Formik} from "formik";
+import { Container } from "react-bootstrap";
+import { Formik } from "formik";
 import * as Yup from "yup";
 
-import {useAuth} from './hooks/AuthContext';
+import { useAuth } from './hooks/AuthContext';
 
 function Login() {
   const navigate = useNavigate();
-  const {setLogin} = useAuth();
-  async function login(values) {
-      const loginUrl = '/api/auth/login';
-
-      let requestBody = {
-        email: values.email,
-        password: values.password,
-      }
-
-      const requestHeader = {
-        'content-type': 'application/json',
-      }
-
-      try{
-        const response = await fetch(loginUrl, {
-          headers: requestHeader,
-          body: JSON.stringify(requestBody),
-          method: "POST"
-        });
-
-        if(response.status === 200) {
-          const data = await response.json();
-          localStorage.setItem("id", data.id);
-          localStorage.setItem("accessToken", data.token);
-          localStorage.setItem("tokenExpiry", data.expiry);
-          localStorage.setItem("userName", data.username);
-          setLogin({
-            username: data.username,
-            token: data.token
-          });
-          navigate('/dashboard');
-        } else {
-          return response;
-        }
-
-      } catch (error) {
-        console.log(error.message);
-      }
+  const { setLogin, isLoggedIn } = useAuth();
+  
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log("Redirect to dashboard");
+      navigate('/dashboard');
     }
+  }, [isLoggedIn, navigate]);
+
+  async function login(values) {
+    const loginUrl = '/api/auth/login';
+
+    let requestBody = {
+      email: values.email,
+      password: values.password,
+    }
+
+    const requestHeader = {
+      'content-type': 'application/json',
+    }
+
+    try {
+      const response = await fetch(loginUrl, {
+        headers: requestHeader,
+        body: JSON.stringify(requestBody),
+        method: "POST"
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        localStorage.setItem("id", data.id);
+        localStorage.setItem("accessToken", data.token);
+        localStorage.setItem("tokenExpiry", data.expiry);
+        localStorage.setItem("userName", data.username);
+        setLogin({
+          username: data.username,
+          token: data.token
+        });
+        navigate('/dashboard');
+      } else {
+        return response;
+      }
+
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string().required('Email is empty').email('Invalid email'),
@@ -62,9 +70,9 @@ function Login() {
     <>
       <Container className="hero-title">
         <Row className="justify-content-center">
-        <h1>Checkmate Central</h1>
-          <br/>
-        <h2>Log in to your account</h2>
+          <h1>Checkmate Central</h1>
+          <br />
+          <h2>Log in to your account</h2>
         </Row>
       </Container>
 
@@ -73,15 +81,15 @@ function Login() {
         onSubmit={(values, { setSubmitting, setFieldError }) => {
           login(values)
             .then(response => {
-              if(response !== undefined && response.status !== 200) {
-                response.json().then(({message}) => {
+              if (response !== undefined && response.status !== 200) {
+                response.json().then(({ message }) => {
                   setFieldError('email', message);
                   setFieldError('password', message);
                   setSubmitting(false);
                 })
               }
             }
-          )
+            )
         }}
         initialValues={{
           email: '',
@@ -99,14 +107,14 @@ function Login() {
                     type="email"
                     placeholder="johndoe@example.com"
                     name="email"
-                    value={ values.email }
+                    value={values.email}
                     onChange={e => {
                       setFieldTouched('email');
                       handleChange(e);
                     }}
-                    isInvalid={ touched.email && errors.email }
+                    isInvalid={touched.email && errors.email}
                   />
-                  <Form.Control.Feedback type="invalid">{ errors.email }</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                 </Form.Group>
               </Row>
               <Row className="mb-3">
@@ -117,14 +125,14 @@ function Login() {
                     type="password"
                     placeholder="Password"
                     name="password"
-                    value={ values.password }
+                    value={values.password}
                     onChange={e => {
                       setFieldTouched('password');
                       handleChange(e);
                     }}
-                    isInvalid={ touched.password && errors.password}
+                    isInvalid={touched.password && errors.password}
                   />
-                  <Form.Control.Feedback type="invalid">{ errors.password }</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                 </Form.Group>
               </Row>
               <Row className="mb-3">

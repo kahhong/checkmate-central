@@ -34,4 +34,8 @@ public class PlayerService {
         player.setAvailability(availability);
         return playerRepository.save(player);
     }
+
+    public long getNumberOfPlayersWithHigherRating(Player player) {
+        return playerRepository.countByRatingGreaterThan(player.getRating());
+    }
 }

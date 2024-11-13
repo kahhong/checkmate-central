@@ -13,15 +13,30 @@ function Profile() {
     if (!profile) {
         console.log("Profile not found");
     } else {
-        setData(profile)
+        setData(profile);
     }
   }
 
-  const url = "/api/player/" + localStorage.id + "/profile";
   const requestHeader = {
       'content-type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.accessToken
   }
+  
+  function setAvailability(isActive) {
+    let newData = { ...data };
+
+    fetch("/api/player/" + localStorage.id + "/availability", {
+      headers: requestHeader,
+      method: 'PUT',
+      body: JSON.stringify({ availability: isActive })
+    })
+    .then(response => response.json())
+    .then(json => newData.availability = json.availability);
+
+    window.location.reload();
+  }
+
+  const url = "/api/player/" + localStorage.id + "/profile";
 
   useEffect(() => {
     fetch(url, {
@@ -46,6 +61,13 @@ function Profile() {
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Time Last Played: {new Date(Date.parse(data.timeLastPlayed)).toString()}</Form.Label>
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Check label="Available for Tournament"
+            type="switch"
+            checked={data.availability}
+            onChange={e => setAvailability(e.currentTarget.checked)}
+          />
         </Form.Group>
       </div>
     </>

@@ -11,4 +11,5 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     @NonNull
     Optional<Player> findById(@NonNull Long id);
     Optional<AccountCredential> findByEmail(String email);
+    long countByRatingGreaterThan(double rating);
 }

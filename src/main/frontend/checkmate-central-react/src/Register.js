@@ -1,22 +1,22 @@
 import { useNavigate } from "react-router-dom";
 
-import {Button, Container} from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import {Formik} from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
 
 function RegisterForm() {
   const navigate = useNavigate();
 
-  async function register({usernameInput, emailInput, password}) {
+  async function register(values, { setFieldError }) {
     const registerUrl = '/api/auth/register/player';
-    console.log(registerUrl)
+    console.log(registerUrl);
 
     let requestBody = {
-      name: usernameInput,
-      email: emailInput,
-      password: password
+      name: values.usernameInput,
+      email: values.emailInput,
+      password: values.password
     }
 
     const requestHeader = {
@@ -30,8 +30,13 @@ function RegisterForm() {
         method: "POST"
       });
 
+      const data = await response.json();
+
       if (response.status === 201) {
+        console.log("Registration successful, navigating to login");
         navigate("/login");
+      } else if (data.error === "EXCEPTION: Account already exists") {
+        setFieldError("emailInput", "Account with this email already exists. Please use a different email");
       }
 
     } catch (error) {
@@ -79,15 +84,15 @@ function RegisterForm() {
                     type="text"
                     placeholder="John Doe"
                     name="usernameInput"
-                    onChange={ e => {
+                    onChange={e => {
                       setFieldTouched('usernameInput');
                       handleChange(e);
                     }}
-                    value = { values.usernameInput }
-                    isInvalid={ touched.usernameInput && errors.usernameInput }
+                    value={values.usernameInput}
+                    isInvalid={touched.usernameInput && errors.usernameInput}
                   />
                   <Form.Control.Feedback type="invalid">
-                    { errors.usernameInput }
+                    {errors.usernameInput}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Row>
@@ -99,14 +104,14 @@ function RegisterForm() {
                     type="email"
                     placeholder="johndoe@example.com"
                     name="emailInput"
-                    value = { values.emailInput }
-                    onChange={ e => {
+                    value={values.emailInput}
+                    onChange={e => {
                       setFieldTouched('emailInput');
                       handleChange(e);
                     }}
-                    isInvalid={ touched.emailInput && errors.emailInput }
-                    />
-                  <Form.Control.Feedback type="invalid">{ errors.emailInput }</Form.Control.Feedback>
+                    isInvalid={touched.emailInput && errors.emailInput}
+                  />
+                  <Form.Control.Feedback type="invalid">{errors.emailInput}</Form.Control.Feedback>
                 </Form.Group>
               </Row>
 
@@ -117,15 +122,15 @@ function RegisterForm() {
                     type="password"
                     placeholder="Password"
                     name="password"
-                    value = { values.password }
-                    onChange={ e => {
+                    value={values.password}
+                    onChange={e => {
                       setFieldTouched('password');
                       handleChange(e);
                     }}
-                    isValid={ touched.password && !errors.password  }
-                    isInvalid={ touched.password && errors.password }
+                    isValid={touched.password && !errors.password}
+                    isInvalid={touched.password && errors.password}
                   />
-                  <Form.Control.Feedback type="invalid">{ errors.password }</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                 </Form.Group>
               </Row>
 
@@ -136,15 +141,15 @@ function RegisterForm() {
                     type="password"
                     placeholder="Confirm password"
                     name="confirmPassword"
-                    value = { values.confirmPassword }
-                    onChange={ e => {
+                    value={values.confirmPassword}
+                    onChange={e => {
                       setFieldTouched('confirmPassword');
                       handleChange(e);
                     }}
-                    isValid={ touched.confirmPassword && !errors.confirmPassword }
-                    isInvalid={ touched.confirmPassword && errors.confirmPassword }
+                    isValid={touched.confirmPassword && !errors.confirmPassword}
+                    isInvalid={touched.confirmPassword && errors.confirmPassword}
                   />
-                  <Form.Control.Feedback type="invalid">{ errors.confirmPassword }</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">{errors.confirmPassword}</Form.Control.Feedback>
                 </Form.Group>
               </Row>
 

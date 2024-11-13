@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { SERVER_URL } from "./env";
 import './index.css';
 import './vendor/bootstrap/css/bootstrap.min.css'
 
@@ -8,7 +7,7 @@ import Form from 'react-bootstrap/Form';
 function Profile() {
     let [data, setData] = useState([]);
 
-    const url = SERVER_URL + "/api/profile/user/" + localStorage.getItem("userName");
+    const url = "/api/profile/user/" + localStorage.getItem("userName");
     const requestHeader = {
         'content-type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.accessToken

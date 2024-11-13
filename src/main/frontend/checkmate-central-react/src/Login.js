@@ -33,6 +33,7 @@ function Login() {
 
         if(response.status === 200) {
           const data = await response.json();
+          localStorage.setItem("id", data.id);
           localStorage.setItem("accessToken", data.token);
           localStorage.setItem("tokenExpiry", data.expiry);
           localStorage.setItem("userName", data.username);

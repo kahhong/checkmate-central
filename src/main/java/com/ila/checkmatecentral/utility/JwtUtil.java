@@ -1,20 +1,28 @@
 package com.ila.checkmatecentral.utility;
 
+import java.time.Instant;
+import java.util.Base64;
+import java.util.Date;
+import java.util.function.Function;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.experimental.UtilityClass;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.Date;
-import java.util.function.Function;
 @UtilityClass
 public class JwtUtil {
     private static final SecretKey key = Jwts.SIG.HS256.key().build();
     private static final String SECRET = Base64.getEncoder().encodeToString(key.getEncoded());
+    
+    @Value("${jwt.lifetime-in-minutes}")
+    private static final int LIFETIME_IN_MINUTES = 720;
 
     public static String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -38,8 +46,8 @@ public class JwtUtil {
         return Jwts.builder()
             .issuer("ILA")
             .subject(userDetails.getUsername())
-            .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+            .issuedAt(Date.from(Instant.now()))
+            .expiration(Date.from(Instant.now().plusSeconds(LIFETIME_IN_MINUTES * 60L)))
             .signWith(getSigningKey())
             .compact();
     }

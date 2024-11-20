@@ -1,16 +1,30 @@
 package com.ila.checkmatecentral.service;
 
-import com.ila.checkmatecentral.entity.*;
-import com.ila.checkmatecentral.entity.Match.MatchOutcome;
-import com.ila.checkmatecentral.exceptions.*;
-import com.ila.checkmatecentral.repository.TournamentRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.ila.checkmatecentral.entity.Admin;
+import com.ila.checkmatecentral.entity.Match;
+import com.ila.checkmatecentral.entity.Match.MatchOutcome;
+import com.ila.checkmatecentral.entity.MatchStatus;
+import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.entity.Tournament;
+import com.ila.checkmatecentral.entity.TournamentStatus;
+import com.ila.checkmatecentral.exceptions.InvalidNumberOfPlayersException;
+import com.ila.checkmatecentral.exceptions.InvalidTournamentException;
+import com.ila.checkmatecentral.exceptions.InvalidTournamentStateException;
+import com.ila.checkmatecentral.exceptions.PlayerAlreadyInTournamentException;
+import com.ila.checkmatecentral.exceptions.PlayerNotInTournamentException;
+import com.ila.checkmatecentral.exceptions.TournamentFullException;
+import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
+import com.ila.checkmatecentral.repository.TournamentRepository;
+import com.ila.checkmatecentral.utility.MathUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
@@ -25,7 +39,7 @@ public class TournamentService {
         
         int numPlayers = tournament.getMaxPlayers();
 
-        if (numPlayers <= 0 || !isPowerOf2(numPlayers)){
+        if (numPlayers <= 0 || !MathUtils.isPowerOf2(numPlayers)){
             throw new InvalidNumberOfPlayersException(numPlayers);
         }
         
@@ -161,8 +175,8 @@ public class TournamentService {
                 .collect(Collectors.toList());
         int neededMatches = (int) Math.ceil(players.size()/2);
 
-        if (!isPowerOf2(neededMatches)) {
-            neededMatches = log2(neededMatches) + 1;
+        if (!MathUtils.isPowerOf2(neededMatches)) {
+            neededMatches = MathUtils.log2(neededMatches) + 1;
         }
 
         int round = getTournament(tournamentId).getRound();
@@ -172,31 +186,6 @@ public class TournamentService {
             Player highEloPlayer = sortedPlayers.get(players.size() - 1 - i);
             matchService.createSingleMatch(lowEloPlayer, highEloPlayer, round, tournamentId);
         }
-    }
-    
-    public static boolean isPowerOf2(int num){
-        /*
-         * Power of 2 means a single bit is set.
-         * Negating by 1 means the rest of the lower bits is set
-         *
-         * Example of 2^3
-         *
-         * 1000
-         * 0111 &
-         * ----
-         * 0000
-         *
-         */
-        
-        if (num < 0) {
-            throw new IllegalArgumentException("Require positive number. Given: " + num);
-        }
-
-        return (num & (num - 1)) == 0;
-    }
-
-    public static int log2(int x) {
-        return (int) (Math.log(x) / Math.log(2));
     }
 
     public Tournament setNextRound(int tournamentId){

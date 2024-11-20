@@ -2,7 +2,6 @@ package com.ila.checkmatecentral.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -170,16 +169,51 @@ public class TournamentService {
     }
 
     public void pairUp(List<Player> players, int tournamentId){
-        List<Player> sortedPlayers = players.stream()
-                .sorted((user1, user2) -> Double.compare(user1.getRating(), user2.getRating()))
-                .collect(Collectors.toList());
-        int neededMatches = (int) Math.ceil(players.size()/2);
+        /* 
+         * Match Specifications
+         * - Bye matches are required if the number of players in tournaments are not a power of two
+         * - We generate bye matches to eliminate players until a number of players in tournament is a power of 2
+         * - Every match will decrease player by 1 => so we need bye matches for every extra player
+         *
+         * Case: 9 players
+         *
+         * Let R be extra players. R should be 1
+         * 9 players = 8 matched + R
+         * 9 players = 2^floor(log2(9 players)) + R
+         *
+         * R = 9 players - 2^floor(log2(9 players))
+         *   = 9 players - 2^floor(3.169...)
+         *   = 9 players - 2^3
+         *   = 9 players - 8
+         *   = 1 player
+         *
+         * PROVEN R = 1
+         * === 
+         * Case: 7 players
+         *
+         * Let R be extra players. R should be 3
+         * 7 players = 4 matched + R
+         * 7 players = 2^floor(log2(7 players)) + R
+         *
+         * R = 7 players - 2^floor(log2(7 players))
+         *   = 7 players - 4
+         *   = 3 players
+         *
+         * PROVEN R = 3
+         */
+        
+        int neededMatches = players.size() / 2;
 
-        if (!MathUtils.isPowerOf2(neededMatches)) {
-            neededMatches = MathUtils.log2(neededMatches) + 1;
+        if (!MathUtils.isPowerOf2(players.size())) {
+            int nearestPowerOfTwo = (int) Math.pow(2, MathUtils.log2(players.size()));
+            neededMatches = players.size() - nearestPowerOfTwo;
         }
 
         int round = getTournament(tournamentId).getRound();
+
+        List<Player> sortedPlayers = players.stream()
+                .sorted((player1, player2) -> Double.compare(player1.getRating(), player2.getRating()))
+                .toList();
         
         for (int i = 0; i < neededMatches; i++) {
             Player lowEloPlayer = sortedPlayers.get(i);

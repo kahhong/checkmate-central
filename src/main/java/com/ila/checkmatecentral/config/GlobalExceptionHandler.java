@@ -36,12 +36,6 @@ public class GlobalExceptionHandler {
         ), httpStatus);
     }
 
-
-    /*
-     * TODO: Check whether all agree with HttpStatus.OK
-     * Check whether it actually works
-     */
-
     @ExceptionHandler(AccountExistsException.class)
     public ResponseEntity<Object> handleAccountExistsException(AccountExistsException ex, WebRequest request) {
         return handleException(ex, "Account already exists");
@@ -52,10 +46,6 @@ public class GlobalExceptionHandler {
         return handleException(ex, "Player is not available");
     }
 
-    /*
-     * TODO: Checks what code to be returned
-     * - Put the valid number of players but FIX
-     */
     @ExceptionHandler(InvalidNumberOfPlayersException.class)
     public ResponseEntity<Object> handleInvalidNumberOfPlayersException(InvalidNumberOfPlayersException ex,
             WebRequest request) {

@@ -106,7 +106,6 @@ public class Tournament {
     @NumberFormat
     private int minElo;
 
-    // TODO: Refactor name to startDateTime
     @Getter
     @Setter
     @JsonProperty("startDate")
@@ -115,7 +114,6 @@ public class Tournament {
     @FutureOrPresent(message = "Start date is in the past.")
     private LocalDateTime startDate;
 
-    // TODO: Refactor name to endDateTime
     @Getter
     @Setter
     @JsonProperty("endDate")

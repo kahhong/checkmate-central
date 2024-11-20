@@ -26,7 +26,6 @@ public class GlobalExceptionHandler {
         return handleException(ex, message, HttpStatus.OK);
     }
 
-
     private static ResponseEntity<Object> handleException(Exception ex, String message, HttpStatus httpStatus) {
         return new ResponseEntity<>(Map.of(
             "timestamp", LocalDateTime.now(),
@@ -54,7 +53,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InvalidCredentialsException.class})
     public ResponseEntity<Object> handleInvalidCredentialsException(InvalidCredentialsException ex, WebRequest request) {
-        log.error("caught bad credentials error");
         return handleException(ex, "Invalid credentials", HttpStatus.UNAUTHORIZED);
     }
 

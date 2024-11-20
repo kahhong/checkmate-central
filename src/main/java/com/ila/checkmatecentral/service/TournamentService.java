@@ -22,6 +22,7 @@ import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.TournamentRepository;
 import com.ila.checkmatecentral.utility.MathUtils;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -116,27 +117,25 @@ public class TournamentService {
         tournamentRepository.save(currentTournament);
     }
 
+    @Transactional
     public void withdrawPlayer(int tournamentId, Player player) {
         final Tournament currentTournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+
         List<Player> players = currentTournament.getPlayerList();
-        List<Match> matches = matchService.getMatches(currentTournament.getTournamentId());
-        if (players.contains(player)) {
-            players.remove(player);
-            currentTournament.setPlayerList(players);
-            tournamentRepository.save(currentTournament);
-        }else{
+
+        if (!players.contains(player)) {
             throw new PlayerNotInTournamentException(tournamentId);
         }
+
+        players.remove(player);
+        currentTournament.setPlayerList(players);
+        tournamentRepository.save(currentTournament);
+
+        List<Match> matches = matchService.getMatches(currentTournament.getTournamentId());
         for (Match match : matches) {
-            if(match.getMatchStatus() == MatchStatus.ONGOING){
-                if(match.getPlayer1().equals(player)){
-                    matchService.updateMatchOutcome(match.getMatchId(), MatchOutcome.LOSE);
-                    break;
-                }else if(match.getPlayer2().equals(player)){
-                    matchService.updateMatchOutcome(match.getMatchId(), MatchOutcome.WIN);
-                    break;
-                }
+            if (match.getMatchStatus() == MatchStatus.ONGOING) {
+                matchService.withdrawPlayer(match, player);
             }
         }
 
@@ -222,7 +221,7 @@ public class TournamentService {
         }
     }
 
-    public Tournament setNextRound(int tournamentId){
+    public Tournament setNextRound(int tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
 
@@ -252,8 +251,6 @@ public class TournamentService {
         pairUp(playersLeft, tournamentId);
         return tournament;
     }
-
-
 
     public void startTournament(int tournamentId) throws InvalidTournamentStateException {
         Tournament tournament = tournamentRepository.findById(tournamentId)

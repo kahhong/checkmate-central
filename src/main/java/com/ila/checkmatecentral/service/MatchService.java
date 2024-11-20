@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ila.checkmatecentral.entity.Match;
 import com.ila.checkmatecentral.entity.MatchStatus;
 import com.ila.checkmatecentral.entity.Player;
+import com.ila.checkmatecentral.entity.Match.MatchOutcome;
 import com.ila.checkmatecentral.exceptions.MatchNotFoundException;
 import com.ila.checkmatecentral.exceptions.TournamentNotFoundException;
 import com.ila.checkmatecentral.repository.MatchRepository;
@@ -38,14 +39,26 @@ public class MatchService {
         return matchRepository.findByTournamentId(tournamentId)
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
     }
+    
+    public Match withdrawPlayer(Match match, Player player) {
+        if (match.getPlayer1().equals(player)) {
+            return updateMatchOutcome(match, MatchOutcome.LOSE);
+        } else if (match.getPlayer2().equals(player)) {
+            return updateMatchOutcome(match, MatchOutcome.WIN);
+        } else {
+            return null;
+        }
+    }
 
     public Match updateMatchOutcome(Integer matchId, Match.MatchOutcome outcome) {
-        //check if outcome is of valid input value
+        Match match = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+        return updateMatchOutcome(match, outcome);
+    }
 
-        Match currentMatch = matchRepository.findByMatchId(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
-        currentMatch.setOutcome(outcome);
-        glickoService.updateRatings(currentMatch);
-        currentMatch.setMatchStatus(MatchStatus.COMPLETED);
-        return matchRepository.save(currentMatch);
+    public Match updateMatchOutcome(Match match, Match.MatchOutcome outcome) {
+        match.setOutcome(outcome);
+        glickoService.updateRatings(match);
+        match.setMatchStatus(MatchStatus.COMPLETED);
+        return matchRepository.save(match);
     }
 }

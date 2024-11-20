@@ -25,10 +25,7 @@ public class TournamentService {
         
         int numPlayers = tournament.getMaxPlayers();
 
-        /*
-         * TODO: Refactor this statement
-         */
-        if (numPlayers > 0 && (numPlayers & (numPlayers - 1)) != 0){
+        if (numPlayers <= 0 || !isPowerOf2(numPlayers)){
             throw new InvalidNumberOfPlayersException(numPlayers);
         }
         
@@ -164,12 +161,11 @@ public class TournamentService {
                 .collect(Collectors.toList());
         int neededMatches = (int) Math.ceil(players.size()/2);
 
-        if(!isPowerOf2(neededMatches)){
+        if (!isPowerOf2(neededMatches)) {
             neededMatches = log2(neededMatches) + 1;
         }
 
         int round = getTournament(tournamentId).getRound();
-
         
         for (int i = 0; i < neededMatches; i++) {
             Player lowEloPlayer = sortedPlayers.get(i);
@@ -179,7 +175,24 @@ public class TournamentService {
     }
     
     public static boolean isPowerOf2(int num){
-        return num > 0 && (num & (num - 1)) != 0;
+        /*
+         * Power of 2 means a single bit is set.
+         * Negating by 1 means the rest of the lower bits is set
+         *
+         * Example of 2^3
+         *
+         * 1000
+         * 0111 &
+         * ----
+         * 0000
+         *
+         */
+        
+        if (num < 0) {
+            throw new IllegalArgumentException("Require positive number. Given: " + num);
+        }
+
+        return (num & (num - 1)) == 0;
     }
 
     public static int log2(int x) {
